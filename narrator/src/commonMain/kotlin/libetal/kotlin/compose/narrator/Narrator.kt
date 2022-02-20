@@ -25,9 +25,10 @@ fun <VM : ViewModel, Index : Any> VM.Narrator(
     firstPage: Index,
     enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
     exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
+    onNarrationEnd: () -> Unit = { throw RuntimeException("Unhandled narration end. No open chapters existing") },
     chaptersInitializer: Narration<Index>.() -> Unit
 ) {
-    val narration = Narration(firstPage, enterTransition, exitTransition)
+    val narration = Narration(firstPage, enterTransition, exitTransition, onNarrationEnd)
 
     chaptersInitializer(narration)
 

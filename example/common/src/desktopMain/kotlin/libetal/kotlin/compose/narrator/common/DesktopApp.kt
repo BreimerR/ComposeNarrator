@@ -8,5 +8,6 @@ import androidx.compose.runtime.Composable
 fun AppPreview() {
     App {
         println("Close app requested")
+        true
     }
 }

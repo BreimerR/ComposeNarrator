@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import libetal.kotlin.compose.narrator.*
 import libetal.kotlin.compose.narrator.chapters.chapter
 import libetal.kotlin.compose.narrator.view_models.ViewModel
@@ -25,21 +26,30 @@ fun App(onAppCloseRequest: () -> Unit) {
 
             chapter("anotherOne", viewModelFactory = { AnotherOneViewModel() }) {
                 this?.let {
-                    Text("Goodbye ${it.name.value}")
+                    val content = remember { it.onCreateData }
+                    Text("Goodbye ${it.onCreateData.value}")
                 }
             }
 
         }
 
         Row {
+
             Button(
                 {
                     narrator.turnTo("anotherOne", "Breimer")
                 },
             ) {
-                Text("Next Page")
+                Text("Breimer Page")
             }
 
+            Button(
+                {
+                    narrator.turnTo("anotherOne", "Breimer 2")
+                },
+            ) {
+                Text("Breimer 2 page")
+            }
 
             Button({
                 narrator.previousChapter("No Data")

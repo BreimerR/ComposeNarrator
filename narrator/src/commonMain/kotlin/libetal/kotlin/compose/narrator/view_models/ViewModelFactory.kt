@@ -1,10 +1,6 @@
 package libetal.kotlin.compose.narrator.view_models
 
 import androidx.compose.runtime.MutableState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import libetal.kotlin.compose.narrator.coroutines.IoDispatcher
 import libetal.kotlin.compose.narrator.lifecycle.LifeCycleAware
 
 abstract class ViewModelFactory<VM : ViewModel> : LifeCycleAware() {
@@ -13,29 +9,43 @@ abstract class ViewModelFactory<VM : ViewModel> : LifeCycleAware() {
         mutableMapOf<Any, MutableState<Any?>>()
     }
 
+    private var viewModelState: MutableState<ViewModel?>? = null
+
     private var created = false
 
-    fun <Index : Any> create(index: Index, viewModelState: MutableState<ViewModel?>) {
+    val onCreateObservers = mutableListOf<(Any?) -> Unit>()
+
+    var onCreateObserver: (Any) -> Unit = {}
+
+    fun <Index : Any> create(index: Index, newViewModelState: MutableState<ViewModel?>) {
         if (created) return
 
         ioLaunch {
-            val viewModel = createViewModel()
 
-            viewModelState.value = viewModel
+            viewModelState = newViewModelState
 
-            onCreateData[index]?.let {
-                viewModel.onCreate(it)
-            } ?: viewModel.onCreate()
+            viewModelState?.apply {
+                value = createViewModel()
+            }
+
+            created = true
+
+            onCreateData[index]?.value?.let { data ->
+                onCreateObserver(data)
+            }
 
         }
 
-        created = true
+
     }
 
-    abstract suspend fun createViewModel(): VM
+    internal fun <D> updateViewModelData(data: D) = ioLaunch {
+        if (created) viewModelState?.value?.onCreateData?.value = data
+        else onCreateObserver = {
+            viewModelState?.value?.onCreateData?.value = data
+        }
+    }
 
-}
+    abstract suspend fun createViewModel(data: Any? = null): VM
 
-fun <T> List<(T) -> Unit>.forEach(argument: T) = forEach { lambda ->
-    lambda(argument)
 }

@@ -36,7 +36,7 @@ fun <T: Any, VM : ViewModel> Narration<T>.chapter(
     this += page to Chapter(
         enterTransition, exitTransition,
         object : ViewModelFactory<VM>() {
-            override suspend fun createViewModel(): VM = viewModelFactory()
+            override suspend fun createViewModel(data: Any?): VM =  viewModelFactory()
         } as ViewModelFactory<in ViewModel>
     ) {
         content(this as? VM)

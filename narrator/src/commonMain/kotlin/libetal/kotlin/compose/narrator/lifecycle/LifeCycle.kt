@@ -50,7 +50,9 @@ abstract class Lifecycle {
         get() =
             SupervisorJob()
 
-    private val coroutineScopes = mutableListOf<CoroutineScope>()
+    private val coroutineScopes  by lazy{
+        mutableListOf<CoroutineScope>()
+    }
 
     private fun getCoroutineScope(context: CoroutineDispatcher = Dispatchers.Main.immediate, supervisorJob: CompletableJob?) =
         CoroutineScope(supervisorJob?.let { it + context } ?: context).also {

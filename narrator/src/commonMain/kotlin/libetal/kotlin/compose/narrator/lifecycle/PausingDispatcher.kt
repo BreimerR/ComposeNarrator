@@ -106,7 +106,7 @@ public suspend fun <T> Lifecycle.whenResumed(block: suspend CoroutineScope.() ->
  * viewLifecycle.whenStateAtLeast(Lifecycle.State.STARTED) {
  *     // here, we are on the main thread and view lifecycle is guaranteed to be STARTED or RESUMED.
  *     // We can safely access our views.
- *     loadingBar.visibility = View.VISIBLE
+ *     loadingBar.visibility = View.kt.VISIBLE
  *     try {
  *         // we can call any suspend function
  *         val data = withContext(Dispatchers.IO) {
@@ -122,13 +122,13 @@ public suspend fun <T> Lifecycle.whenResumed(block: suspend CoroutineScope.() ->
  *         // this line will execute on the main thread and only if the lifecycle is in at least
  *         // STARTED state (STARTED is the parameter we've passed to whenStateAtLeast)
  *         // Because of this guarantee, we can safely access the UI again.
- *         loadingBar.visibility = View.GONE
+ *         loadingBar.visibility = View.kt.GONE
  *         nameTextView.text = user.name
  *         lastNameTextView.text = user.lastName
  *     } catch(ex : UserNotFoundException) {
  *         // same as above, this code can safely access UI elements because it only runs if
  *         // view lifecycle is at least STARTED
- *         loadingBar.visibility = View.GONE
+ *         loadingBar.visibility = View.kt.GONE
  *         showErrorDialog(ex)
  *     } catch(th : Throwable) {
  *          // Unlike the catch statement above, this catch statements it too generic and might

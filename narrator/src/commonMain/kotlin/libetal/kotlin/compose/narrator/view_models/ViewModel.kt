@@ -9,6 +9,10 @@ import libetal.kotlin.compose.narrator.lifecycle.LifeCycleAware
 
 abstract class ViewModel : LifeCycleAware() {
 
+    val onCreateData by lazy {
+        mutableStateOf<Any?>(null)
+    }
+
     open fun onCreate(data: MutableState<Any?>) {
         onCreate()
     }
