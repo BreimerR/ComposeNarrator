@@ -25,70 +25,58 @@ import androidx.compose.runtime.*
  **/
 @Composable
 fun <Key : Enum<*>> Narration(
-    onNarrationEnd: () -> Boolean,
+    onNarrationEnd: (() -> Boolean)? = null,
     enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
     exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
     prepareNarrations: NarrationScope<Key>.() -> Unit
 ) {
 
-    RunInNarrationScope<Key>(onNarrationEnd, enterTransition, exitTransition) {
-        Narrate(prepareNarrations)
+    val narrations = remember { mutableStateListOf<Key>() }
+
+    val backStack = NarrationBackStack(narrations).apply {
+        onNarrationEnd?.let {
+            addOnEmptyListener(it)
+        }
+    }
+
+    val scope = NarrationScope(
+        backStack,
+        enterTransition = enterTransition,
+        exitTransition = exitTransition
+    )
+
+    prepareNarrations(scope)
+
+    CompositionLocalProvider(LocalNarrationScope provides scope) {
+        scope.narrate()
     }
 
 }
 
 @Composable
-fun <Key : Enum<*>> NarrationScope<Key>.Narrate(
-    prepareNarrations: NarrationScope<Key>.() -> Unit
+fun <Key : Enum<*>> Narrator(
+    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
+    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
+    content: @Composable () -> Unit
 ) {
+    val narrations = remember { mutableStateListOf<Key>() }
 
-    prepareNarrations()
+    val scope = NarrationScope(
+        NarrationBackStack(narrations),
+        enterTransition = enterTransition,
+        exitTransition = exitTransition
+    )
 
-    Compose {
-        narrate()
-    }
-
-}
-
-
-@Composable
-fun <Key> NarrationScope<Key>.Compose(content: @Composable NarrationScope<Key>.() -> Unit) {
-    CompositionLocalProvider(LocalNarrationScope provides this) {
+    CompositionLocalProvider(LocalNarrationScope provides scope) {
         content()
     }
-}
-
-@Composable
-fun <Key> Narration(
-    onNarrationEnd: () -> Boolean = { false },
-    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
-    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
-    content: @Composable NarrationScope<Key>.() -> Unit
-) {
-    RunInNarrationScope<Key>(onNarrationEnd, enterTransition, exitTransition) {
-        Compose(content)
-    }
 
 }
 
 @Composable
-internal fun <Key> RunInNarrationScope(
-    onNarrationEnd: () -> Boolean = { false },
-    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
-    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
-    compose: @Composable NarrationScope<Key>.() -> Unit
-) {
-    /**
-     * Moving this outside causes narration
-     * to loop back to the previous narration
-     **/
-    NarrationScope(
-        NarrationBackStack(
-            remember { mutableStateListOf<Key>() },
-            onNarrationEnd
-        ),
-        enterTransition,
-        exitTransition
-    ).compose()
-
+fun <Key> Narrate(onNarrationEnd: () -> Boolean, prepareNarrations: NarrationScope<Key>.() -> Unit) {
+    val scope = LocalNarrationScope.current as NarrationScope<Key>
+    scope.backStack.addOnEmptyListener(onNarrationEnd)
+    prepareNarrations(scope)
+    scope.narrate()
 }

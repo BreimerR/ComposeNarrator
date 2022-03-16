@@ -1,7 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 interface NarrationController<Key> {
-     val scope: NarrationScope<Key>
+    val scope: NarrationScope<Key>
 }
 
 interface NarrationDestination<Key> : NarrationController<Key> {
@@ -9,7 +9,7 @@ interface NarrationDestination<Key> : NarrationController<Key> {
 }
 
 interface NarrationHistory : NarrationController<Any> {
-    fun begin(onEmpty: () -> Boolean): Boolean
+    fun begin(onEmpty: (() -> Boolean)? = null): Boolean
 }
 
 

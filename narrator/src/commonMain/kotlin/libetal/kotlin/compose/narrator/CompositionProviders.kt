@@ -40,5 +40,5 @@ class Narration<Key>(private val key: Key, override val scope: NarrationScope<Ke
 }
 
 class History(override val scope: NarrationScope<Any>) : NarrationHistory {
-    override fun begin(onEmpty: () -> Boolean): Boolean = scope.back(onEmpty)
+    override fun begin(onEmpty: (() -> Boolean)?): Boolean = scope.back(onEmpty)
 }

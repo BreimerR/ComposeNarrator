@@ -10,10 +10,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
  * would be required.
  * @Author brymher@gmail.com
  * */
-abstract class ListBackStack<Key>(override val stack: MutableList<Key>, val onEmpty: () -> Boolean) :
+abstract class ListBackStack<Key>(override val stack: MutableList<Key>) :
     BackStack<Key, MutableList<Key>>() {
 
-    constructor(vararg composer: Key, onEmpty: () -> Boolean) : this(mutableStateListOf(*composer), onEmpty)
+    constructor(vararg composer: Key) : this(mutableStateListOf(*composer))
 
     override val isEmpty: Boolean
         get() = stack.isEmpty()

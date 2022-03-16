@@ -9,13 +9,13 @@ import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.coroutines.IoDispatcher
 import libetal.multiplatform.log.Log
 
-class NarrationBackStack<Key>(activities: SnapshotStateList<Key>, onEmpty: () -> Boolean) : ListBackStack<Key>(activities, onEmpty)
+class NarrationBackStack<Key>(activities: SnapshotStateList<Key>) : ListBackStack<Key>(activities)
 
 /**
  * Provides for adding components into the back stack
  * */
 class NarrationScope<Key>(
-    private val backStack: NarrationBackStack<Key>,
+    internal var backStack: NarrationBackStack<Key>,
     private val enterTransition: EnterTransition,
     private val exitTransition: ExitTransition
 ) {
@@ -94,7 +94,7 @@ class NarrationScope<Key>(
     internal fun navigateTo(key: Key) =
         if (!isTransitioning) backStack.navigateTo(key) else Log.d("Narration", "Transitioning: Event not consumed")
 
-    internal fun back(onEmpty: () -> Boolean): Boolean = if (!isTransitioning) backStack.back(onEmpty) else true
+    internal fun back(onEmpty: (() -> Boolean)? = null): Boolean = if (!isTransitioning) backStack.back(onEmpty) else true
 
     companion object {
         val TAG = "NarrationScope"
