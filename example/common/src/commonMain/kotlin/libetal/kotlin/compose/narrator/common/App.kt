@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import libetal.kotlin.compose.narrator.History
 import libetal.kotlin.compose.narrator.Narration
 import libetal.kotlin.compose.narrator.historyScope
 import libetal.kotlin.compose.narrator.narration

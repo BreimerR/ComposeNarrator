@@ -75,6 +75,15 @@ class NarrationScope<Key>(
             isTransitioning = false
         }
 
+        DisposableEffect(component) {
+
+
+            onDispose {
+                // Start a timer to clear the view model
+                // viewModel.pendingDispose()
+            }
+        }
+
     }
 
     /**

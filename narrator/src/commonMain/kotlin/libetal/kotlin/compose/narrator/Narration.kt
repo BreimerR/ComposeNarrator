@@ -28,38 +28,67 @@ fun <Key : Enum<*>> Narration(
     onNarrationEnd: () -> Boolean,
     enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
     exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
-    prepareNarrations:  NarrationScope<Key>.() -> Unit
+    prepareNarrations: NarrationScope<Key>.() -> Unit
 ) {
 
-    val activities = remember { mutableStateListOf<Key>() }
-    val backStack = NarrationBackStack(activities, onNarrationEnd)
+    RunInNarrationScope<Key>(onNarrationEnd, enterTransition, exitTransition) {
+        Narrate(prepareNarrations)
+    }
 
+}
+
+@Composable
+fun <Key : Enum<*>> NarrationScope<Key>.Narrate(
+    prepareNarrations: NarrationScope<Key>.() -> Unit
+) {
+
+    prepareNarrations()
+
+    Compose {
+        narrate()
+    }
+
+}
+
+
+@Composable
+fun <Key> NarrationScope<Key>.Compose(content: @Composable NarrationScope<Key>.() -> Unit) {
+    CompositionLocalProvider(LocalNarrationScope provides this) {
+        content()
+    }
+}
+
+@Composable
+fun <Key> Narration(
+    onNarrationEnd: () -> Boolean = { false },
+    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
+    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
+    content: @Composable NarrationScope<Key>.() -> Unit
+) {
+    RunInNarrationScope<Key>(onNarrationEnd, enterTransition, exitTransition) {
+        Compose(content)
+    }
+
+}
+
+@Composable
+internal fun <Key> RunInNarrationScope(
+    onNarrationEnd: () -> Boolean = { false },
+    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
+    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
+    compose: @Composable NarrationScope<Key>.() -> Unit
+) {
     /**
      * Moving this outside causes narration
      * to loop back to the previous narration
      **/
-    val narrationScope = NarrationScope(
-        backStack,
+    NarrationScope(
+        NarrationBackStack(
+            remember { mutableStateListOf<Key>() },
+            onNarrationEnd
+        ),
         enterTransition,
         exitTransition
-    )
+    ).compose()
 
-    CompositionLocalProvider(LocalNarrationScope provides narrationScope) {
-        /**
-         * Preparing this outside the scope of this causes' app
-         * to fail not sure about providers and how they manage data yet
-         * */
-        narrationScope.prepareNarrations()
-
-        narrationScope.narrate()
-    }
-
-    DisposableEffect(backStack) {
-
-        onDispose {
-            backStack.clear()
-        }
-
-    }
 }
-

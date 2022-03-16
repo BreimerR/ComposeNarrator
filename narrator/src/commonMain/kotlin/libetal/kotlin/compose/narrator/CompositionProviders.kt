@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import libetal.multiplatform.log.Log
 
 
-val LocalNarrationScope by compositionProvider<NarrationScope<*>>()
+internal val LocalNarrationScope by compositionProvider<NarrationScope<*>>()
 
 val <Key : Enum<*>> Key.NavigationController: NarrationScope<Key>
     @Composable get() {
