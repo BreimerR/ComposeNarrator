@@ -1,4 +1,4 @@
- buildscript {
+buildscript {
     repositories {
         gradlePluginPortal()
         google()
@@ -22,6 +22,7 @@ version = "1.0.0"
 allprojects {
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }

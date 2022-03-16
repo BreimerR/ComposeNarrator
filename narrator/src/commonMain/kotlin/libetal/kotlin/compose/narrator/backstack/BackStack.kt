@@ -2,29 +2,24 @@ package libetal.kotlin.compose.narrator.backstack
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
-class BackStack<Index>(private val indexes: SnapshotStateList<Index>) {
+abstract class BackStack<Composer, Collection> {
 
-    /**TODO
-     * val hasStack: Boolean
-     *     get() = !hasNoStack
-     * val hasNoStack
-     *     get() = indexes.isEmpty()
-     **/
-    val active: Index
-        get() = indexes.lastOrNull() ?: throw EmptyBackStackException()
+    abstract val stack: Collection
 
-    fun previous(onEmptyStack: () -> Unit, onSuccessfulNarrationSwitch: () -> Unit = {}) = if (indexes.size <= 1) onEmptyStack()
-    else {
-        indexes.removeRange(indexes.size - 1, indexes.size)
-    }
+    abstract val current: Composer
 
-    fun navigateTo(index: Index): Index {
-        if (index in indexes) return index
+    abstract val isEmpty: Boolean
 
-        indexes.add(index)
+    abstract val isAlmostEmpty: Boolean
 
-        return index
+    protected abstract fun pop(): Boolean
+
+    fun back(onEmptyStack: () -> Boolean): Boolean = if (isAlmostEmpty) onEmptyStack()
+    else pop()
+
+    companion object {
+        operator fun <Activity> invoke(vararg activity: Activity, onEmpty: () -> Boolean) =
+            object : ListBackStack<Activity>(*activity, onEmpty = onEmpty) {} as BackStack<Activity, SnapshotStateList<Activity>>
     }
 
 }
-
