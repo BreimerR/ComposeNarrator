@@ -4,8 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.job
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.lifecycle.*
 import libetal.kotlin.compose.narrator.lifecycle.LocalViewModelProvider
@@ -168,9 +166,7 @@ class NarrationScope<Key>(
 
         val current = backStack.current
 
-        if (!current.lifecycle.wasCreated) {
-            current.lifecycle.create()
-        }
+        if (!current.lifecycle.wasCreated) current.lifecycle.create()
 
         val viewModel = viewModelStore.find(current)
 
@@ -211,7 +207,7 @@ class NarrationScope<Key>(
 
         DisposableEffect(current) {
             onDispose {
-               current.lifecycle.pause()
+                current.lifecycle.pause()
             }
         }
 

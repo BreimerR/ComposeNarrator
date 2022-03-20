@@ -19,6 +19,7 @@ package libetal.kotlin.compose.narrator.lifecycle
 import kotlinx.coroutines.*
 import libetal.kotlin.compose.narrator.coroutines.IO
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Defines an object that has an Android Lifecycle. {@link androidx.fragment.app.Fragment Fragment}
@@ -84,41 +85,15 @@ abstract class Lifecycle {
         }
 
     fun launch(
-        dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
-        parent: Job? = null,
-        supervisorJob: CompletableJob? = SupervisorJob(parent),
-        block: suspend CoroutineScope.() -> Unit
-    ): Job {
-        val coroutineScope = getCoroutineScope(dispatcher, supervisorJob)
-
-        /*TODO: when (state) {
-            State.DESTROYED -> coroutineScope.cancel()
-            State.INITIALIZED -> coroutineScope.launch(block = block)
-            State.CREATED -> TODO()
-            State.STARTED ->   coroutineScope.launch(block = block)
-            State.RESUMED -> TODO()
-        }*/
-
-        return coroutineScope.launch(block = block)
-
-    }
-
-    fun launch(
-        coroutineScope: CoroutineScope,
+        coroutineScope: CoroutineScope = this.coroutineScope,
         coroutineContext: CoroutineContext = coroutineScope.coroutineContext,
         block: suspend CoroutineScope.() -> Unit
     ) = coroutineScope.launch(coroutineContext, block = block)
 
     fun ioLaunch(
-        parent: Job? = null,
-        supervisorJob: CompletableJob? = SupervisorJob(parent),
+        start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
-    ) = launch(
-        Dispatchers.IO,
-        parent,
-        supervisorJob,
-        block
-    )
+    ) = coroutineScope.launch(Dispatchers.IO, start = start, block = block)
 
     /**
      * Adds a LifecycleObserver that will be notified when the LifecycleOwner changes
@@ -241,13 +216,12 @@ abstract class Lifecycle {
         fun isAtLeast(state: State) = compareTo(state) >= 0
 
         val nextState
-            get() = when (ordinal + 1) {
-                CREATED.ordinal -> CREATED
-                RESUMED.ordinal -> RESUMED
-                STARTED.ordinal -> STARTED
-                PAUSED.ordinal -> PAUSED
-                DESTROYED.ordinal -> DESTROYED
-                else -> DESTROYED
+            get() = when (this) {
+                CREATED -> RESUMED
+                RESUMED -> STARTED
+                STARTED -> STARTED
+                PAUSED -> DESTROYED
+                DESTROYED -> DESTROYED
             }
 
 
@@ -275,17 +249,15 @@ abstract class Lifecycle {
 
     }
 
-    interface Observer {
-        // fun onStateChanged()
-    }
+    interface Observer
 
-    interface Owner<LC : Lifecycle> {
+    interface Owner<L : Lifecycle> {
         /**
          * Returns the Lifecycle of the provider.
          *
          * @return The lifecycle of the provider.
          */
-        val lifeCycle: LC
+        val lifeCycle: L
     }
 
 }

@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
+import libetal.multiplatform.log.Log
 
 abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
 
@@ -14,7 +15,6 @@ abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
             pauseJob?.cancel()
             State.RESUMED
         }
-
     }
 
     /**
@@ -29,26 +29,31 @@ abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
         state = State.STARTED
     }
 
-    fun pause() {
+    fun pause(killAfter: Long? = deathDate) {
         state = State.PAUSED
-        pauseJob = coroutineScope.to(State.DESTROYED, deathDate)
+
+        killAfter?.let {
+            pauseJob = state.to(State.DESTROYED, it)
+        }
+
     }
 
     /**
      * Wait's 5 seconds then starts
      * the fall to the target state
      **/
-    fun CoroutineScope.to(state: State, delay: Long) = launch(Dispatchers.Default) {
+    fun State.to(state: State, delay: Long) = ioLaunch {
 
         delay(delay)
 
-        var from = this@LifeCycleAware.state
+        var currentState = this@LifeCycleAware.state
 
         while (isActive) {
-            if (state < this@LifeCycleAware.state) {
+            if (currentState < this@to) {
                 cancel("Death was canceled. Reversing to required state...")
                 break
             }
+            Log.d(TAG, "Moving to next state $currentState")
 
             if (this@LifeCycleAware.state == state) {
 
@@ -57,15 +62,18 @@ abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
                 break
             }
 
-            from = from.nextState
+            currentState = currentState.nextState
 
-            this@LifeCycleAware.state = from
+            this@LifeCycleAware.state = currentState
 
         }
 
     }
 
 
+    companion object {
+        const val TAG = "LifeCycleAware"
+    }
 }
 
 
