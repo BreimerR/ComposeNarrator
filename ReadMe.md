@@ -12,4 +12,3 @@ Read [Missing Dispatchers.Main Exception](https://github.com/JetBrains/compose-j
 Known Issues
 
 1. Narrations are canceled even if story is resumed [BUG].
-
