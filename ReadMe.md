@@ -27,7 +27,7 @@ Known Issues
       fun OrderOfThePhoenix(){
          Narration{
              HarryPotter.Hogwarts{
-                 AtHarryPotter()
+                 AtHogwarts()
              }
              HarryPotter.DeathToAllMuggle({JKsMind()}){
                 DeathToMuggles(lifeCycleViewModel())
@@ -36,7 +36,7 @@ Known Issues
       }
        
       @Composable
-      fun AtHarryPotter(){
+      fun AtHogwarts(){
          Text("Probably playing Quidditch!! Ron Sucked!! Please redo ending Ron can't have her.")
       }
        
