@@ -1,8 +1,6 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
-import libetal.kotlin.compose.narrator.coroutines.IoDispatcher
-import libetal.kotlin.compose.narrator.coroutines.MainDispatcher
 
 abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
 

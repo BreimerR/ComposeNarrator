@@ -17,7 +17,7 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
-import libetal.kotlin.compose.narrator.coroutines.IoDispatcher
+import libetal.kotlin.compose.narrator.coroutines.IO
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -114,7 +114,7 @@ abstract class Lifecycle {
         supervisorJob: CompletableJob? = SupervisorJob(parent),
         block: suspend CoroutineScope.() -> Unit
     ) = launch(
-        IoDispatcher,
+        Dispatchers.IO,
         parent,
         supervisorJob,
         block
