@@ -20,7 +20,7 @@ fun App(onAppCloseRequest: () -> Unit) {
 
     Column {
 
-        Narration({
+        Narration<Test>({
             onAppCloseRequest()
             true
         }) {

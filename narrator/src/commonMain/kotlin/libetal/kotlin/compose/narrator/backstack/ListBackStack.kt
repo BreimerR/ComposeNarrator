@@ -21,6 +21,8 @@ abstract class ListBackStack<Key>(override val stack: MutableList<Key>) :
     override val current
         get() = stack.lastOrNull() ?: throw EmptyBackStackException()
 
+    var previous: Key? = null
+
     override val isAlmostEmpty: Boolean
         get() = stack.size <= 1
 
@@ -43,6 +45,7 @@ abstract class ListBackStack<Key>(override val stack: MutableList<Key>) :
     }
 
     public override fun pop(): Boolean {
+        previous = current
         stack.removeAt(stack.size - 1)
         return true
     }

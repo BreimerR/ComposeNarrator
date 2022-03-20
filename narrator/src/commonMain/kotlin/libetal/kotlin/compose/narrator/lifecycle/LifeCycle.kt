@@ -18,6 +18,7 @@ package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
 import libetal.kotlin.compose.narrator.coroutines.IoDispatcher
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Defines an object that has an Android Lifecycle. {@link androidx.fragment.app.Fragment Fragment}
@@ -44,17 +45,40 @@ abstract class Lifecycle {
      * Defines the initial state of the component
      * */
     var state: State = State.DESTROYED
+        set(value) {
 
+            if (field == value) return
+
+            field = value
+
+            onStateChange()
+
+        }
+
+    val isPaused: Boolean
+        get() {
+            return state == State.PAUSED
+        }
+
+    val isDestroyed: Boolean
+        get() = state == State.DESTROYED
+
+    val coroutineScope: CoroutineScope by lazy {
+        CloseableCoroutineScope(SupervisorJob()).also { coroutineScope ->
+            coroutineScopes += coroutineScope
+        }
+    }
 
     private val supervisorJob
-        get() =
-            SupervisorJob()
+        get() = SupervisorJob()
 
-    private val coroutineScopes  by lazy{
+    private val coroutineScopes by lazy {
         mutableListOf<CoroutineScope>()
     }
 
-    private fun getCoroutineScope(context: CoroutineDispatcher = Dispatchers.Main.immediate, supervisorJob: CompletableJob?) =
+    abstract fun onStateChange()
+
+    private fun getCoroutineScope(context: CoroutineDispatcher = Dispatchers.Main, supervisorJob: CompletableJob?) =
         CoroutineScope(supervisorJob?.let { it + context } ?: context).also {
             coroutineScopes += it
         }
@@ -64,22 +88,26 @@ abstract class Lifecycle {
         parent: Job? = null,
         supervisorJob: CompletableJob? = SupervisorJob(parent),
         block: suspend CoroutineScope.() -> Unit
-    ): CoroutineScope {
+    ): Job {
         val coroutineScope = getCoroutineScope(dispatcher, supervisorJob)
 
-        /*when (state) {
-            State.DESTROYED -> context.cancel()
-            State.INITIALIZED -> TODO()
+        /*TODO: when (state) {
+            State.DESTROYED -> coroutineScope.cancel()
+            State.INITIALIZED -> coroutineScope.launch(block = block)
             State.CREATED -> TODO()
-            State.STARTED -> context.launch(block = block)
+            State.STARTED ->   coroutineScope.launch(block = block)
             State.RESUMED -> TODO()
         }*/
 
-        coroutineScope.launch(block = block)
+        return coroutineScope.launch(block = block)
 
-        return coroutineScope
     }
 
+    fun launch(
+        coroutineScope: CoroutineScope,
+        coroutineContext: CoroutineContext = coroutineScope.coroutineContext,
+        block: suspend CoroutineScope.() -> Unit
+    ) = coroutineScope.launch(coroutineContext, block = block)
 
     fun ioLaunch(
         parent: Job? = null,
@@ -102,10 +130,7 @@ abstract class Lifecycle {
      *
      * @param observer The observer to notify.
      */
-    //   @MainThread
-    fun addObserver(observer: LifecycleObserver) {
-
-    }
+    abstract fun addObserver(observer: Observer): Boolean
 
     /**
      * Removes the given observer from the observers list.
@@ -120,10 +145,7 @@ abstract class Lifecycle {
      *
      * @param observer The observer to be removed.
      */
-    //    @MainThread
-    fun removeObserver(observer: LifecycleObserver) {
-
-    }
+    abstract fun removeObserver(observer: Observer): Boolean
 
     enum class Event {
         /**
@@ -149,7 +171,7 @@ abstract class Lifecycle {
         /**
          * Constant for onStop event of the {@link LifecycleOwner}.
          */
-        ON_STOP,
+        /*ON_STOP,*/
 
         /**
          * Constant for onDestroy event of the {@link LifecycleOwner}.
@@ -164,95 +186,11 @@ abstract class Lifecycle {
 
         companion object {
 
-            /**
-             * Returns the {@link Lifecycle.Event} that will be reported by a {@link Lifecycle}
-             * leaving the specified {@link Lifecycle.State} to a lower state, or {@code null}
-             * if there is no valid event that can move down from the given state.
-             *
-             * @param state the higher state that the returned event will transition down from
-             * @return the event moving down the lifecycle phases from state
-             */
-            public fun downFrom(state: State): Event? {
-                return when (state) {
-                    State.CREATED -> ON_DESTROY
-                    State.STARTED -> ON_STOP
-                    State.RESUMED -> ON_PAUSE
-                    else -> null
-                }
-            }
-
-
-            public fun downTo(state: State): Event? {
-                return when (state) {
-                    State.DESTROYED -> ON_DESTROY
-                    State.CREATED -> ON_STOP
-                    State.STARTED -> ON_PAUSE
-                    else -> null
-                }
-            }
-
-
-            public fun upFrom(state: State): Event? = when (state) {
-                State.INITIALIZED -> ON_CREATE
-                State.CREATED -> ON_START
-                State.STARTED -> ON_RESUME
-                else -> null
-            }
-
-            /**
-             * Returns the {@link Lifecycle.Event} that will be reported by a {@link Lifecycle}
-             * entering the specified {@link Lifecycle.State} from a lower state, or {@code null}
-             * if there is no valid event that can move up to the given state.
-             *
-             * @param state the higher state that the returned event will transition up to
-             * @return the event moving up the lifecycle phases to state
-             */
-
-            fun upTo(state: State) = when (state) {
-                State.CREATED -> ON_CREATE
-                State.STARTED -> ON_START
-                State.RESUMED -> ON_RESUME
-                else -> null
-            }
-
-
-            /**
-             * Returns the new {@link Lifecycle.State} of a {@link Lifecycle} that just reported
-             * this {@link Lifecycle.Event}.
-             *
-             * Throws {@link IllegalArgumentException} if called on {@link #ON_ANY}, as it is a special
-             * value used by {@link OnLifecycleEvent} and not a real lifecycle event.
-             *
-             * @return the state that will result from this event
-             */
-            fun Event.getTargetState(): State = when (this) {
-                ON_CREATE, ON_STOP -> State.CREATED
-                ON_START, ON_PAUSE -> State.STARTED
-                ON_RESUME -> State.RESUMED
-                ON_DESTROY -> State.DESTROYED
-                // ON_ANY: ->
-                else -> throw  IllegalArgumentException("$this has no target state");
-            }
-
-
         }
 
     }
 
     enum class State {
-        /**
-         * Destroyed state for a LifecycleOwner. After this event, this Lifecycle will not dispatch
-         * any more events. For instance, for an {@link android.app.Activity}, this state is reached
-         * <b>right before</b> Activity's {@link android.app.Activity#onDestroy() onDestroy} call.
-         */
-        DESTROYED,
-
-        /**
-         * Initialized state for a LifecycleOwner. For an {@link android.app.Activity}, this is
-         * the state when it is constructed but has not received
-         * {@link android.app.Activity#onCreate(android.os.Bundle) onCreate} yet.
-         */
-        INITIALIZED,
 
         /**
          * Created state for a LifecycleOwner. For an {@link android.app.Activity}, this state
@@ -263,6 +201,13 @@ abstract class Lifecycle {
          * </ul>
          */
         CREATED,
+
+
+        /**
+         * Resumed state for a LifecycleOwner. For an {@link android.app.Activity}, this state
+         * is reached after {@link android.app.Activity#onResume() onResume} is called.
+         */
+        RESUMED,
 
         /**
          * Started state for a LifecycleOwner. For an {@link android.app.Activity}, this state
@@ -275,10 +220,17 @@ abstract class Lifecycle {
         STARTED,
 
         /**
-         * Resumed state for a LifecycleOwner. For an {@link android.app.Activity}, this state
-         * is reached after {@link android.app.Activity#onResume() onResume} is called.
+         * Intermediate state awaiting destruction
+         **/
+        PAUSED,
+
+        /**
+         * Destroyed state for a LifecycleOwner. After this event, this Lifecycle will not dispatch
+         * any more events. For instance, for an {@link android.app.Activity}, this state is reached
+         * <b>right before</b> Activity's {@link android.app.Activity#onDestroy() onDestroy} call.
          */
-        RESUMED;
+        DESTROYED;
+
 
         /**
          * Compares if this State is greater or equal to the given {@code state}.
@@ -286,7 +238,18 @@ abstract class Lifecycle {
          * @param state State to compare with
          * @return true if this State is greater or equal to the given {@code state}
          */
-        public fun isAtLeast(state: State) = compareTo(state) >= 0
+        fun isAtLeast(state: State) = compareTo(state) >= 0
+
+        val nextState
+            get() = when (ordinal + 1) {
+                CREATED.ordinal -> CREATED
+                RESUMED.ordinal -> RESUMED
+                STARTED.ordinal -> STARTED
+                PAUSED.ordinal -> PAUSED
+                DESTROYED.ordinal -> DESTROYED
+                else -> DESTROYED
+            }
+
 
     }
 
@@ -304,13 +267,27 @@ abstract class Lifecycle {
         fun onPause() {
         }
 
-        fun onStop() {
-        }
+        /*      fun onStop() {
+              }*/
 
         fun onDestroy() {
         }
 
     }
+
+    interface Observer {
+        // fun onStateChanged()
+    }
+
+    interface Owner<LC : Lifecycle> {
+        /**
+         * Returns the Lifecycle of the provider.
+         *
+         * @return The lifecycle of the provider.
+         */
+        val lifeCycle: LC
+    }
+
 }
 
 

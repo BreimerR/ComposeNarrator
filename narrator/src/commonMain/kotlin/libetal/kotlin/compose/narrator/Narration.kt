@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 
 /**@Description
@@ -18,16 +19,22 @@ import androidx.compose.runtime.*
  * Needs to be lifecycle aware to prevent UI thread wastage
  **/
 
+val defaultEntryAnimation
+    get() = slideInVertically { height -> height } + fadeIn()
+
+val defaultExitAnimation
+    get() = slideOutVertically { height -> height / 2 } + fadeOut()
+
 /** TODO
  * BUG look at
  * /home/breimer/Videos/recordings/2022-03-16 03-22-52.mkv
  *
  **/
 @Composable
-fun <Key : Enum<*>> Narration(
+fun <Key> Narration(
     onNarrationEnd: (() -> Boolean)? = null,
-    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
-    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
+    enterTransition: EnterTransition = defaultEntryAnimation,
+    exitTransition: ExitTransition = defaultExitAnimation,
     prepareNarrations: NarrationScope<Key>.() -> Unit
 ) {
 
@@ -54,9 +61,9 @@ fun <Key : Enum<*>> Narration(
 }
 
 @Composable
-fun <Key : Enum<*>> Narrator(
-    enterTransition: EnterTransition = slideInVertically { height -> height } + fadeIn(),
-    exitTransition: ExitTransition = slideOutVertically { height -> -height } + fadeOut(),
+fun <Key> Narrator(
+    enterTransition: EnterTransition = defaultEntryAnimation,
+    exitTransition: ExitTransition = defaultExitAnimation,
     content: @Composable () -> Unit
 ) {
     val narrations = remember { mutableStateListOf<Key>() }

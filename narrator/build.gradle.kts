@@ -21,6 +21,7 @@ kotlin {
         }
     }
     sourceSets {
+
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
@@ -28,30 +29,43 @@ kotlin {
                 api(compose.material)
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
                 api("libetal.multiplatform:log:1.0.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
+
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
+
         val androidMain by getting {
             dependencies {
+                api(compose.preview)
                 api("androidx.appcompat:appcompat:1.4.1")
                 api("androidx.core:core-ktx:1.7.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-android:1.6.0")
             }
         }
+
         val androidTest by getting {
             dependencies {
                 implementation("junit:junit:4.13.2")
             }
         }
+
         val desktopMain by getting {
             dependencies {
                 api(compose.preview)
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-awt:1.6.0")
             }
         }
-        val desktopTest by getting
+        val desktopTest by getting {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
+            }
+        }
     }
 }
 
@@ -65,5 +79,13 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["kotlin"])
+        }
     }
 }
