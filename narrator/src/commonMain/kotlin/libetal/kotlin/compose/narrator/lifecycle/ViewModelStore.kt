@@ -25,7 +25,7 @@ class ViewModelStore<Key> {
         }
     }
 
-    val ViewModel.key: Key?
+    private val ViewModel.key: Key?
         get() {
             var result: Key? = null
 
@@ -36,9 +36,6 @@ class ViewModelStore<Key> {
             return result
         }
 
-    val Key.shouldHaveViewModel
-        get() = this in initializers
-
-    val Key.hasInitializer
+    private val Key.hasInitializer
         get() = this in initializers
 }

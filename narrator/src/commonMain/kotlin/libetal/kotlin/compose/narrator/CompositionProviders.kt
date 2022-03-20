@@ -17,7 +17,7 @@ val <Key : Enum<*>> Key.NavigationController: NarrationScope<Key>
             /**TODO
              * Lead users to the component
              **/
-            throw RuntimeException("Key used can't is not available in this composable's compositionProvider $this.")
+            throw RuntimeException("Key used is not available in this composable's compositionProvider $this")
         }
 
     }

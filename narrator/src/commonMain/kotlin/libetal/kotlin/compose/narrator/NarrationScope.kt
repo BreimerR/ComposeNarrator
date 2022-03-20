@@ -152,6 +152,16 @@ class NarrationScope<Key>(
 
     }
 
+    /** TODO
+     * Allow narration nesting
+     * This is already supported
+     * but I was thinking in terms maybe of
+     * dialogs being children of the narration and
+     * on back pressed that child is killed and
+     * the current narration resumes
+     * also prevent's having the current viewModel from being
+     * destroyed. Behaviour not analysed but might be happening
+     **/
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun narrate() {
