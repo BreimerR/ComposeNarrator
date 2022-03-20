@@ -29,7 +29,9 @@ Known Issues
              HarryPotter.Hogwarts{
                  AtHarryPotter()
              }
-             HarryPotter.DeathToAllMuggle({JKsMind()})
+             HarryPotter.DeathToAllMuggle({JKsMind()}){
+                DeathToMuggles(lifeCycleViewModel())
+             }
          }
       }
        
@@ -39,7 +41,7 @@ Known Issues
       }
        
       @Composable
-      fun DeathToMuggles(){
+      fun DeathToMuggles(viewModel:JKsMind){
            Text("Well figuratively")
       }
        
