@@ -10,9 +10,7 @@ be canceled once they are no longer relevant( After 5seconds 😄 ) stories.
 Read [Missing Dispatchers.Main Exception](https://github.com/JetBrains/compose-jb/releases/tag/v1.1.1)
 
 Known Issues
-
-1. Narrations are canceled even if story is resumed [BUG].
-2. Unable to pass information from one story to another [FEATURE].
+1. Unable to pass information from one story to another [FEATURE].
 
 ## Features
 
