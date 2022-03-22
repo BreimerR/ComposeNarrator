@@ -95,7 +95,7 @@ class NarrationScope<Key>(
             return registry
         }
 
-    private val viewModelStore by lazy {
+    internal val viewModelStore by lazy {
         ViewModelStore<Key>()
     }
 

@@ -3,6 +3,7 @@ package libetal.kotlin.compose.narrator.lifecycle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import kotlinx.coroutines.*
+import libetal.kotlin.compose.narrator.LocalNarrationScope
 import libetal.multiplatform.log.Log
 import kotlin.coroutines.CoroutineContext
 
@@ -84,13 +85,16 @@ fun <VM : ViewModel> viewModelProvider() = LocalViewModelProvider.current as? VM
  * thus might not be the best option to use
  **/
 @Composable
-fun <VM : ViewModel> lifeCycleViewModel(): VM {
-    val viewModel = viewModelProvider<VM>()
+fun <Key, VM : ViewModel> lifeCycleViewModel(key: Key): VM {
+    val viewModelStore = LocalNarrationScope.current.viewModelStore as ViewModelStore<Key>
+
+    val viewModel = viewModelStore[key]
+
     return try {
         @Suppress("UNCHECKED_CAST")
         viewModel as VM
     } catch (e: Exception) {
-        throw NullPointerException("Make sure correct key invoke was used operator Key.invoke(provider:()->ViewModel) was used")
+        throw NullPointerException("The composable you are requesting a viewModel for isn't inside the current narration key.")
     }
 }
 
