@@ -11,12 +11,12 @@ group = "$packageName.narrator.samples.android"
 version = projectVersion
 
 repositories {
-    jcenter()
+
 }
 
 dependencies {
     implementation(project(":example:common"))
-    implementation("androidx.activity:activity-compose:1.3.0")
+    implementation("androidx.activity:activity-compose:1.4.0")
 }
 
 android {

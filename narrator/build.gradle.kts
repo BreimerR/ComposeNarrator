@@ -90,7 +90,7 @@ publishing {
 
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions{
+    kotlinOptions {
         kotlin.sourceSets.all {
             languageSettings.optIn("kotlin.RequiresOptIn")
         }

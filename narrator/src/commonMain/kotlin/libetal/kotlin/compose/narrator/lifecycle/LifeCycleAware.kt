@@ -10,7 +10,7 @@ abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
     var pauseJob: Job? = null
 
     fun create() {
-        state = if (!isPaused) State.DESTROYED
+        state = if (!isPaused) State.CREATED
         else {
             pauseJob?.cancel()
             State.RESUMED
