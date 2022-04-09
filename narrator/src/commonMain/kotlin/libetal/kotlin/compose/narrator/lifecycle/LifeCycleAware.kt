@@ -9,6 +9,10 @@ abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
 
     var pauseJob: Job? = null
 
+    private val synked by lazy {
+        mutableListOf<LifeCycleAware>()
+    }
+
     fun create() {
         state = if (!isPaused) State.CREATED
         else {

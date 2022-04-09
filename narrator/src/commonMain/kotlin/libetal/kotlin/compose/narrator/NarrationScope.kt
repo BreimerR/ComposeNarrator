@@ -5,8 +5,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
-import libetal.kotlin.compose.narrator.lifecycle.*
+import libetal.kotlin.compose.narrator.lifecycle.LifeCycleRegistry
+import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.LocalViewModelProvider
+import libetal.kotlin.compose.narrator.lifecycle.ViewModelStore
 import libetal.multiplatform.log.Log
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel as LifeCycleViewModel
 
@@ -107,18 +109,16 @@ class NarrationScope<Key>(
      * Initializes marked composables that
      * can be navigated to in the stack
      **/
-    operator fun Key.invoke(content: @Composable Key.() -> Unit) {
-        add {
-            content(this)
-        }
+    operator fun Key.invoke(content: @Composable Key.() -> Unit) = add {
+        content(this)
     }
 
-    operator fun <VM : LifeCycleViewModel> Key.invoke(viewModelProvider: () -> VM, content: @Composable Key.() -> Unit) {
+    operator fun <VM : LifeCycleViewModel> Key.invoke(viewModelProvider: () -> VM, content: @Composable VM.(Key) -> Unit) {
 
         viewModelStore[this] = viewModelProvider
 
         add {
-            content(this)
+            content(lifeCycleViewModel(),this)
         }
 
     }
@@ -218,10 +218,10 @@ class NarrationScope<Key>(
      * member of the enum. Would mean constraining stack keys to enums
      * to avoid adding invalid keys to a stack.
      * */
-    internal fun navigateTo(key: Key) =
+    fun navigateTo(key: Key) =
         if (!isTransitioning) backStack.navigateTo(key) else Log.d("Narration", "Transitioning: Event not consumed")
 
-    internal fun back(onEmpty: (() -> Boolean)? = null): Boolean = if (!isTransitioning) backStack.back(onEmpty) else true
+    fun back(onEmpty: (() -> Boolean)? = null): Boolean = if (!isTransitioning) backStack.back(onEmpty) else true
 
     companion object {
         private const val TAG = "NarrationScope"

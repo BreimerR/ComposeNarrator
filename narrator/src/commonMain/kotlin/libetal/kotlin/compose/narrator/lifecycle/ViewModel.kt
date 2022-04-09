@@ -2,13 +2,14 @@ package libetal.kotlin.compose.narrator.lifecycle
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import libetal.kotlin.compose.narrator.LocalNarrationScope
 import libetal.multiplatform.log.Log
 import kotlin.coroutines.CoroutineContext
 
 interface ViewModelLifeCycleObserver : Lifecycle.Observer {
-    fun onStateChangeListener()
+  fun onStateChangeListener(owner: LifeCycleAware)
 }
 
 abstract class ViewModel : LifeCycleAware(), ViewModelLifeCycleObserver {
@@ -18,7 +19,7 @@ abstract class ViewModel : LifeCycleAware(), ViewModelLifeCycleObserver {
     }
 
     override fun onStateChange() = observers.forEach {
-        it.onStateChangeListener()
+        it.onStateChangeListener(this)
     }
 
     override fun addObserver(observer: Observer): Boolean {
@@ -30,9 +31,9 @@ abstract class ViewModel : LifeCycleAware(), ViewModelLifeCycleObserver {
 
     override fun removeObserver(observer: Observer): Boolean = observers.remove(observer)
 
-    override fun onStateChangeListener() {
+    override  fun onStateChangeListener(owner: LifeCycleAware) {
 
-        when (state) {
+        when (owner.state) {
 
             State.DESTROYED -> {
                 onDestroy()
