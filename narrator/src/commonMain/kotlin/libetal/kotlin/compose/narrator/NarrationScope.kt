@@ -90,12 +90,6 @@ class NarrationScope<Key>(
             }
         }*/
 
-        DisposableEffect(initial) {
-            onDispose {
-                initial = 0
-            }
-        }
-
     }
 
     /**
