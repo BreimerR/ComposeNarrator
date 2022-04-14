@@ -20,11 +20,11 @@ dependencies {
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     defaultConfig {
         applicationId = "libetal.kotlin.compose.narrator.android"
-        minSdkVersion(24)
-        targetSdkVersion(31)
+        minSdk = 24
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
     }
@@ -32,9 +32,27 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    packagingOptions{
+        excludes += "META-INF/log.kotlin_module"
+    }
+
     buildTypes {
-        getByName("release") {
+
+        getByName("debug") {
             isMinifyEnabled = false
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

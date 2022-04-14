@@ -1,7 +1,6 @@
 package libetal.kotlin.compose.narrator.backstack
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 
 /**@Description
  * This BackStack just adds and removes items from the
@@ -10,8 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
  * would be required.
  * @Author brymher@gmail.com
  * */
-abstract class ListBackStack<Key>(override val stack: MutableList<Key>) :
-    BackStack<Key, MutableList<Key>>() {
+abstract class ListBackStack<Key>(stack: MutableList<Key>) : BackStack<Key, MutableList<Key>>(stack) {
 
     constructor(vararg composer: Key) : this(mutableStateListOf(*composer))
 
@@ -50,6 +48,8 @@ abstract class ListBackStack<Key>(override val stack: MutableList<Key>) :
         return true
     }
 
-    fun clear() = stack.clear()
+    override fun exit(): Boolean = super.exit().also {
+        if (!isEmpty) stack.clear()
+    }
 
 }

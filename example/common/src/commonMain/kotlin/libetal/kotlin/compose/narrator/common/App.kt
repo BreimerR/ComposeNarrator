@@ -1,18 +1,17 @@
 package libetal.kotlin.compose.narrator.common
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import libetal.kotlin.compose.narrator.Narration
 import libetal.kotlin.compose.narrator.historyScope
-import libetal.kotlin.compose.narrator.narration
+import libetal.kotlin.compose.narrator.lifecycle.LifeCycleAware
+import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
+import libetal.kotlin.compose.narrator.lifecycle.ViewModelLifeCycleObserver
 
 
 @Composable
@@ -25,16 +24,47 @@ fun App(onAppCloseRequest: () -> Unit) {
             true
         }) {
 
-            Test.HelloWorld {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    val narration = Test.AnotherOne.narration
-                    Button({
-                        narration.begin()
-                    }) {
-                        Text("Next narration")
+            Test.HelloWorld({ HelloWorldViewModel() }) {
+                var state by remember { mutableStateOf(state) }
+                val count by remember { countState }
+                val persistent by remember { persistentState }
+                val message by remember { messageState }
+
+                addObserver(object : ViewModelLifeCycleObserver {
+                    override fun onStateChangeListener(owner: LifeCycleAware, newState: Lifecycle.State) {
+                        state = newState
                     }
-                    Spacer(Modifier.width(12.dp))
-                    Text("Hello World")
+                })
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Button({
+                        this@HelloWorld.state = Lifecycle.State.CREATED
+                    }) {
+                        Text("CREATE")
+                    }
+                    Button({
+                        resume()
+                    }) {
+                        Text("RESUME")
+                    }
+                    Button({
+                        start()
+                    }) {
+                        Text("START")
+                    }
+                    Button({
+                        pause()
+                    }) {
+                        Text("PAUSE")
+                    }
+
+                    Text("Persisting: $persistent")
+                    Text("$message: $count")
+
                 }
             }
 
@@ -43,10 +73,7 @@ fun App(onAppCloseRequest: () -> Unit) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button({
-                        history.begin {
-                            onAppCloseRequest()
-                            true
-                        }
+                        history.begin()
                     }) {
                         Text("Hello You")
                     }
@@ -61,4 +88,5 @@ fun App(onAppCloseRequest: () -> Unit) {
     }
 
 }
+
 

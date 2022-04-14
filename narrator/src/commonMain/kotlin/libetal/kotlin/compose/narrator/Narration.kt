@@ -1,7 +1,6 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 
 /**@Description
@@ -33,6 +32,7 @@ val defaultExitAnimation
 @Composable
 fun <Key> Narration(
     onNarrationEnd: (() -> Boolean)? = null,
+
     enterTransition: EnterTransition = defaultEntryAnimation,
     exitTransition: ExitTransition = defaultExitAnimation,
     prepareNarrations: NarrationScope<Key>.() -> Unit
@@ -60,30 +60,34 @@ fun <Key> Narration(
 
 }
 
-@Composable
-fun <Key> Narrator(
-    enterTransition: EnterTransition = defaultEntryAnimation,
-    exitTransition: ExitTransition = defaultExitAnimation,
-    content: @Composable () -> Unit
-) {
-    val narrations = remember { mutableStateListOf<Key>() }
 
-    val scope = NarrationScope(
-        NarrationBackStack(narrations),
-        enterTransition = enterTransition,
-        exitTransition = exitTransition
-    )
+@Composable
+fun <T> Narration(
+    state:MutableState<T>,
+    exitState: T,
+    onNarrationEnd: (() -> Boolean)? = null,
+    prepareNarrations: StateNarrationScope<T>.() -> Unit
+) {
+    val narrations = remember { mutableStateListOf<StateNarrationKey>() }
+
+    val backStack = AdaptableNarrationBackStack(narrations).apply {
+        onNarrationEnd?.let {
+            addOnEmptyListener(it)
+        }
+    }
+
+    val scope = StateNarrationScope(state,exitState, backStack){
+        state.value = exitState
+        true
+    }
+
+    prepareNarrations(scope)
 
     CompositionLocalProvider(LocalNarrationScope provides scope) {
-        content()
+        scope.narrate()
     }
 
 }
 
-@Composable
-fun <Key> Narrate(onNarrationEnd: () -> Boolean, prepareNarrations: NarrationScope<Key>.() -> Unit) {
-    val scope = LocalNarrationScope.current as NarrationScope<Key>
-    scope.backStack.addOnEmptyListener(onNarrationEnd)
-    prepareNarrations(scope)
-    scope.narrate()
-}
+
+

@@ -26,6 +26,7 @@ version = projectVersion
                 api(compose.foundation)
                 api(compose.material)
                 api(project(":narrator"))
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
             }
         }
         val commonTest by getting {

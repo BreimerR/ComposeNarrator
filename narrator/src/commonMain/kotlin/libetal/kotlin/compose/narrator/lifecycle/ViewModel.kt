@@ -5,11 +5,12 @@ import androidx.compose.runtime.compositionLocalOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import libetal.kotlin.compose.narrator.LocalNarrationScope
-import libetal.multiplatform.log.Log
+import libetal.kotlin.debug.debug
+import libetal.kotlin.debug.info
 import kotlin.coroutines.CoroutineContext
 
 interface ViewModelLifeCycleObserver : Lifecycle.Observer {
-  fun onStateChangeListener(owner: LifeCycleAware)
+    fun onStateChangeListener(owner: LifeCycleAware, state: Lifecycle.State)
 }
 
 abstract class ViewModel : LifeCycleAware(), ViewModelLifeCycleObserver {
@@ -18,8 +19,18 @@ abstract class ViewModel : LifeCycleAware(), ViewModelLifeCycleObserver {
         mutableListOf<ViewModelLifeCycleObserver>(this)
     }
 
-    override fun onStateChange() = observers.forEach {
-        it.onStateChangeListener(this)
+    override fun onStateChange(state: State) {
+        super.onStateChange(state)
+
+        try {
+            observers.forEach {
+                it.onStateChangeListener(this, state)
+                TAG info "Calling state change for ${this::class.simpleName} $state"
+            }
+        } catch (e: ConcurrentModificationException) {
+            TAG info "Really hard to sort this out"
+        }
+
     }
 
     override fun addObserver(observer: Observer): Boolean {
@@ -31,34 +42,34 @@ abstract class ViewModel : LifeCycleAware(), ViewModelLifeCycleObserver {
 
     override fun removeObserver(observer: Observer): Boolean = observers.remove(observer)
 
-    override  fun onStateChangeListener(owner: LifeCycleAware) {
-
-        when (owner.state) {
+    override fun onStateChangeListener(owner: LifeCycleAware, state: State) {
+        TAG info "onStateChangeListener: ${owner::class.simpleName} state: ${owner.state}"
+        when (state) {
 
             State.DESTROYED -> {
                 onDestroy()
                 coroutineScope.cancel()
-                Log.d(TAG, "Destroyed ${this@ViewModel::class.qualifiedName ?: "AnonymousViewModel"}...")
+                TAG debug "Destroyed $state ${this@ViewModel::class.qualifiedName ?: "AnonymousViewModel"}..."
             }
 
             State.CREATED -> {
                 onCreate()
-                Log.d(TAG, "Created ${this@ViewModel}...")
+                TAG info "Created ${this@ViewModel}..."
             }
 
             State.STARTED -> {
                 onStart()
-                Log.d(TAG, "Started ${this@ViewModel}...")
+                TAG info "Started ${this@ViewModel}..."
             }
 
             State.PAUSED -> {
                 onPause()
-                Log.d(TAG, "Paused ${this@ViewModel}...")
+                TAG info "Paused ${this@ViewModel}..."
             }
 
             State.RESUMED -> {
                 onResume()
-                Log.d(TAG, "Resumed ${this@ViewModel}...")
+                TAG info "Resumed ${this@ViewModel}..."
             }
         }
 
@@ -87,9 +98,8 @@ fun <VM : ViewModel> viewModelProvider() = LocalViewModelProvider.current as? VM
  **/
 @Composable
 fun <Key, VM : ViewModel> lifeCycleViewModel(key: Key): VM {
-    val viewModelStore = LocalNarrationScope.current.viewModelStore as ViewModelStore<Key>
 
-    val viewModel = viewModelStore[key]
+    val viewModel = StoryViewModelStore["${key!!::class.qualifiedName!!}.$key"]
 
     return try {
         @Suppress("UNCHECKED_CAST")
@@ -97,6 +107,7 @@ fun <Key, VM : ViewModel> lifeCycleViewModel(key: Key): VM {
     } catch (e: Exception) {
         throw NullPointerException("The composable you are requesting a viewModel for isn't inside the current narration key.")
     }
+
 }
 
 internal class CloseableCoroutineScope(context: CoroutineContext) : Closeable, CoroutineScope {

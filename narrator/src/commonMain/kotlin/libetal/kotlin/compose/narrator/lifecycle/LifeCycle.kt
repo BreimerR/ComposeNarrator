@@ -18,8 +18,10 @@ package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
 import libetal.kotlin.compose.narrator.coroutines.IO
+import libetal.kotlin.debug.debug
+import libetal.kotlin.debug.info
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+
 
 /**
  * Defines an object that has an Android Lifecycle. {@link androidx.fragment.app.Fragment Fragment}
@@ -46,13 +48,16 @@ abstract class Lifecycle {
      * Defines the initial state of the component
      * */
     var state: State = State.DESTROYED
-        set(value) {
+        set(value)  {
+            TAG info "Field= $field newValue:$value"
 
-            if (field == value) return
+            if (field.ordinal == value.ordinal) return
 
             field = value
 
-            onStateChange()
+            TAG debug "Field = $field : value = $value"
+
+            onStateChange(value)
 
         }
 
@@ -65,7 +70,7 @@ abstract class Lifecycle {
         get() = state == State.DESTROYED
 
     val coroutineScope: CoroutineScope by lazy {
-        CloseableCoroutineScope(SupervisorJob()).also { coroutineScope ->
+        CloseableCoroutineScope(SupervisorJob() + Dispatchers.Main).also { coroutineScope ->
             coroutineScopes += coroutineScope
         }
     }
@@ -77,7 +82,7 @@ abstract class Lifecycle {
         mutableListOf<CoroutineScope>()
     }
 
-    abstract fun onStateChange()
+    protected abstract fun onStateChange(state: State)
 
     private fun getCoroutineScope(context: CoroutineDispatcher = Dispatchers.Main, supervisorJob: CompletableJob?) =
         CoroutineScope(supervisorJob?.let { it + context } ?: context).also {
@@ -89,6 +94,12 @@ abstract class Lifecycle {
         coroutineContext: CoroutineContext = coroutineScope.coroutineContext,
         block: suspend CoroutineScope.() -> Unit
     ) = coroutineScope.launch(coroutineContext, block = block)
+
+    fun launch(
+        dispatcher: CoroutineDispatcher,
+        coroutineScope: CoroutineScope = this.coroutineScope,
+        block: suspend CoroutineScope.() -> Unit
+    ) = coroutineScope.launch(dispatcher, block = block)
 
     fun ioLaunch(
         start: CoroutineStart = CoroutineStart.DEFAULT,
@@ -257,7 +268,11 @@ abstract class Lifecycle {
          *
          * @return The lifecycle of the provider.
          */
-        val lifeCycle: L
+        // val lifeCycle: L
+    }
+
+    companion object {
+        private const val TAG = "LifeCycle"
     }
 
 }

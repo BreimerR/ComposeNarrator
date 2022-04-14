@@ -1,10 +1,9 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
-import libetal.multiplatform.log.Log
 
 
-internal val LocalNarrationScope by compositionProvider<NarrationScope<*>>()
+internal val LocalNarrationScope by compositionProvider<StoryScope<*, *>>()
 
 val <Key : Enum<*>> Key.NavigationController: NarrationScope<Key>
     @Composable get() {
@@ -29,16 +28,18 @@ val <Key : Enum<*>> Key.NavigationController: NarrationScope<Key>
  * and a cause for it to fail as goal
  * is to implement a tight typeCheck
  * */
+@Suppress("UNCHECKED_CAST")
 val <Key : Enum<*>> Key.narration
     @Composable get() = Narration(this, LocalNarrationScope.current as NarrationScope<Key>)
 
+@Suppress("UNCHECKED_CAST")
 val historyScope
-    @Composable get() = History(LocalNarrationScope.current as NarrationScope<Any>)
+    @Composable get() = History(LocalNarrationScope.current as StoryScope<Any, *>)
 
 class Narration<Key>(private val key: Key, override val scope: NarrationScope<Key>) : NarrationDestination<Key> {
     override fun begin() = scope.navigateTo(key)
 }
 
-class History(override val scope: NarrationScope<Any>) : NarrationHistory {
-    override fun begin(onEmpty: (() -> Boolean)?): Boolean = scope.back(onEmpty)
+class History(override val scope: StoryScope<Any, *>) : NarrationHistory {
+    override fun begin(): Boolean = scope.back()
 }

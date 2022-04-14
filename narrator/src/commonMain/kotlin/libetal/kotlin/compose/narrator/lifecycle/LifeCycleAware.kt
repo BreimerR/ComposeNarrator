@@ -1,24 +1,35 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
+
 import kotlinx.coroutines.*
-import libetal.multiplatform.log.Log
+import libetal.kotlin.debug.info
+import libetal.kotlin.compose.narrator.coroutines.IO as LifeCycleIO
+
 
 abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
 
-    var deathDate = 5000L
+    private var deathDate = 5000L
 
-    var pauseJob: Job? = null
+    private var pauseJob: Job? = null
+        set(value) {
 
-    private val synked by lazy {
-        mutableListOf<LifeCycleAware>()
-    }
+            if (field != null && value != null) return value.cancel()
+
+            if (value == null) {
+                field?.cancel()
+                TAG info "Cancelling pause for ${this::class.simpleName} $state"
+            }
+
+            field = value
+
+        }
+
+    val wasCreated
+        get() = state > State.CREATED && !isPaused && !isDestroyed
 
     fun create() {
-        state = if (!isPaused) State.CREATED
-        else {
-            pauseJob?.cancel()
-            State.RESUMED
-        }
+        state = if (isPaused || isDestroyed) State.CREATED
+        else state
     }
 
     /**
@@ -37,39 +48,47 @@ abstract class LifeCycleAware : Lifecycle(), Lifecycle.Callbacks {
         state = State.PAUSED
 
         killAfter?.let {
-            pauseJob = state.to(State.DESTROYED, it)
+            pauseJob = launch {
+                to(state, State.DESTROYED, deathDate)
+            }
         }
 
+    }
+
+    override fun onStateChange(state: State) = when (state) {
+        State.CREATED -> {
+            pauseJob = null
+            TAG info "Creating... ${this::class.simpleName}"
+        }
+        State.RESUMED -> {
+            pauseJob = null
+            TAG info "Resuming... ${this::class.simpleName}: $state"
+        }
+        State.STARTED -> {
+            TAG info "Started... ${this::class.simpleName}"
+        }
+        State.PAUSED -> {
+            TAG info "Pausing ${this::class.simpleName}..."
+        }
+        State.DESTROYED -> {
+            TAG info "Destroyed... ${this::class.simpleName}"
+        }
     }
 
     /**
      * Wait's 5 seconds then starts
      * the fall to the target state
      **/
-    fun State.to(state: State, delay: Long) = ioLaunch {
+    suspend fun to(initialState: State, destinationState: State, delay: Long) = withContext(Dispatchers.LifeCycleIO) {
 
         delay(delay)
 
-        var currentState = this@LifeCycleAware.state
+        val owner = this@LifeCycleAware::class.simpleName
 
-        while (isActive) {
-            if (currentState < this@to) {
-                cancel("Death was canceled. Reversing to required state...")
-                break
-            }
-            Log.d(TAG, "Moving to next state $currentState")
+        TAG info "$owner will be destroyed soon"
 
-            if (this@LifeCycleAware.state == state) {
-
-                pauseJob = null
-
-                break
-            }
-
-            currentState = currentState.nextState
-
-            this@LifeCycleAware.state = currentState
-
+        while (state != destinationState && isActive && state >= initialState) {
+            state = state.nextState
         }
 
     }

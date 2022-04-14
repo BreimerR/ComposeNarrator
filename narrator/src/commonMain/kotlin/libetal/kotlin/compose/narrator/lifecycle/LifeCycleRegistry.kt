@@ -1,13 +1,10 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
-import libetal.multiplatform.log.Log
-
 class LifeCycleRegistry : LifeCycleAware() {
 
-    val wasCreated: Boolean
-        get() = state > State.CREATED && !isDestroyed
-
-    private val observers = mutableListOf<LifecycleEventObserver>()
+    private val observers by lazy {
+        mutableListOf<LifecycleEventObserver>()
+    }
 
     override fun addObserver(observer: Observer): Boolean = if (observer is LifecycleEventObserver) {
         addObserver(observer)
@@ -29,8 +26,8 @@ class LifeCycleRegistry : LifeCycleAware() {
 
     override fun removeObserver(observer: Observer) = observers.remove(observer)
 
-    override fun onStateChange() {
-        Log.d(TAG, "Calling observers with state: $state")
+    override fun onStateChange(state: State) {
+        super.onStateChange(state)
         observers.forEach {
             val event = when (state) {
                 State.DESTROYED -> Event.ON_DESTROY
@@ -41,12 +38,11 @@ class LifeCycleRegistry : LifeCycleAware() {
             }
 
             it.onStateChanged(event)
-
         }
     }
 
     companion object {
-        private val TAG = "LifeCycleRegistry"
+        private const val TAG = "LifeCycleRegistry"
     }
 
 }

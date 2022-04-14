@@ -15,11 +15,13 @@ version = projectVersion
 
 kotlin {
     android()
+
     jvm("desktop") {
         compilations.all {
             kotlinOptions.jvmTarget = "11"
         }
     }
+
     sourceSets {
 
         val commonMain by getting {
@@ -29,7 +31,9 @@ kotlin {
                 api(compose.material)
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
                 api("libetal.multiplatform:log:1.0.0")
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                api("libetal.kotlin:log:1.0.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+
             }
         }
 
@@ -56,12 +60,12 @@ kotlin {
         val desktopMain by getting {
             dependencies {
                 api(compose.preview)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
             }
         }
         val desktopTest by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
             }
         }
     }

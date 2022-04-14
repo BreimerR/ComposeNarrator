@@ -1,6 +1,6 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
-class ViewModelStore<Key> {
+open class ViewModelStore<Key> {
 
     private val store = mutableMapOf<Key, ViewModel>()
 
@@ -9,7 +9,20 @@ class ViewModelStore<Key> {
     operator fun get(key: Key) = store[key] ?: key.createViewModel()
 
     private fun Key.createViewModel() = initializers[this]?.invoke()?.also { viewModel ->
+
+        viewModel.addObserver(object : ViewModelLifeCycleObserver {
+            override fun onStateChangeListener(owner: LifeCycleAware, state: Lifecycle.State) {
+                when (owner.state) {
+                    Lifecycle.State.DESTROYED -> this@ViewModelStore.remove(viewModel)
+                    else -> {
+
+                    }
+                }
+            }
+        })
+
         store[this] = viewModel
+
     }
 
     operator fun set(key: Key, factory: () -> ViewModel) {
