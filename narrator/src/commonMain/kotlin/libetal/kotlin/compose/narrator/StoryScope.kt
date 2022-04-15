@@ -8,7 +8,15 @@ import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.lifecycle.*
 import libetal.kotlin.debug.info
 
-abstract class StoryScope<Key, BackStack : ListBackStack<Key>>(internal var backStack: BackStack) : LifeCycleAware() {
+abstract class StoryScope<Key, BackStack : ListBackStack<Key>>(
+    internal var backStack: BackStack,
+) : LifeCycleAware() {
+
+    abstract val shouldExit: Boolean
+
+    internal val children by lazy {
+        mutableMapOf<String, StoryScope<*, *>>()
+    }
 
     protected val components by lazy {
         mutableStateMapOf<Key, @Composable () -> Unit>()
@@ -94,6 +102,9 @@ abstract class StoryScope<Key, BackStack : ListBackStack<Key>>(internal var back
         components[this] = content
     }
 
+    /**
+     * @return Boolean :Indicates that the narration has ended or not
+     **/
     abstract fun back(): Boolean
 
     /**
@@ -145,6 +156,11 @@ abstract class StoryScope<Key, BackStack : ListBackStack<Key>>(internal var back
                 | operator fun Key.invoke() instead of
             """.trimMargin()
         )
+    }
+
+    fun add(hashCode: String, child: StoryScope<*, *>) {
+        if (hashCode in children.keys) return
+        children[hashCode] = child
     }
 
     override fun addObserver(observer: Observer): Boolean {

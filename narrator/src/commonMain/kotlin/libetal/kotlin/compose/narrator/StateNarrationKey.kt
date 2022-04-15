@@ -1,3 +1,3 @@
 package libetal.kotlin.compose.narrator
 
-typealias StateNarrationKey = () -> Boolean
+typealias StateNarrationKey<T> = (T) -> Boolean

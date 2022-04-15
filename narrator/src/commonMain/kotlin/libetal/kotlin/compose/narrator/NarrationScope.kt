@@ -2,14 +2,8 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import libetal.kotlin.compose.narrator.lifecycle.LocalViewModelProvider
+import libetal.kotlin.debug.debug
 import libetal.multiplatform.log.Log
 
 
@@ -22,9 +16,10 @@ class NarrationScope<Key>(
     private val exitTransition: ExitTransition
 ) : StoryScope<Key, NarrationBackStack<Key>>(backStack) {
 
-    var isTransitioning: Boolean = false
+    override val shouldExit: Boolean
+        get() = backStack.isAlmostEmpty
 
-    private var initial = 0
+    var isTransitioning: Boolean = false
 
     /** TODO
      * Allow narration nesting
@@ -57,13 +52,6 @@ class NarrationScope<Key>(
          * TODO
          * this might be irrelevant as keys provide the
          * required viewModel in invoke
-         **/
-
-        /** TODO
-         * On launch there is a jerk
-         * this avoids that jerk
-         * it's most probably being called by state
-         * variable being updated twice but not sure which
          **/
         AnimatedContent(
             component,
@@ -100,7 +88,16 @@ class NarrationScope<Key>(
     fun navigateTo(key: Key) =
         if (!isTransitioning) backStack.navigateTo(key) else Log.d("Narration", "Transitioning: Event not consumed")
 
-    override fun back(): Boolean = if (!isTransitioning) backStack.back() else true
+    override fun back(): Boolean = if (!isTransitioning) {
+        var exitState = true
+
+        for ((_, child) in children) {
+            exitState = exitState && child.back()
+        }
+
+        if (exitState) backStack.back()
+        else false
+    } else false
 
     companion object {
         private const val TAG = "NarrationScope"

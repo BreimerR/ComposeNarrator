@@ -8,7 +8,7 @@ class NarratorScope<Key> {
     fun Narrate(onNarrationEnd: () -> Boolean = { true }, prepareNarrations: NarrationScope<Key>.() -> Unit) {
         @Suppress("UNCHECKED_CAST")
         val scope = LocalNarrationScope.current as NarrationScope<Key>
-        scope.backStack.addOnEmptyListener(onNarrationEnd)
+        // TODO not sure if this behaviour is needed scope.backStack.addOnEmptyListener(onNarrationEnd)
         prepareNarrations(scope)
         scope.narrate()
     }

@@ -1,9 +1,10 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 
 
-internal val LocalNarrationScope by compositionProvider<StoryScope<*, *>>()
+internal val LocalNarrationScope = compositionLocalOf<StoryScope<*, *>?> { null }
 
 val <Key : Enum<*>> Key.NavigationController: NarrationScope<Key>
     @Composable get() {

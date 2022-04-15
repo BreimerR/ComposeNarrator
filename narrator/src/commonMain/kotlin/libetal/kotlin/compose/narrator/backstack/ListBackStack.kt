@@ -49,7 +49,7 @@ abstract class ListBackStack<Key>(stack: MutableList<Key>) : BackStack<Key, Muta
     }
 
     override fun exit(): Boolean = super.exit().also {
-        if (!isEmpty) stack.clear()
+        stack.clear()
     }
 
 }

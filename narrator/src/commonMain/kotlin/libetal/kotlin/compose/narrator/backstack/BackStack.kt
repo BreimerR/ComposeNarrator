@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator.backstack
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import libetal.kotlin.debug.debug
 
 abstract class BackStack<Composer, Collection>(protected val stack: Collection) {
 
@@ -12,19 +13,18 @@ abstract class BackStack<Composer, Collection>(protected val stack: Collection) 
 
     protected abstract fun pop(): Boolean
 
-    private val onEmptyListeners: MutableList<() -> Boolean> = mutableListOf()
+    private val onEmptyListeners by lazy {
+        mutableListOf<() -> Boolean>()
+    }
 
     abstract fun add(composer: Composer)
 
     fun back(onEmptyStack: (() -> Boolean)? = null): Boolean = if (isAlmostEmpty) {
-
-        onEmptyStack?.let {
-            addOnEmptyListener(it)
-        }
-
         exit()
-
-    } else pop()
+    } else {
+        pop()
+        false
+    }
 
     open fun exit(): Boolean {
         var closed = true
@@ -38,4 +38,7 @@ abstract class BackStack<Composer, Collection>(protected val stack: Collection) 
 
     fun addOnEmptyListener(listener: () -> Boolean) = onEmptyListeners.add(listener)
 
+    companion object {
+        private const val TAG = "BackStack"
+    }
 }

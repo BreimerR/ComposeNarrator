@@ -2,13 +2,18 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import libetal.kotlin.debug.debug
 
 class StateNarrationScope<T>(
+    backStack: AdaptableNarrationBackStack<T>,
     private val controlState: MutableState<T>,
-    private val exitState: T,
-    backStack: AdaptableNarrationBackStack,
-    private val onBackPressed: () -> Boolean
-) : StoryScope<StateNarrationKey, AdaptableNarrationBackStack>(backStack) {
+    private val exitState: T
+) : StoryScope<StateNarrationKey<T>, AdaptableNarrationBackStack<T>>(backStack) {
+
+    override val shouldExit: Boolean
+        get() = currentState == exitState
 
     private val stateChangeListeners by lazy(this) {
         mutableListOf<(T) -> Unit>()
@@ -19,7 +24,7 @@ class StateNarrationScope<T>(
         set(value) {
             controlState.value = value
             for ((test, composable) in components) {
-                if (!test()) backStack.remove(test)
+                if (!test(controlState.value)) backStack.remove(test)
             }
             stateChangeListeners.forEach { it(value) }
         }
@@ -28,7 +33,7 @@ class StateNarrationScope<T>(
     override fun narrate() {
 
         for ((key, component) in components) {
-            if (key()) {
+            if (key(controlState.value)) {
                 component()
             }
         }
@@ -39,10 +44,15 @@ class StateNarrationScope<T>(
         currentState = newState
     }
 
-    override fun back(): Boolean {
+    override fun back(): Boolean = if (shouldExit) {
+        super.backStack.exit()
+    } else {
         currentState = exitState
-        if (backStack.isEmpty) backStack.exit()
-        return onBackPressed()
+        false
+    }
+
+    companion object {
+        private const val TAG = "StateNarrationScope"
     }
 
 }

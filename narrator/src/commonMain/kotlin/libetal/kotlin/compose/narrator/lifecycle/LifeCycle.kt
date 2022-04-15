@@ -48,14 +48,13 @@ abstract class Lifecycle {
      * Defines the initial state of the component
      * */
     var state: State = State.DESTROYED
-        set(value)  {
-            TAG info "Field= $field newValue:$value"
+        set(value) {
+
+            TAG debug "${this::class.qualifiedName} Field = $field NewValue = $value"
 
             if (field.ordinal == value.ordinal) return
 
             field = value
-
-            TAG debug "Field = $field : value = $value"
 
             onStateChange(value)
 
@@ -84,6 +83,11 @@ abstract class Lifecycle {
 
     protected abstract fun onStateChange(state: State)
 
+    /**
+     * TODO
+     * remove implementation as a LifeCycle
+     * just has a single scope currently
+     **/
     private fun getCoroutineScope(context: CoroutineDispatcher = Dispatchers.Main, supervisorJob: CompletableJob?) =
         CoroutineScope(supervisorJob?.let { it + context } ?: context).also {
             coroutineScopes += it
@@ -232,7 +236,7 @@ abstract class Lifecycle {
                 RESUMED -> STARTED
                 STARTED -> STARTED
                 PAUSED -> DESTROYED
-                DESTROYED -> DESTROYED
+                DESTROYED -> DESTROYED // TODO move to CREATED not sure of side effects
             }
 
 

@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 @Preview
 @Composable
 fun AppPreview() {
-    App {
+    App({}) {
         println("Close app requested")
         true
     }

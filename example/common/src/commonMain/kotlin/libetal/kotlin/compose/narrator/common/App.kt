@@ -8,14 +8,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import libetal.kotlin.compose.narrator.Narration
+import libetal.kotlin.compose.narrator.StoryScope
 import libetal.kotlin.compose.narrator.historyScope
 import libetal.kotlin.compose.narrator.lifecycle.LifeCycleAware
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.ViewModelLifeCycleObserver
+import libetal.kotlin.compose.narrator.narration
 
 
 @Composable
-fun App(onAppCloseRequest: () -> Unit) {
+fun App(prepareNarrations: StoryScope<*, *>.() -> Unit, onAppCloseRequest: () -> Unit) {
 
     Column {
 
@@ -23,6 +25,8 @@ fun App(onAppCloseRequest: () -> Unit) {
             onAppCloseRequest()
             true
         }) {
+
+            prepareNarrations()
 
             Test.HelloWorld({ HelloWorldViewModel() }) {
                 var state by remember { mutableStateOf(state) }
@@ -41,6 +45,13 @@ fun App(onAppCloseRequest: () -> Unit) {
                     verticalArrangement = Arrangement.SpaceAround,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val anotherNarration = Test.AnotherOne.narration
+
+                    Button({
+                        anotherNarration.begin()
+                    }) {
+                        Text("Another One")
+                    }
                     Button({
                         this@HelloWorld.state = Lifecycle.State.CREATED
                     }) {
@@ -69,17 +80,26 @@ fun App(onAppCloseRequest: () -> Unit) {
             }
 
             Test.AnotherOne {
-                val history = historyScope
+                val controlState = mutableStateOf(false)
+                Column {
+                    Narration(controlState, false) {
+                        val showDisplay = { _: Boolean -> true }
+                        val onHideDisplay = { newState: Boolean -> newState }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button({
-                        history.begin()
-                    }) {
-                        Text("Hello You")
+                        showDisplay {
+                            Text("Always visible")
+                            Button({
+                                controlState.value = !controlState.value
+                            }) {
+                                Text("Change")
+                            }
+                        }
+
+                        onHideDisplay {
+                            Text("Always hides")
+                        }
+
                     }
-                    Spacer(Modifier.width(12.dp))
-
-                    Text("Goodbye Good Bye")
                 }
             }
 

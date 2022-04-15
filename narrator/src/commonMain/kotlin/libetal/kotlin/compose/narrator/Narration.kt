@@ -2,6 +2,7 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.*
+import libetal.kotlin.debug.debug
 
 /**@Description
  * Controls a composables switching between different components.
@@ -32,7 +33,6 @@ val defaultExitAnimation
 @Composable
 fun <Key> Narration(
     onNarrationEnd: (() -> Boolean)? = null,
-
     enterTransition: EnterTransition = defaultEntryAnimation,
     exitTransition: ExitTransition = defaultExitAnimation,
     prepareNarrations: NarrationScope<Key>.() -> Unit
@@ -41,9 +41,13 @@ fun <Key> Narration(
     val narrations = remember { mutableStateListOf<Key>() }
 
     val backStack = NarrationBackStack(narrations).apply {
-        onNarrationEnd?.let {
+        /**
+         * Avoid using till your able to
+         * fix looping in added scopes
+         **/
+       /* onNarrationEnd?.let {
             addOnEmptyListener(it)
-        }
+        }*/
     }
 
     val scope = NarrationScope(
@@ -51,6 +55,8 @@ fun <Key> Narration(
         enterTransition = enterTransition,
         exitTransition = exitTransition
     )
+
+    LocalNarrationScope.current?.add("${prepareNarrations.hashCode()}", scope)
 
     prepareNarrations(scope)
 
@@ -63,23 +69,27 @@ fun <Key> Narration(
 
 @Composable
 fun <T> Narration(
-    state:MutableState<T>,
+    state: MutableState<T>,
     exitState: T,
     onNarrationEnd: (() -> Boolean)? = null,
     prepareNarrations: StateNarrationScope<T>.() -> Unit
 ) {
-    val narrations = remember { mutableStateListOf<StateNarrationKey>() }
+    val controlState = remember { state }
+    val narrations = remember { mutableStateListOf<StateNarrationKey<T>>() }
 
     val backStack = AdaptableNarrationBackStack(narrations).apply {
-        onNarrationEnd?.let {
-            addOnEmptyListener(it)
-        }
+        /**
+         * Avoid using till your able to
+         * fix looping in added scopes
+         **/
+        /* onNarrationEnd?.let {
+             addOnEmptyListener(it)
+         }*/
     }
 
-    val scope = StateNarrationScope(state,exitState, backStack){
-        state.value = exitState
-        true
-    }
+    val scope = StateNarrationScope(backStack, controlState, exitState)
+
+    LocalNarrationScope.current?.add("${prepareNarrations.hashCode()}", scope)
 
     prepareNarrations(scope)
 

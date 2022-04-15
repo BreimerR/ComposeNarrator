@@ -6,7 +6,7 @@ import androidx.compose.ui.window.application
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
         MaterialTheme {
-            App {
+            App({}) {
                 exitApplication()
             }
         }
