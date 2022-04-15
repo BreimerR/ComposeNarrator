@@ -2,9 +2,13 @@ package libetal.kotlin.compose.narrator.lifecycle
 
 open class ViewModelStore<Key> {
 
-    private val store = mutableMapOf<Key, ViewModel>()
+    internal val store by lazy {
+        mutableMapOf<Key, ViewModel>()
+    }
 
-    private val initializers = mutableMapOf<Key, () -> ViewModel>()
+    private val initializers by lazy {
+        mutableMapOf<Key, () -> ViewModel>()
+    }
 
     operator fun get(key: Key) = store[key] ?: key.createViewModel()
 

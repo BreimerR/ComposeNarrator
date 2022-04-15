@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 
 class NarratorScope<Key> {
 

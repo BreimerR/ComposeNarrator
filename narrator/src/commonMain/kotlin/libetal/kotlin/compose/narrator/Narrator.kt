@@ -1,10 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 
 @Composable
 fun <Key> Narrator(
@@ -22,6 +19,24 @@ fun <Key> Narrator(
 
     CompositionLocalProvider(LocalNarrationScope provides scope) {
         content(NarratorScope())
+    }
+
+}
+
+@Composable
+fun <T> Narrator(
+    state: MutableState<T>,
+    exitState: T,
+    content: @Composable StateNarrationScope<T>.() -> Unit
+) {
+
+    val currentState = remember { state }
+
+    val narrations = remember { mutableStateListOf<StateNarrationKey<T>>() }
+    val scope = StateNarrationScope(StateNarrationBackStack(narrations), currentState, exitState)
+
+    CompositionLocalProvider(LocalNarrationScope provides scope) {
+        content(scope)
     }
 
 }

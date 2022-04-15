@@ -94,10 +94,16 @@ abstract class StoryScope<Key, BackStack : ListBackStack<Key>>(
     @Suppress("UNCHECKED_CAST")
     fun <VM : ViewModel?> Key.viewModel() = StoryViewModelStore[storeKey] as? VM
 
+    fun invalidate(key: Key, onInvalidate: () -> Unit) {
+        val storeKey = key.storeKey
+        StoryViewModelStore.invalidate(storeKey, onInvalidate)
+
+    }
+
     @Composable
     abstract fun narrate()
 
-    private fun Key.add(content: @Composable () -> Unit) {
+    fun Key.add(content: @Composable () -> Unit) {
         backStack.add(this)
         components[this] = content
     }
@@ -106,43 +112,6 @@ abstract class StoryScope<Key, BackStack : ListBackStack<Key>>(
      * @return Boolean :Indicates that the narration has ended or not
      **/
     abstract fun back(): Boolean
-
-    /**
-     * Initializes marked composables that
-     * can be navigated to in the stack
-     **/
-    operator fun Key.invoke(content: @Composable Key.() -> Unit) = add {
-        content(this)
-    }
-
-    operator fun <VM : ViewModel> Key.invoke(viewModelProvider: () -> VM, content: @Composable VM.(Key) -> Unit) {
-
-        StoryViewModelStore[storeKey] = viewModelProvider
-
-        add {
-
-            val viewModel = lifeCycleViewModel<VM>()
-
-            if (!viewModel.wasCreated)
-                viewModel.create()
-
-            CompositionLocalProvider(LocalViewModelProvider provides viewModel) {
-                content(viewModel, this)
-            }
-
-            LaunchedEffect(viewModel) {
-                viewModel.resume()
-            }
-
-            DisposableEffect(viewModel) {
-                onDispose {
-                    viewModel.pause()
-                }
-            }
-
-        }
-
-    }
 
     @Suppress("UNCHECKED_CAST")
     fun <VM : ViewModel> Key.lifeCycleViewModel(): VM = try {

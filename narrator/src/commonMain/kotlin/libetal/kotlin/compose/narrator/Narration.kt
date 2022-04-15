@@ -2,7 +2,6 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.*
-import libetal.kotlin.debug.debug
 
 /**@Description
  * Controls a composables switching between different components.
@@ -77,7 +76,7 @@ fun <T> Narration(
     val controlState = remember { state }
     val narrations = remember { mutableStateListOf<StateNarrationKey<T>>() }
 
-    val backStack = AdaptableNarrationBackStack(narrations).apply {
+    val backStack = StateNarrationBackStack(narrations).apply {
         /**
          * Avoid using till your able to
          * fix looping in added scopes

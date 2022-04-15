@@ -2,7 +2,13 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import libetal.kotlin.compose.narrator.lifecycle.LocalViewModelProvider
+import libetal.kotlin.compose.narrator.lifecycle.StoryViewModelStore
+import libetal.kotlin.compose.narrator.lifecycle.ViewModel
 import libetal.kotlin.debug.debug
 import libetal.multiplatform.log.Log
 
@@ -79,6 +85,44 @@ class NarrationScope<Key>(
         }*/
 
     }
+
+    /**
+     * Initializes marked composables that
+     * can be navigated to in the stack
+     **/
+    operator fun Key.invoke(content: @Composable Key.() -> Unit) = add {
+        content(this)
+    }
+
+     operator fun <VM : ViewModel> Key.invoke(viewModelProvider: () -> VM, content: @Composable VM.(Key) -> Unit) {
+
+        StoryViewModelStore[storeKey] = viewModelProvider
+
+        add {
+
+            val viewModel = lifeCycleViewModel<VM>()
+
+            if (!viewModel.wasCreated)
+                viewModel.create()
+
+            CompositionLocalProvider(LocalViewModelProvider provides viewModel) {
+                content(viewModel, this)
+            }
+
+            LaunchedEffect(viewModel) {
+                viewModel.resume()
+            }
+
+            DisposableEffect(viewModel) {
+                onDispose {
+                    viewModel.pause()
+                }
+            }
+
+        }
+
+    }
+
 
     /**
      * Don't think I can add a key that's not a

@@ -1,16 +1,15 @@
 package libetal.kotlin.compose.narrator
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import libetal.kotlin.debug.debug
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.*
+import libetal.kotlin.compose.narrator.lifecycle.StoryViewModelStore
+import libetal.kotlin.compose.narrator.lifecycle.ViewModel
 
 class StateNarrationScope<T>(
-    backStack: AdaptableNarrationBackStack<T>,
+    backStack: StateNarrationBackStack<T>,
     private val controlState: MutableState<T>,
     private val exitState: T
-) : StoryScope<StateNarrationKey<T>, AdaptableNarrationBackStack<T>>(backStack) {
+) : StoryScope<StateNarrationKey<T>, StateNarrationBackStack<T>>(backStack) {
 
     override val shouldExit: Boolean
         get() = currentState == exitState
@@ -37,8 +36,45 @@ class StateNarrationScope<T>(
                 component()
             }
         }
+    }
+
+    @Composable
+    operator fun <VM : ViewModel> (StateNarrationKey<T>).invoke(
+        viewModelProvider: () -> VM,
+        content: @Composable VM.(StateNarrationKey<T>) -> Unit
+    ) {
+
+        if (invoke(controlState.value)) {
+
+            if (StoryViewModelStore[storeKey] == null) StoryViewModelStore[storeKey] = viewModelProvider
+
+            val viewModel = lifeCycleViewModel<VM>()
+
+            if (!viewModel.wasCreated) viewModel.create()
+
+
+            content(lifeCycleViewModel(), this)
+
+            LaunchedEffect(viewModel) {
+                viewModel.resume()
+            }
+
+            DisposableEffect(viewModel) {
+                onDispose {
+                    viewModel.pause()
+                }
+            }
+        }
 
     }
+
+    @Composable
+    operator fun (StateNarrationKey<T>).invoke(content: @Composable StateNarrationKey<T>.() -> Unit) {
+        if (this(controlState.value)) {
+            content()
+        }
+    }
+
 
     fun navigateTo(newState: T) {
         currentState = newState

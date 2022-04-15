@@ -3,7 +3,7 @@ package libetal.kotlin.compose.narrator
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 
-class AdaptableNarrationBackStack<T>(activities: SnapshotStateList<StateNarrationKey<T>>) :
+class StateNarrationBackStack<T>(activities: SnapshotStateList<StateNarrationKey<T>>) :
     ListBackStack<StateNarrationKey<T>>(activities) {
 
     private val isFull
