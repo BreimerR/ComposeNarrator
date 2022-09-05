@@ -22,9 +22,9 @@ interface NarrationScope<Key, ComposableFun> {
      * Adds a view to the current
      * composition backStack
      **/
-    fun Key.add(content: ComposableFun) {
-        if (this in composables) throw RuntimeException("Can't initialize same key twice")
-        composables[this] = content
+    fun add(key: Key, content: ComposableFun) {
+        if (key in composables) throw RuntimeException("Can't initialize same key twice")
+        composables[key] = content
     }
 
     /**
@@ -59,7 +59,7 @@ interface NarrationScope<Key, ComposableFun> {
         onExitRequest?.let {
             onNarrativeExitRequest[this] = it
         }
-        add(content)
+        add(this, content)
     }
 
     fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ComposableFun>) -> Boolean) {

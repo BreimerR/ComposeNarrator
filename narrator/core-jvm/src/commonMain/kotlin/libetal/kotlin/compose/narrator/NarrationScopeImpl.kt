@@ -40,14 +40,9 @@ class NarrationScopeImpl<Key> constructor(
 
     constructor(backStack: ListBackStack<Key>) : this(backStack, fadeIn(), fadeOut())
 
-    infix fun Key.narrates(content: ComposableFun) = add(content)
-
     /*TODO: IRLowering fails if this is not there*/
-    override fun Key.add(content: ComposableFun) {
-        addToBackstack()
-        composables[this] = {
-            content()
-        }
+    override fun add(key: Key, content: ComposableFun) = super.add(key) {
+        content()
     }
 
     @Composable

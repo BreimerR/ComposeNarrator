@@ -1,5 +1,7 @@
 package libetal.kotlin.compose.narrator.interfaces
 
+import androidx.compose.runtime.Composable
+import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 
 interface ProgressiveNarrationScope<Key, C> : NarrationScope<Key, C> {
@@ -13,9 +15,9 @@ interface ProgressiveNarrationScope<Key, C> : NarrationScope<Key, C> {
      * Adds a view to the current
      * composition backStack
      **/
-    override fun Key.add(content: C) {
-        addToBackstack()
-        composables[this] = content
+    override fun add(key: Key, content: C) {
+        key.addToBackstack()
+        composables[key] = content
     }
 
     fun Key.addToBackstack() {

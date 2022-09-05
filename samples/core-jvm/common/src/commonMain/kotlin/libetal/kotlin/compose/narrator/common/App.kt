@@ -44,7 +44,7 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
                 }
             }
 
-            AppNarrations.VIDEOS narrates {
+            AppNarrations.VIDEOS {
                 val settingsNarrative = AppNarrations.SETTINGS.narrative
 
                 CardedComponent(4.dp) {
