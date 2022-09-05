@@ -7,16 +7,20 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
-class NarrationScopeImpl<Key> constructor(
+class NarrationScopeImpl<Key : Any> constructor(
     override val backStack: ListBackStack<Key>
 ) : ProgressiveNarrationScope<Key, @Composable () -> Unit> {
 
     override val currentComponent
         get() = composables[currentKey]
+    override val currentNarrativeScope: NarrativeScope
+        get() = TODO("Not yet implemented")
 
     override val composables: MutableMap<Key, @Composable () -> Unit> by laziest {
         mutableMapOf()
     }
+    override val narrativeScopes: MutableMap<Key, NarrativeScope>
+        get() = TODO("Not yet implemented")
 
     override val children: MutableList<NarrationScope<Key, @Composable () -> Unit>> by laziest {
         mutableListOf()

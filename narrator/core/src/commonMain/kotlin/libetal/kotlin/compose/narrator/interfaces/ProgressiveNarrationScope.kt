@@ -2,9 +2,10 @@ package libetal.kotlin.compose.narrator.interfaces
 
 import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.NarrativeScope
+import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 
-interface ProgressiveNarrationScope<Key, C> : NarrationScope<Key, C> {
+interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
     val backStack: ListBackStack<Key>
 
@@ -22,6 +23,10 @@ interface ProgressiveNarrationScope<Key, C> : NarrationScope<Key, C> {
 
     fun Key.addToBackstack() {
         if (backStack.isEmpty) backStack.add(this)
+    }
+
+    fun Key.narrate() {
+        backStack.navigateTo(this)
     }
 
     // ASK ME LAST

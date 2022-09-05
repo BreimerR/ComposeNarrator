@@ -1,16 +1,21 @@
 package libetal.kotlin.compose.narrator.interfaces
 
 import androidx.compose.runtime.Composable
+import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 
 
-interface NarrationScope<Key, ComposableFun> {
+interface NarrationScope<Key : Any, ComposableFun> {
 
     val currentKey: Key
 
     val currentComponent: ComposableFun?
 
+    val currentNarrativeScope: NarrativeScope
+
     val composables: MutableMap<Key, ComposableFun>
+
+    val narrativeScopes: MutableMap<Key, NarrativeScope>
 
     val onExitRequestListeners: MutableList<ExitRequestListener>
 

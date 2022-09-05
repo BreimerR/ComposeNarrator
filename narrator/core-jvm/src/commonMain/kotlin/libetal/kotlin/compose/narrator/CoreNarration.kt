@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
+import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 
 /**
@@ -14,7 +15,7 @@ import libetal.kotlin.compose.narrator.interfaces.NarrationScope
  * If provided handles
  **/
 @Composable
-fun <Key> Narration(prepareComponents: NarrationScopeImpl<Key>.() -> Unit) {
+fun <Key : Any> Narration(prepareComponents: ProgressiveNarrationScope<Key, ComposableFun>.() -> Unit) {
     val backStack = NarrationBackStack(
         remember { mutableStateListOf<Key>() }
     )

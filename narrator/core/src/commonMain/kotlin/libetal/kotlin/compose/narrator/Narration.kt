@@ -5,7 +5,7 @@ import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 @Suppress("UNCHECKED_CAST")
-val <Key> Key.narrative
+val <Key: Any> Key.narrative
     @Composable get() = Narrative(
         LocalNarrationScope.current as? ProgressiveNarrationScope<Key, @Composable () -> Unit>
             ?: throw RuntimeException("Failed to retrieve proper narration"),

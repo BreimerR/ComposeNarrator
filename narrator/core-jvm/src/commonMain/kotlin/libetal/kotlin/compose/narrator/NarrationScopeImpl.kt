@@ -10,10 +10,10 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
-typealias ComposableFun = @Composable NarrativeScope.() -> Unit
+
 // typealias NarrativeComposable = @Composable ProgressiveNarrativeScope.() -> Unit
 
-class NarrationScopeImpl<Key> constructor(
+class NarrationScopeImpl<Key : Any> constructor(
     override val backStack: ListBackStack<Key>,
     private val enterTransition: EnterTransition? = null,
     private val exitTransition: ExitTransition? = null
@@ -22,8 +22,17 @@ class NarrationScopeImpl<Key> constructor(
     override val currentComponent
         get() = composables[currentKey]
 
-    override val composables: MutableMap<Key, ComposableFun> by laziest {
-        mutableMapOf()
+    override val narrativeScopes by laziest {
+        mutableMapOf<Key, NarrativeScope>()
+    }
+
+    override val currentNarrativeScope
+        get() = narrativeScopes[currentKey] ?: ProgressiveNarrativeScope(this@NarrationScopeImpl).also {
+            narrativeScopes[currentKey] = it
+        }
+
+    override val composables by laziest {
+        mutableMapOf<Key, ComposableFun>()
     }
 
     override val children: MutableList<NarrationScope<Key, ComposableFun>> by laziest {
@@ -40,7 +49,6 @@ class NarrationScopeImpl<Key> constructor(
 
     constructor(backStack: ListBackStack<Key>) : this(backStack, fadeIn(), fadeOut())
 
-    /*TODO: IRLowering fails if this is not there*/
     override fun add(key: Key, content: ComposableFun) = super.add(key) {
         content()
     }
@@ -57,10 +65,10 @@ class NarrationScopeImpl<Key> constructor(
                 },
                 contentAlignment = Alignment.CenterEnd
             ) {
-                it(ProgressiveNarrativeScope())
+                it(currentNarrativeScope)
             }
         } else {
-            composable(ProgressiveNarrativeScope())
+            composable(currentNarrativeScope)
         }
     }
 

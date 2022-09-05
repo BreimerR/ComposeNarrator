@@ -45,12 +45,11 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
             }
 
             AppNarrations.VIDEOS {
-                val settingsNarrative = AppNarrations.SETTINGS.narrative
 
                 CardedComponent(4.dp) {
                     Text("Videos")
                     Button({
-                        settingsNarrative.narrate()
+                        AppNarrations.SETTINGS.narrate()
                     }) {
                         Text("Settings")
                     }
