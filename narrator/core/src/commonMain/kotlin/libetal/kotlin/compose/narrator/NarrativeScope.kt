@@ -13,11 +13,9 @@ abstract class NarrativeScope {
 
     @Composable
     fun addOnExitRequest(action: () -> Boolean) {
-        (LocalNarrationScope.current as? ProgressiveNarrationScope<*, *>)?.let { narration ->
-            val current = narration.currentKey ?: throw RuntimeException("")
-            if (current !in narration.onExitRequestListeners) narration.onCurrentKeyExitRequestListener {
-                this@NarrativeScope.back()
-            }
+
+        LocalNarrationScope.current?.onCurrentKeyExitRequestListener {
+            this@NarrativeScope.back()
         }
 
         if (action in onExitRequestListeners) return
