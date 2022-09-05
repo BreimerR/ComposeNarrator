@@ -1,0 +1,4 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.ComposeNarrator.Example.NoActionBar"  parent="@style/Theme.AppCompat.Light.NoActionBar"/>
+</resources>

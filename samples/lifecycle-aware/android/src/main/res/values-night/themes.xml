@@ -1,0 +1,4 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.ComposeNarrator.Example.NoActionBar" parent="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+</resources>
