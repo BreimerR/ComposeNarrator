@@ -3,8 +3,11 @@ package libetal.kotlin.compose.narrator.common
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -20,11 +23,11 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
             scopeProvider(this as NarrationScope<*, @Composable () -> Unit>)
 
             AppNarrations.HOME {
-                val settingsNarrative = AppNarrations.SETTINGS.narrative
+
                 CardedComponent(4.dp) {
                     Text("Home")
                     Button({
-                        settingsNarrative.narrate()
+                        AppNarrations.SETTINGS.narrate()
                     }) {
                         Text("Settings")
                     }
@@ -46,8 +49,13 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
 
             AppNarrations.VIDEOS {
 
+                val allowExit = remember { mutableStateOf(false) }
+
                 CardedComponent(4.dp) {
                     Text("Videos")
+                    Switch(allowExit.value, {
+                        allowExit.value = it
+                    })
                     Button({
                         AppNarrations.SETTINGS.narrate()
                     }) {
@@ -56,7 +64,7 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
                 }
 
                 addOnExitRequest {
-                    false
+                    allowExit.value
                 }
 
             }

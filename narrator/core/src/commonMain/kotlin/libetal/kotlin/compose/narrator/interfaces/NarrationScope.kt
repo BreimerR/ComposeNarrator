@@ -21,7 +21,7 @@ interface NarrationScope<Key : Any, ComposableFun> {
 
     val children: MutableList<NarrationScope<Key, ComposableFun>>
 
-    val onNarrativeExitRequest: MutableMap<Key, (NarrationScope<Key, ComposableFun>) -> Boolean>
+    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>>
 
     /**
      * Adds a view to the current
@@ -37,7 +37,13 @@ interface NarrationScope<Key : Any, ComposableFun> {
      **/
     fun back(): Boolean {
 
-        var childrenExit = onNarrativeExitRequest[currentKey]?.invoke(this) ?: true
+        var childrenExit = true
+
+        onNarrativeExitRequest[currentKey]?.let { listeners ->
+            for (listener in listeners) {
+                childrenExit = childrenExit && listener(this)
+            }
+        }
 
         for (child in children) {
             childrenExit = childrenExit && child.back()
@@ -62,25 +68,26 @@ interface NarrationScope<Key : Any, ComposableFun> {
 
     operator fun Key.invoke(onExitRequest: ((NarrationScope<Key, ComposableFun>) -> Boolean)? = null, content: ComposableFun) {
         onExitRequest?.let {
-            onNarrativeExitRequest[this] = it
+            addOnNarrativeExitRequest(it)
+
         }
         add(this, content)
     }
 
-    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ComposableFun>) -> Boolean) {
-        if (currentKey !in onNarrativeExitRequest) {
-            onNarrativeExitRequest[currentKey] = action
-        }
+    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, ComposableFun>) -> Boolean) {
+        val requestListeners =
+            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, ComposableFun>) -> Boolean>().also {
+                onNarrativeExitRequest[this] = it
+            }
+
+        if (onExitRequest !in requestListeners) requestListeners.add(onExitRequest)
+
     }
 
-    /**
-     * Makes it possible to monitor back pressed per narration and prevent
-     * an exit if possible
-     **/
-    fun onExitRequest(action: ExitRequestListener) {
-        if (action in onExitRequestListeners) return
+    fun NarrativeScope.addOnExitRequest(action: () -> Boolean)  = addOnExitRequest(this@NarrationScope, action)
 
-        onExitRequestListeners.add(action)
+    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ComposableFun>) -> Boolean) {
+        currentKey.addOnNarrativeExitRequest(action)
     }
 
 }

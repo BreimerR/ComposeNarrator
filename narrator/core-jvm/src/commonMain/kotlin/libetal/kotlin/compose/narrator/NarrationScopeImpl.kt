@@ -10,9 +10,6 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
-
-// typealias NarrativeComposable = @Composable ProgressiveNarrativeScope.() -> Unit
-
 class NarrationScopeImpl<Key : Any> constructor(
     override val backStack: ListBackStack<Key>,
     private val enterTransition: EnterTransition? = null,
@@ -39,7 +36,7 @@ class NarrationScopeImpl<Key : Any> constructor(
         mutableListOf()
     }
 
-    override val onNarrativeExitRequest: MutableMap<Key, (NarrationScope<Key, ComposableFun>) -> Boolean> by laziest {
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>> by laziest {
         mutableMapOf()
     }
 

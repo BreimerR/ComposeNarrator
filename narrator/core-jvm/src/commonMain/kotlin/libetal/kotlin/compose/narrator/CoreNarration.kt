@@ -9,7 +9,6 @@ import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
-
 /**
  * @param backHandler
  * If provided handles

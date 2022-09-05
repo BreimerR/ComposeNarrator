@@ -1,9 +1,8 @@
 package libetal.kotlin.compose.narrator.interfaces
 
-import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.NarrativeScope
-import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
+import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 
 interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
@@ -26,7 +25,8 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
     }
 
     fun Key.narrate() {
-        backStack.navigateTo(this)
+        if (currentNarrativeScope.hasCliffhangers)
+            backStack.navigateTo(this)
     }
 
     // ASK ME LAST
@@ -36,6 +36,8 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
         return backStack.isEmpty
 
     }
+
+
 
     companion object {
         const val TAG = "ProgressiveNarrationScope"
