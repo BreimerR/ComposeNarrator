@@ -17,7 +17,7 @@ import libetal.kotlin.compose.narrator.narrative
 fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Narration<AppNarrations> {
-            scopeProvider(this)
+            scopeProvider(this as NarrationScope<*, @Composable () -> Unit>)
 
             AppNarrations.HOME {
                 val settingsNarrative = AppNarrations.SETTINGS.narrative

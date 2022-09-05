@@ -62,6 +62,12 @@ interface NarrationScope<Key, ComposableFun> {
         add(content)
     }
 
+    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ComposableFun>) -> Boolean) {
+        if (currentKey !in onNarrativeExitRequest) {
+            onNarrativeExitRequest[currentKey] = action
+        }
+    }
+
     /**
      * Makes it possible to monitor back pressed per narration and prevent
      * an exit if possible
