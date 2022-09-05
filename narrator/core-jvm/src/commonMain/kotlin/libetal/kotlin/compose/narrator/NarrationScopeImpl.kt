@@ -10,7 +10,7 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
-typealias ComposableFun = @Composable ProgressiveNarrativeScope.() -> Unit
+typealias ComposableFun = @Composable NarrativeScope.() -> Unit
 // typealias NarrativeComposable = @Composable ProgressiveNarrativeScope.() -> Unit
 
 class NarrationScopeImpl<Key> constructor(
