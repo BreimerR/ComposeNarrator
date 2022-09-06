@@ -20,6 +20,10 @@ class NarrationScopeImpl<Key : Any> constructor(
         mutableMapOf<Key, NarrativeScope>()
     }
 
+    override val onNarrationEndListeners: MutableList<() -> Unit> by laziest {
+        mutableListOf()
+    }
+
     override fun createNarrative() =
         ProgressiveNarrativeScope(this@NarrationScopeImpl)
 

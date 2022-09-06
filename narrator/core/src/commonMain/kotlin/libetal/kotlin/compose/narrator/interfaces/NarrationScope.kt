@@ -7,6 +7,9 @@ import libetal.kotlin.compose.narrator.NarrativeScope
 interface NarrationScope<Key : Any, ComposableFun> {
 
     val currentKey: Key
+
+    val shouldExit: Boolean
+
     val currentComponent
         get() = composables[currentKey]
 
@@ -15,6 +18,8 @@ interface NarrationScope<Key : Any, ComposableFun> {
     val composables: MutableMap<Key, ComposableFun>
 
     val narrativeScopes: MutableMap<Key, NarrativeScope>
+
+    val onNarrationEndListeners: MutableList<() -> Unit>
 
     val children: MutableList<NarrationScope<Key, ComposableFun>>
 
@@ -34,29 +39,44 @@ interface NarrationScope<Key : Any, ComposableFun> {
      **/
     fun back(): Boolean {
 
-        var shouldExit = true
+        var shouldExit = runNarrativeExitRequestListeners(true)
 
-        val listeners = onNarrativeExitRequest[currentKey]
-
-        if (listeners != null) {
-            for (listener in listeners) {
-                shouldExit = shouldExit && listener(this)
-                if (!shouldExit) return false
-            }
-        }
+        if (!shouldExit) return false
 
         for (child in children) {
             shouldExit = shouldExit && child.back()
             if (!shouldExit) return false
         }
 
-        if (shouldExit) cleanUp(currentKey)
+        if (shouldExit) {
+            if (this.shouldExit) { // Android Might be affected by this part here
+                for (listener in onNarrationEndListeners) {
+                    listener()
+                }
+            }
+            cleanUp(currentKey)
+        }
 
         return shouldExit
 
     }
 
-    fun cleanUp(key:Key){
+    private fun runNarrativeExitRequestListeners(shouldExit: Boolean): Boolean {
+        var exit = shouldExit
+
+        val listeners = onNarrativeExitRequest[currentKey]
+
+        if (listeners != null) {
+            for (listener in listeners) {
+                exit = exit && listener(this)
+                if (!exit) return false
+            }
+        }
+
+        return exit
+    }
+
+    fun cleanUp(key: Key) {
         onNarrativeExitRequest[key]?.clear()
         onNarrativeExitRequest[key] = null
     }
@@ -95,6 +115,11 @@ interface NarrationScope<Key : Any, ComposableFun> {
 
     fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ComposableFun>) -> Boolean) {
         currentKey.addOnNarrativeExitRequest(action)
+    }
+
+    fun addOnNarrationEnd(action: () -> Unit) {
+        if (action in onNarrationEndListeners) return
+        onNarrationEndListeners.add(action)
     }
 
 }

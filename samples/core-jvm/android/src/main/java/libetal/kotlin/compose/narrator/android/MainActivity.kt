@@ -9,11 +9,18 @@ import libetal.kotlin.compose.narrator.ComposableFun
 import libetal.kotlin.compose.narrator.collectedScope
 import libetal.kotlin.compose.narrator.common.App
 import libetal.kotlin.compose.narrator.common.AppNarrations
+import libetal.kotlin.compose.narrator.createScopeCollector
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
+import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
+import libetal.kotlin.debug.info
 
 class MainActivity : AppCompatActivity() {
 
-    private val narrationScope by collectedScope
+    private val narrationScope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ComposableFun>>{
+        addOnNarrationEnd {
+            super.onBackPressed()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,12 +31,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
     }
 
     override fun onBackPressed() {
-        if (narrationScope.back()) {
+        if (narrationScope.shouldExit) super.onBackPressed()
+        else if (narrationScope.back()) {
             super.onBackPressed()
         }
     }
 
+    companion object {
+        const val TAG = "MainActivity"
+    }
 }

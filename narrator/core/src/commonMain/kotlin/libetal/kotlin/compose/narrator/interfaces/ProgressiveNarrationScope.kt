@@ -10,6 +10,9 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
     override val currentKey: Key
         get() = backStack.current
 
+    override val shouldExit: Boolean
+        get() = backStack.isAlmostEmpty
+
     override val currentNarrativeScope
         get() = narrativeScopes[currentKey] ?: createNarrative().also {
             narrativeScopes[currentKey] = it

@@ -1,25 +1,21 @@
 package libetal.kotlin.compose.narrator.common
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.internal.ComposableLambda
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import libetal.kotlin.compose.narrator.ComposableFun
 import libetal.kotlin.compose.narrator.Narration
-import libetal.kotlin.compose.narrator.collectedScope
-import libetal.kotlin.compose.narrator.interfaces.NarrationScope
+import libetal.kotlin.compose.narrator.createScopeCollector
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.narrative
 
@@ -27,11 +23,11 @@ import libetal.kotlin.compose.narrator.narrative
 fun App() =
     Column(Modifier.fillMaxSize()) {
 
-        val scope by collectedScope
+        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ComposableFun>>()
 
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(MaterialTheme.colors.primary)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(horizontal = 4.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -45,9 +41,7 @@ fun App() =
             Row {
                 IconButton({
                     // scope.narrate(AppNarrations.SETTINGS)
-                    with(scope as ProgressiveNarrationScope<AppNarrations, ComposableFun>) {
-                    
-                        
+                    with(scope) {
                         AppNarrations.SETTINGS.narrate()
                     }
                 }) {
@@ -58,7 +52,6 @@ fun App() =
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Narration<AppNarrations> {
-
                 AppNarrations.HOME {
 
                     CardedComponent(4.dp) {
