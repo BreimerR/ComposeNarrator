@@ -25,4 +25,5 @@ fun <Key : Any> Narration(prepareComponents: ProgressiveNarrationScope<Key, Comp
             Narrate()
         }
     }
+
 }

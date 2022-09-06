@@ -16,17 +16,12 @@ class NarrationScopeImpl<Key : Any> constructor(
     private val exitTransition: ExitTransition? = null
 ) : ProgressiveNarrationScope<Key, ComposableFun> {
 
-    override val currentComponent
-        get() = composables[currentKey]
-
     override val narrativeScopes by laziest {
         mutableMapOf<Key, NarrativeScope>()
     }
 
-    override val currentNarrativeScope
-        get() = narrativeScopes[currentKey] ?: ProgressiveNarrativeScope(this@NarrationScopeImpl).also {
-            narrativeScopes[currentKey] = it
-        }
+    override fun createNarrative() =
+        ProgressiveNarrativeScope(this@NarrationScopeImpl)
 
     override val composables by laziest {
         mutableMapOf<Key, ComposableFun>()
@@ -38,10 +33,6 @@ class NarrationScopeImpl<Key : Any> constructor(
 
     override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>> by laziest {
         mutableMapOf()
-    }
-
-    override val onExitRequestListeners: MutableList<ExitRequestListener> by laziest {
-        mutableListOf()
     }
 
     constructor(backStack: ListBackStack<Key>) : this(backStack, fadeIn(), fadeOut())

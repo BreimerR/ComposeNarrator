@@ -12,15 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import libetal.kotlin.compose.narrator.ComposableFun
 import libetal.kotlin.compose.narrator.Narration
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.narrative
 
 @Composable
-fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
+fun App(scopeProvider: (NarrationScope<AppNarrations, ComposableFun>) -> Unit) =
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Narration<AppNarrations> {
-            scopeProvider(this as NarrationScope<*, @Composable () -> Unit>)
+            scopeProvider(this)
 
             AppNarrations.HOME {
 
@@ -34,9 +35,10 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
                 }
             }
 
-            AppNarrations.SETTINGS({ scope -> true }) {
+            AppNarrations.SETTINGS {
 
                 val videosNarrative = AppNarrations.VIDEOS.narrative
+
                 CardedComponent(4.dp) {
                     Text("Settings View")
                     Button({
@@ -45,6 +47,11 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
                         Text("Videos")
                     }
                 }
+
+                addOnExitRequest {
+                    true
+                }
+
             }
 
             AppNarrations.VIDEOS {
@@ -69,6 +76,19 @@ fun App(scopeProvider: (NarrationScope<*, @Composable () -> Unit>) -> Unit) =
 
             }
 
+
+            /**
+             * TODO: Use this way to get narrates to work
+             * this are like plot twists or sub stories
+             * AppNarrations.VIDEOS_SUBSECTIONS twists {
+             *     VideosSubSections()
+             * }
+             * // bad word given it's can be used in may apps
+             * AppNarrations.VIDEOS_SUBSECTIONS setting {
+             *     VideosSubSections()
+             * }
+             **/
+
         }
     }
 
@@ -80,4 +100,17 @@ fun CardedComponent(padding: Dp, composable: @Composable ColumnScope.() -> Unit)
             composable()
         }
     }
+}
+
+@Composable
+fun VideosSubSections() {
+
+    /*AppNarrations.VIDEOS_HOME narrates {
+        Text("Videos Home")
+    }
+
+    AppNarrations.VIDEOS_SETTINGS narrates {
+        Text("Videos Settings")
+    }*/
+
 }

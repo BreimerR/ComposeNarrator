@@ -9,7 +9,10 @@ abstract class NarrativeScope {
         mutableListOf()
     }
 
-    fun <Key : Any, ComposableFun> addOnExitRequest(narrationScope: NarrationScope<Key, ComposableFun>, action: () -> Boolean) {
+    internal fun <Key : Any, ComposableFun> addOnExitRequest(
+        narrationScope: NarrationScope<Key, ComposableFun>,
+        action: () -> Boolean
+    ) {
         narrationScope.onCurrentKeyExitRequestListener {
             hasCliffhangers
         }

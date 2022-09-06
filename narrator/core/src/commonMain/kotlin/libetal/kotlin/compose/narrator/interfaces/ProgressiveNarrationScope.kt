@@ -2,7 +2,6 @@ package libetal.kotlin.compose.narrator.interfaces
 
 import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
-import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 
 interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
@@ -10,6 +9,14 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
     override val currentKey: Key
         get() = backStack.current
+
+    override val currentNarrativeScope
+        get() = narrativeScopes[currentKey] ?: createNarrative().also {
+            narrativeScopes[currentKey] = it
+        }
+
+
+    fun createNarrative(): NarrativeScope
 
     /**
      * Adds a view to the current
@@ -24,9 +31,23 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
         if (backStack.isEmpty) backStack.add(this)
     }
 
+    /**
+     * TODO
+     * Navigates away from
+     * the current narrative
+     * There is need to clean up a few places
+     **/
     fun Key.narrate() {
-        if (currentNarrativeScope.hasCliffhangers)
-            backStack.navigateTo(this)
+        if (currentNarrativeScope.hasCliffhangers) {
+            val previous = currentKey
+            val existedInStack = backStack.navigateTo(this)
+            if (existedInStack)
+                previous.cleanUp(existedInStack)
+        }
+    }
+
+    fun Key.cleanUp(existedInStack: Boolean) {
+        backStack.invalidate(this)
     }
 
     // ASK ME LAST
@@ -34,9 +55,7 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
         if (super.back()) backStack.pop()
 
         return backStack.isEmpty
-
     }
-
 
 
     companion object {
