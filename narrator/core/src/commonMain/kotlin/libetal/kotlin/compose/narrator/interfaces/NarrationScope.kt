@@ -18,7 +18,7 @@ interface NarrationScope<Key : Any, ComposableFun> {
 
     val children: MutableList<NarrationScope<Key, ComposableFun>>
 
-    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>>
+    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?>
 
     /**
      * Adds a view to the current
@@ -50,8 +50,15 @@ interface NarrationScope<Key : Any, ComposableFun> {
             if (!shouldExit) return false
         }
 
+        if (shouldExit) cleanUp(currentKey)
+
         return shouldExit
 
+    }
+
+    fun cleanUp(key:Key){
+        onNarrativeExitRequest[key]?.clear()
+        onNarrativeExitRequest[key] = null
     }
 
     @Composable

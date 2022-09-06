@@ -38,6 +38,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.material)
                 implementation(compose.animation)
+                implementation(compose.materialIconsExtended)
                 api(project(":narrator:core-jvm"))
             }
         }

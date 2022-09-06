@@ -31,7 +31,7 @@ class NarrationScopeImpl<Key : Any> constructor(
         mutableListOf()
     }
 
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>> by laziest {
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?> by laziest {
         mutableMapOf()
     }
 

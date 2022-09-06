@@ -6,22 +6,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.ComposableFun
+import libetal.kotlin.compose.narrator.collectedScope
 import libetal.kotlin.compose.narrator.common.App
 import libetal.kotlin.compose.narrator.common.AppNarrations
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var narrationScope: NarrationScope<AppNarrations, ComposableFun>
+    private val narrationScope by collectedScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             MaterialTheme {
-                App {
-                    narrationScope = it
-                }
+                App()
             }
         }
 

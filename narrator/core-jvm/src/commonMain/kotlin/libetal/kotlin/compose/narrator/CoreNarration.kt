@@ -19,6 +19,10 @@ fun <Key : Any> Narration(prepareComponents: ProgressiveNarrationScope<Key, Comp
         remember { mutableStateListOf<Key>() }
     )
     val scope = NarrationScopeImpl(backStack)
+    for (collector in scopeCollectors){
+        collector collect scope
+    }
+    scopeCollectors.clear()
     CompositionLocalProvider(LocalNarrationScope provides scope) {
         with(scope) {
             prepareComponents()

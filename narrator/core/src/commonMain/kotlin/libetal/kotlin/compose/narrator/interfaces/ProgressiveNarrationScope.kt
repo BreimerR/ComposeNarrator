@@ -41,19 +41,15 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
         if (currentNarrativeScope.hasCliffhangers) {
             val previous = currentKey
             val existedInStack = backStack.navigateTo(this)
-            if (existedInStack)
-                previous.cleanUp(existedInStack)
+            if (existedInStack) {
+                backStack.invalidate(previous)
+                cleanUp(previous)
+            }
         }
     }
 
-    fun Key.cleanUp(existedInStack: Boolean) {
-        backStack.invalidate(this)
-    }
-
-    // ASK ME LAST
     override fun back(): Boolean {
         if (super.back()) backStack.pop()
-
         return backStack.isEmpty
     }
 
