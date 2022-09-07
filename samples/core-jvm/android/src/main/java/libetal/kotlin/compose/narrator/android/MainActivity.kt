@@ -16,7 +16,7 @@ import libetal.kotlin.debug.info
 
 class MainActivity : AppCompatActivity() {
 
-    private val narrationScope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ComposableFun>>{
+    private val narrationScope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ComposableFun>> {
         addOnNarrationEnd {
             super.onBackPressed()
         }
@@ -35,10 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (narrationScope.shouldExit) super.onBackPressed()
-        else if (narrationScope.back()) {
-            super.onBackPressed()
-        }
+        narrationScope.back()
     }
 
     companion object {

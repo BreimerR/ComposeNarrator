@@ -8,3 +8,5 @@ class ProgressiveNarrativeScope<K : Any, N : ProgressiveNarrationScope<K, *>>(pr
     fun narrate(key: K) = narrationScope.backStack.navigateTo(key)
 }
 
+
+

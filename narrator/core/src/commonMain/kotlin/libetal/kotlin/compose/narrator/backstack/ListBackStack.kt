@@ -52,10 +52,7 @@ abstract class ListBackStack<Key>(stack: MutableList<Key>) : BackStack<Key, Muta
         stack.removeAt(stack.size - 1)
     }
 
-    fun invalidate(key: Key) {
-        TAG info "Removing $key"
-        stack.remove(key)
-    }
+    fun invalidate(key: Key) = stack.remove(key)
 
     override fun add(composer: Key) {
         stack.add(composer)

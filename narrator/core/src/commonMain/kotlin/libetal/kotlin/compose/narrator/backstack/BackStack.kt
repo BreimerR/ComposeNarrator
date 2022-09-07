@@ -18,13 +18,18 @@ abstract class BackStack<Key, Collection>(protected val stack: Collection) {
 
     abstract fun add(composer: Key)
 
-    fun back(onEmptyStack: (() -> Boolean)? = null): Boolean = if (isAlmostEmpty) {
-        onEmptyStack?.invoke()
-        exit()
-    } else {
-        pop()
-        false
-    }
+    /**
+     * TODO Remove
+     * ```kotlin
+     * fun back(onEmptyStack: (() -> Boolean)? = null): Boolean = if (isAlmostEmpty) {
+     *     onEmptyStack?.invoke()
+     *     exit()
+     * } else {
+     *     pop()
+     *     false
+     * }
+     * ```
+     * */
 
     open fun exit(): Boolean {
         var closed = true

@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
-import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 /**
@@ -23,11 +22,6 @@ fun <Key : Any> Narration(prepareComponents: ProgressiveNarrationScope<Key, Comp
         collector collect scope
     }
     scopeCollectors.clear()
-    CompositionLocalProvider(LocalNarrationScope provides scope) {
-        with(scope) {
-            prepareComponents()
-            Narrate()
-        }
-    }
-
+    Narration(scope, prepareComponents)
 }
+

@@ -1,7 +1,9 @@
 package libetal.kotlin.compose.narrator.interfaces
 
 import libetal.kotlin.compose.narrator.NarrativeScope
+import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
+import libetal.kotlin.debug.info
 
 interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
@@ -9,17 +11,6 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
     override val currentKey: Key
         get() = backStack.current
-
-    override val shouldExit: Boolean
-        get() = backStack.isAlmostEmpty
-
-    override val currentNarrativeScope
-        get() = narrativeScopes[currentKey] ?: createNarrative().also {
-            narrativeScopes[currentKey] = it
-        }
-
-
-    fun createNarrative(): NarrativeScope
 
     /**
      * Adds a view to the current
@@ -29,6 +20,9 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
         key.addToBackstack()
         composables[key] = content
     }
+
+    override val newNarrativeScope
+        get() = ProgressiveNarrativeScope(this)
 
     fun Key.addToBackstack() {
         if (backStack.isEmpty) backStack.add(this)
@@ -51,8 +45,11 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
         }
     }
 
-    override fun back(): Boolean {
-        if (super.back()) backStack.pop()
+    override fun back(onNarrationEnd: (() -> Unit)?): Boolean {
+        if (super.back(onNarrationEnd)) {
+            TAG info "Progressive exit"
+            backStack.pop()
+        }
         return backStack.isEmpty
     }
 

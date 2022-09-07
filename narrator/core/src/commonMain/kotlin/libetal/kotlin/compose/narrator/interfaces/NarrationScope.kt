@@ -2,6 +2,7 @@ package libetal.kotlin.compose.narrator.interfaces
 
 import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.NarrativeScope
+import libetal.kotlin.debug.info
 
 
 interface NarrationScope<Key : Any, ComposableFun> {
@@ -14,6 +15,9 @@ interface NarrationScope<Key : Any, ComposableFun> {
         get() = composables[currentKey]
 
     val currentNarrativeScope: NarrativeScope
+        get() = narrativeScopes[currentKey] ?: newNarrativeScope.also {
+            narrativeScopes[currentKey] = it
+        }
 
     val composables: MutableMap<Key, ComposableFun>
 
@@ -25,6 +29,7 @@ interface NarrationScope<Key : Any, ComposableFun> {
 
     val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?>
 
+
     /**
      * Adds a view to the current
      * composition backStack
@@ -34,10 +39,19 @@ interface NarrationScope<Key : Any, ComposableFun> {
         composables[key] = content
     }
 
+
+    val newNarrativeScope: NarrativeScope
+
     /**
      * backstack
      **/
-    fun back(): Boolean {
+    fun back(onNarrationEnd: (() -> Unit)? = null): Boolean {
+        if (shouldExit) {
+            TAG info "Exiting Popping item"
+            cleanUp(currentKey)
+            onNarrationEnd?.invoke()
+            return true
+        }
 
         var shouldExit = runNarrativeExitRequestListeners(true)
 
@@ -48,14 +62,7 @@ interface NarrationScope<Key : Any, ComposableFun> {
             if (!shouldExit) return false
         }
 
-        if (shouldExit) {
-            if (this.shouldExit) { // Android Might be affected by this part here
-                for (listener in onNarrationEndListeners) {
-                    listener()
-                }
-            }
-            cleanUp(currentKey)
-        }
+        if (shouldExit) cleanUp(currentKey)
 
         return shouldExit
 
@@ -120,6 +127,10 @@ interface NarrationScope<Key : Any, ComposableFun> {
     fun addOnNarrationEnd(action: () -> Unit) {
         if (action in onNarrationEndListeners) return
         onNarrationEndListeners.add(action)
+    }
+
+    companion object {
+        const val TAG = "NarrationScope"
     }
 
 }

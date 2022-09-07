@@ -33,7 +33,11 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.back()
+                    scope.back {
+                        for (listener in scope.onNarrationEndListeners) {
+                            listener()
+                        }
+                    }
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }

@@ -19,19 +19,17 @@ class NarrationScopeImpl<Key : Any> constructor(
     override val composables: MutableMap<Key, @Composable () -> Unit> by laziest {
         mutableMapOf()
     }
-    override val narrativeScopes: MutableMap<Key, NarrativeScope>
-        get() = TODO("Not yet implemented")
+
+    override val narrativeScopes: MutableMap<Key, NarrativeScope> by laziest { mutableMapOf() }
+
+    override val onNarrationEndListeners: MutableList<() -> Unit> by laziest { mutableListOf() }
 
     override val children: MutableList<NarrationScope<Key, @Composable () -> Unit>> by laziest {
         mutableListOf()
     }
 
-    override val onNarrativeExitRequest: MutableMap<Key, (NarrationScope<Key, @Composable () -> Unit>) -> Boolean> by laziest {
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, () -> Unit>) -> Boolean>?> by laziest {
         mutableMapOf()
-    }
-
-    override val onExitRequestListeners: MutableList<ExitRequestListener> by laziest {
-        mutableListOf()
     }
 
     @Composable
