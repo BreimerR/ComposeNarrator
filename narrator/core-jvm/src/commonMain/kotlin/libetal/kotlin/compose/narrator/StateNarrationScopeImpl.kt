@@ -9,14 +9,16 @@ import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 import libetal.kotlin.laziest
 
-class StateNarrationScopeImpl<Key>(
-    override val state: MutableState<Key>, backStack: ListBackStack<Int>,
-    enterTransition: EnterTransition? = null, exitTransition: ExitTransition? = null
-) : StateNarrationScope<Key, ComposableFun> {
+class StateNarrationScopeImpl<T>(
+    override val state: MutableState<T>,
+    backStack: ListBackStack<Int>,
+    enterTransition: EnterTransition? = null,
+    exitTransition: ExitTransition? = null
+) : StateNarrationScope<T, ComposableFun> {
 
     private val delegate = JvmNarrationScope(backStack, enterTransition, exitTransition, this)
 
-    override val stateSelectors: MutableMap<Int, NarrationStateKey<Key>> = mutableMapOf()
+    override val stateSelectors: MutableMap<Int, NarrationStateKey<T>> = mutableMapOf()
 
     override val currentKey: Int
         get() {

@@ -6,9 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -17,7 +15,6 @@ import libetal.kotlin.compose.narrator.ComposableFun
 import libetal.kotlin.compose.narrator.Narration
 import libetal.kotlin.compose.narrator.createScopeCollector
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
-import libetal.kotlin.compose.narrator.narrative
 
 @Composable
 fun App() =
@@ -65,26 +62,49 @@ fun App() =
                         }) {
                             Text("Settings")
                         }
-                    }
-                }
-
-                AppNarrations.SETTINGS {
-
-                    val videosNarrative = AppNarrations.VIDEOS.narrative
-
-                    CardedComponent(4.dp) {
-                        Text("Settings View")
+                        Text("Videos")
                         Button({
-                            videosNarrative.narrate()
+                            AppNarrations.VIDEOS.narrate()
                         }) {
                             Text("Videos")
                         }
                     }
+                }
 
-                    addOnExitRequest {
-                        true
+
+
+                AppNarrations.SETTINGS {
+                    val userState = remember { mutableStateOf<User?>(null) }
+                    Narration(userState) {
+                        val login = { user: User? -> user == null }
+                        val edit = { user: User? -> user != null }
+
+                        login {
+                            var name by remember { mutableStateOf("") }
+                            CardedComponent(4.dp) {
+                                TextField(name, {
+                                    name = it
+                                })
+
+                                Button({
+                                    userState.value = User(name)
+                                }) {
+                                    Text("Save")
+                                }
+                            }
+                        }
+
+                        edit {
+                            CardedComponent(4.dp) {
+                                Row {
+                                    Text("Name:")
+                                    CardedComponent(2.dp) {
+                                        Text(userState.value?.name ?: "")
+                                    }
+                                }
+                            }
+                        }
                     }
-
                 }
 
                 AppNarrations.VIDEOS {
@@ -148,3 +168,6 @@ fun VideosSubSections() {
     }*/
 
 }
+
+
+data class User(val name: String)

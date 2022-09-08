@@ -10,6 +10,8 @@ import libetal.kotlin.laziest
 class NarrationScopeImpl<Key : Any> constructor(
     override val backStack: ListBackStack<Key>
 ) : ProgressiveNarrationScope<Key, @Composable () -> Unit> {
+    override val shouldExit: Boolean
+        get() = backStack.isAlmostEmpty
 
     override val currentComponent
         get() = composables[currentKey]
