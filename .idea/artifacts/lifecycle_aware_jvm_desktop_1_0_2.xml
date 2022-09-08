@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="lifecycle-aware-jvm-desktop-1.0.2">
+    <output-path>$PROJECT_DIR$/narrator/lifecycle-aware-jvm/build/libs</output-path>
+    <root id="archive" name="lifecycle-aware-jvm-desktop-1.0.2.jar">
+      <element id="module-output" name="Narrator.narrator.lifecycle-aware-jvm.desktopMain" />
+    </root>
+  </artifact>
+</component>

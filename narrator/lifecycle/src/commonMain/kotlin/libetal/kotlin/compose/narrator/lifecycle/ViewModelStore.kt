@@ -17,18 +17,12 @@ open class ViewModelStore<Key> {
 
     operator fun get(key: Key) = store[key] ?: key.createViewModel() ?: throw RuntimeException(
         """| Make sure to use 
-           | fun Key.narrates(viewModelFactory:()->ViewModel, ...)
+           | fun Key.invoke(viewModelFactory:()->ViewModel, ...)
         """.trimMargin()
     )
 
     private fun Key.createViewModel() = initializers[this]?.invoke()?.also { viewModel ->
-
-        viewModel.lifeCycle.addObserver {
-
-        }
-
         store[this] = viewModel
-
     }
 
     operator fun set(key: Key, factory: () -> ViewModel) {

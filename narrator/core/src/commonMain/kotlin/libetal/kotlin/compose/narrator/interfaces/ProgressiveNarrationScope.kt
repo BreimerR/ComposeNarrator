@@ -9,6 +9,9 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Key, C> 
 
     val backStack: ListBackStack<Key>
 
+    override val shouldExit: Boolean
+        get() = backStack.isAlmostEmpty
+
     override val currentKey: Key
         get() = backStack.current
 

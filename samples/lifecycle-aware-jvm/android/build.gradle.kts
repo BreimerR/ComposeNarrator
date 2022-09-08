@@ -16,6 +16,11 @@ group = "$projectGroup.narrator.samples.android"
 version = projectVersion
 
 dependencies {
+    implementation(compose.runtime)
+    implementation(compose.material)
+    implementation(compose.animation)
+    implementation(compose.materialIconsExtended)
+    implementation(project(":narrator:core-jvm"))
     implementation(project(":samples:lifecycle-aware-jvm:common"))
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("com.google.android.material:material:1.6.1")

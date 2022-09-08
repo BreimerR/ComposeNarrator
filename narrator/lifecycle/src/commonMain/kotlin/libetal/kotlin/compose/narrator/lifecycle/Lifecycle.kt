@@ -42,10 +42,7 @@ import libetal.kotlin.coroutines.IO as CompatIO
  * To observe lifecycle events call {@link #addObserver(LifecycleObserver)} passing an object
  * that implements either {@link DefaultLifecycleObserver} or {@link LifecycleEventObserver}.
  */
-abstract class Lifecycle {
-
-    internal var deathDate = 5000L
-
+abstract class Lifecycle(internal var deathDate: Long = 5000L) {
     val isPausing
         get() = pauseJob != null
 
@@ -124,27 +121,27 @@ abstract class Lifecycle {
         when (state) {
             State.CREATED -> {
                 pauseJob = null
-                LifeCycleAware.TAG info "Creating... ${this::class.simpleName}"
+                TAG info "Creating... ${this::class.simpleName}"
             }
 
             State.RESUMED -> {
                 pauseJob = null
-                LifeCycleAware.TAG info "Resuming... ${this::class.simpleName}: $state"
+                TAG info "Resuming... ${this::class.simpleName}: $state"
             }
 
             State.STARTED -> {
-                LifeCycleAware.TAG info "Started... ${this::class.simpleName}"
+                TAG info "Started... ${this::class.simpleName}"
             }
 
             State.PAUSED -> {
                 pauseJob = transition(State.DESTROYED, deathDate)
-                LifeCycleAware.TAG info "Pausing ${this::class.simpleName}..."
+                TAG info "Pausing ${this::class.simpleName}..."
             }
 
             State.DESTROYED -> {
                 ioScope.cancel()
                 coroutineScope.cancel()
-                LifeCycleAware.TAG info "Destroyed... ${this::class.simpleName}"
+                TAG info "Destroyed... ${this::class.simpleName}"
             }
         }
 
@@ -240,20 +237,15 @@ abstract class Lifecycle {
 
     interface Callbacks {
 
-        fun onCreate() {
-        }
+        fun onCreate() {}
 
-        fun onStart() {
-        }
+        fun onStart() {}
 
-        fun onResume() {
-        }
+        fun onResume() {}
 
-        fun onPause() {
-        }
+        fun onPause() {}
 
-        fun onDestroy() {
-        }
+        fun onDestroy() {}
 
     }
 

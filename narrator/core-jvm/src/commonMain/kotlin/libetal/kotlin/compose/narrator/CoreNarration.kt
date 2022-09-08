@@ -13,7 +13,7 @@ import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
  * If provided handles
  **/
 @Composable
-fun <Key : Any> Narration(prepareComponents: ProgressiveNarrationScope<Key, ComposableFun>.() -> Unit) {
+fun <Key : Any> Narration(prepareComponents: @Composable ProgressiveNarrationScope<Key, ComposableFun>.() -> Unit) {
     val backStack = NarrationBackStack(
         remember { mutableStateListOf<Key>() }
     )

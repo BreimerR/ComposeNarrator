@@ -7,7 +7,7 @@ val androidTargetSdkVersion: String by project
 val androidCompileSdkVersion: String by project
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.compose")
     kotlin("multiplatform")
 }
@@ -19,7 +19,9 @@ version = projectVersion
 kotlin {
 
     android {
-
+        compilations.all {
+            kotlinOptions.jvmTarget = jvmTargetVersion
+        }
     }
 
     jvm("desktop") {
@@ -32,6 +34,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(compose.runtime)
+                implementation(compose.material)
+                implementation(compose.animation)
+                implementation(compose.materialIconsExtended)
                 implementation(project(":narrator:lifecycle-aware-jvm"))
             }
         }

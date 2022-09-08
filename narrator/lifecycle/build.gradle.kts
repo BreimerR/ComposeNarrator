@@ -38,7 +38,7 @@ kotlin {
                 }
             }
         }
-        binaries.executable()
+        // binaries.executable()
     }
 
     sourceSets {
@@ -51,9 +51,9 @@ kotlin {
                  * Including narrator causes project to fetch
                  * log which is failing for other projects
                  **/
-                implementation("libetal.libraries.kotlin:log:1.0.2")
-                implementation("libetal.libraries.kotlin:library:1.0.2")
-                implementation("libetal.libraries.kotlin:coroutines:1.0.2")
+                api("libetal.libraries.kotlin:log:1.0.2")
+                api("libetal.libraries.kotlin:library:1.0.2")
+                api("libetal.libraries.kotlin:coroutines:1.0.2")
 
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
@@ -70,8 +70,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(compose.preview)
-                // api("androidx.core:core-ktx:1.8.0")
-                // api("androidx.appcompat:appcompat:1.5.0")
             }
         }
 
@@ -102,8 +100,8 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

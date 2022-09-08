@@ -4,7 +4,7 @@ import libetal.kotlin.debug.debug
 import libetal.kotlin.debug.info
 import libetal.kotlin.name
 
-class ViewModelLifecycle(val owner: Lifecycle.Callbacks) : Lifecycle() {
+class ViewModelLifecycle(private val owner: Callbacks, killDuration: Long = 5000L) : Lifecycle(killDuration) {
 
     override fun onStateChange(state: State) {
 

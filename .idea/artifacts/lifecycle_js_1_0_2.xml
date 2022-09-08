@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="lifecycle-js-1.0.2">
+    <output-path>$PROJECT_DIR$/narrator/lifecycle/build/libs</output-path>
+    <root id="archive" name="lifecycle-js-1.0.2.jar">
+      <element id="module-output" name="Narrator.narrator.lifecycle.jsMain" />
+    </root>
+  </artifact>
+</component>

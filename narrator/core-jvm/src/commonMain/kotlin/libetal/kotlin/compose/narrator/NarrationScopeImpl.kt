@@ -30,9 +30,6 @@ class NarrationScopeImpl<Key : Any> constructor(
         content()
     }
 
-    override val shouldExit: Boolean
-        get() = backStack.isAlmostEmpty
-
     override val composables: MutableMap<Key, ComposableFun>
         get() = delegate.composables
     override val narrativeScopes: MutableMap<Key, NarrativeScope>
