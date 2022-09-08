@@ -12,32 +12,36 @@ import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
 class NarrationScopeImpl<Key : Any> constructor(
-    backStack: ListBackStack<Key>,
+    override val backStack: ListBackStack<Key>,
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
 ) : ProgressiveNarrationScope<Key, ComposableFun> {
 
-    private val delegate = JvmNarrationScope(backStack, enterTransition, exitTransition, this)
+    override val Key.key: Key
+        get() = this
+
+    private val delegate = JvmNarrationScope(enterTransition, exitTransition, this) { composable, starting, ended ->
+        composable()
+    }
 
     constructor(backStack: ListBackStack<Key>) : this(backStack, fadeIn(), fadeOut())
 
-    override fun add(key: Key, content: ComposableFun) = super<ProgressiveNarrationScope>.add(key) {
+    override fun add(key: Key, content: ComposableFun) = super.add(key) {
         content()
     }
 
-    override val backStack: ListBackStack<Key>
-        get() = delegate.backStack
     override val shouldExit: Boolean
-        get() = delegate.shouldExit
+        get() = backStack.isAlmostEmpty
+
     override val composables: MutableMap<Key, ComposableFun>
         get() = delegate.composables
     override val narrativeScopes: MutableMap<Key, NarrativeScope>
         get() = delegate.narrativeScopes
     override val onNarrationEndListeners: MutableList<() -> Unit>
         get() = delegate.onNarrationEndListeners
-    override val children: MutableList<NarrationScope<Key, ComposableFun>>
+    override val children: MutableList<NarrationScope<Key, Key, ComposableFun>>
         get() = delegate.children
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?>
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Key, ComposableFun>) -> Boolean>?>
         get() = delegate.onNarrativeExitRequest
 
     @Composable

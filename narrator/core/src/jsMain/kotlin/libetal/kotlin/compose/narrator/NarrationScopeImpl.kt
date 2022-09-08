@@ -7,8 +7,9 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
+/*
 class NarrationScopeImpl<Key : Any> constructor(
-    override val backStack: ListBackStack<Key>
+    val backStack: ListBackStack<Key>
 ) : ProgressiveNarrationScope<Key, @Composable () -> Unit> {
     override val shouldExit: Boolean
         get() = backStack.isAlmostEmpty
@@ -37,4 +38,4 @@ class NarrationScopeImpl<Key : Any> constructor(
     @Composable
     override fun Narrate(composable: @Composable () -> Unit) = composable()
 
-}
+}*/

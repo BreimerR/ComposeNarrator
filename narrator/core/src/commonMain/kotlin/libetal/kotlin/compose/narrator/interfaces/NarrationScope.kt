@@ -5,7 +5,7 @@ import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.debug.info
 
 
-interface NarrationScope<Key : Any, ComposableFun> {
+interface NarrationScope<Key : Any, Invoked, ComposableFun> {
 
     val currentKey: Key
 
@@ -19,15 +19,17 @@ interface NarrationScope<Key : Any, ComposableFun> {
             narrativeScopes[currentKey] = it
         }
 
+    val Invoked.key: Key
+
     val composables: MutableMap<Key, ComposableFun>
 
     val narrativeScopes: MutableMap<Key, NarrativeScope>
 
     val onNarrationEndListeners: MutableList<() -> Unit>
 
-    val children: MutableList<NarrationScope<Key, ComposableFun>>
+    val children: MutableList<NarrationScope<Key, Invoked, ComposableFun>>
 
-    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?>
+    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Invoked, ComposableFun>) -> Boolean>?>
 
 
     /**
@@ -89,28 +91,28 @@ interface NarrationScope<Key : Any, ComposableFun> {
     }
 
     @Composable
-    fun Narrate() {
-
-        when (val composable: (ComposableFun)? = currentComponent) {
-            null -> throw RuntimeException("Failed to retrieve component")
-            else -> Narrate(composable)
-        }
+    fun Narrate() = when (val composable: ComposableFun? = currentComponent) {
+        null -> throw RuntimeException("Failed to retrieve component")
+        else -> Narrate(composable)
     }
 
     @Composable
     fun Narrate(composable: ComposableFun)
 
-    operator fun Key.invoke(onExitRequest: ((NarrationScope<Key, ComposableFun>) -> Boolean)? = null, content: ComposableFun) {
+    operator fun Invoked.invoke(
+        onExitRequest: ((NarrationScope<Key, Invoked, ComposableFun>) -> Boolean)? = null,
+        content: ComposableFun
+    ) {
         onExitRequest?.let {
-            addOnNarrativeExitRequest(it)
+            key.addOnNarrativeExitRequest(it)
 
         }
-        add(this, content)
+        add(key, content)
     }
 
-    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, ComposableFun>) -> Boolean) {
+    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Invoked, ComposableFun>) -> Boolean) {
         val requestListeners =
-            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, ComposableFun>) -> Boolean>().also {
+            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, Invoked, ComposableFun>) -> Boolean>().also {
                 onNarrativeExitRequest[this] = it
             }
 
@@ -118,9 +120,7 @@ interface NarrationScope<Key : Any, ComposableFun> {
 
     }
 
-    fun NarrativeScope.addOnExitRequest(action: () -> Boolean) = addOnExitRequest(this@NarrationScope, action)
-
-    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ComposableFun>) -> Boolean) {
+    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, Invoked, ComposableFun>) -> Boolean) {
         currentKey.addOnNarrativeExitRequest(action)
     }
 

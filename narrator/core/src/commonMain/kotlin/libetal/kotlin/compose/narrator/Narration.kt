@@ -15,7 +15,7 @@ val <Key: Any> Key.narrative
 
 @Composable
 fun <Key : Any> Narration(
-    scope: ProgressiveNarrationScope<Key, @Composable NarrativeScope.() -> Unit>,
+    scope: ProgressiveNarrationScope<Key,@Composable NarrativeScope.() -> Unit>,
     prepareNarratives: ProgressiveNarrationScope<Key, @Composable NarrativeScope.() -> Unit>.() -> Unit
 ) = CompositionLocalProvider(LocalNarrationScope provides scope) {
     with(scope) {

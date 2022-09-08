@@ -25,19 +25,15 @@ fun <Key : Any> Narration(prepareComponents: ProgressiveNarrationScope<Key, Comp
     Narration(scope, prepareComponents)
 }
 
-
 @Composable
 fun <T> Narration(
     state: MutableState<T>,
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
-    prepareNarrations: StateNarrationScope<T, ComposableFun>.() -> Unit
+    prepareNarrations: StateNarrationScope<T, StateComposable<T>>.() -> Unit
 ) {
     val scope = StateNarrationScopeImpl(
         state,
-        NarrationBackStack(
-            remember { mutableStateListOf() }
-        ),
         enterTransition,
         exitTransition
     )

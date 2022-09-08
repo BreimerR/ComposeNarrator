@@ -6,4 +6,4 @@ import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 
 val LocalNarrationScope =
-    compositionLocalOf<NarrationScope<*, @Composable NarrativeScope.() -> Unit>?> { null }
+    compositionLocalOf<NarrationScope<*, *, *>?> { null }

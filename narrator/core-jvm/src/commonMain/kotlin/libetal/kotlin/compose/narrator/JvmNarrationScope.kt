@@ -7,15 +7,14 @@ import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.laziest
 
-open class JvmNarrationScope<Key : Any>(
-    val backStack: ListBackStack<Key>,
+class JvmNarrationScope<Key : Any, Invoked, ComposableFun>(
     private val enterTransition: EnterTransition?,
     private val exitTransition: ExitTransition?,
-    delegate:NarrationScope<Key,ComposableFun>
-) : NarrationScope<Key, ComposableFun>  by delegate{
+    delegate: NarrationScope<Key, Invoked, ComposableFun>,
+    private val composer: @Composable NarrativeScope.(ComposableFun, start: Boolean, end: Boolean) -> Unit
+) : NarrationScope<Key, Invoked, ComposableFun> by delegate {
 
-    override val shouldExit: Boolean
-        get() = backStack.isAlmostEmpty
+    var isAnimating: Boolean = false
 
     override val narrativeScopes by laziest {
         mutableMapOf<Key, NarrativeScope>()
@@ -25,7 +24,7 @@ open class JvmNarrationScope<Key : Any>(
         mutableMapOf()
     }
 
-    override val children: MutableList<NarrationScope<Key, ComposableFun>> by laziest {
+    override val children: MutableList<NarrationScope<Key, Invoked, ComposableFun>> by laziest {
         mutableListOf()
     }
 
@@ -33,7 +32,7 @@ open class JvmNarrationScope<Key : Any>(
         mutableListOf()
     }
 
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?> by laziest {
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Invoked, ComposableFun>) -> Boolean>?> by laziest {
         mutableMapOf()
     }
 
@@ -48,10 +47,13 @@ open class JvmNarrationScope<Key : Any>(
             },
             contentAlignment = Alignment.CenterEnd
         ) {
-            it(currentNarrativeScope)
+            //TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
+            val startingAnimation = !isAnimating
+            isAnimating = this.transition.currentState != this.transition.targetState
+            currentNarrativeScope.composer(it, startingAnimation, !isAnimating && !startingAnimation)
         }
     } else {
-        composable(currentNarrativeScope)
+        currentNarrativeScope.composer(composable, false, true)
     }
 
 }

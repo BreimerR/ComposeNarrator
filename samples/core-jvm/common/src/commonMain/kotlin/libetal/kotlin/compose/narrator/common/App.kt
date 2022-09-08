@@ -1,5 +1,8 @@
 package libetal.kotlin.compose.narrator.common
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -71,11 +74,10 @@ fun App() =
                     }
                 }
 
-
-
                 AppNarrations.SETTINGS {
                     val userState = remember { mutableStateOf<User?>(null) }
-                    Narration(userState) {
+
+                    Narration(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
                         val login = { user: User? -> user == null }
                         val edit = { user: User? -> user != null }
 
@@ -95,16 +97,29 @@ fun App() =
                         }
 
                         edit {
+                            val user = it!!
+
                             CardedComponent(4.dp) {
                                 Row {
                                     Text("Name:")
                                     CardedComponent(2.dp) {
-                                        Text(userState.value?.name ?: "")
+                                        Text(user.name)
                                     }
+                                }
+                                Button({
+                                    userState.value = null
+                                }) {
+                                    Text("Clear")
                                 }
                             }
                         }
+
+                        addOnExitRequest {
+                            userState.value != null
+                        }
+
                     }
+
                 }
 
                 AppNarrations.VIDEOS {
