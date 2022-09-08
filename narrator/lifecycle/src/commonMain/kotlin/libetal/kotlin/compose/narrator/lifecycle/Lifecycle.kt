@@ -266,7 +266,8 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
         }
 
         fun pause(killAfter: Long = lifeCycle.deathDate) {
-
+            // No point in pausing infinite viewModels
+            if (killAfter == Long.MAX_VALUE) return
             if (lifeCycle.isPausing || lifeCycle.isPaused) return
 
             lifeCycle.state = State.PAUSED
