@@ -6,7 +6,6 @@ import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.NarrationViewModelStore
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
-import libetal.kotlin.compose.narrator.lifecycle.ViewModelStore
 import libetal.kotlin.debug.info
 
 val <Key : Any> Key.viewModelStoreKey
@@ -14,8 +13,8 @@ val <Key : Any> Key.viewModelStoreKey
 
 @Composable
 @Suppress("UNCHECKED_CAST")
-fun <Key : Any, VM : ViewModel> Key.invoke(
-    vmFactory: () -> ViewModel,
+operator fun <Key : Any, VM : ViewModel> Key.invoke(
+    vmFactory: () -> VM,
     content: @Composable NarrativeScope.(VM) -> Unit
 ) = with(
     (LocalNarrationScope.current as? NarrationScopeImpl<Key>) ?: throw RuntimeException("Can't be run outside a composable scope")
@@ -38,6 +37,7 @@ fun <Key : Any, VM : ViewModel> Key.invoke(
         }
 
         addOnExitRequest {
+
             viewModel.addObserver {
                 if (it == Lifecycle.State.DESTROYED) {
                     NarrationViewModelStore.invalidate(key) {
@@ -49,6 +49,7 @@ fun <Key : Any, VM : ViewModel> Key.invoke(
             viewModel.pause()
 
             true
+
         }
 
     }

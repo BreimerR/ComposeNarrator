@@ -99,16 +99,7 @@ interface NarrationScope<Key : Any, Invoked, ComposableFun> {
     @Composable
     fun Narrate(composable: ComposableFun)
 
-    operator fun Invoked.invoke(
-        onExitRequest: ((NarrationScope<Key, Invoked, ComposableFun>) -> Boolean)? = null,
-        content: ComposableFun
-    ) {
-        onExitRequest?.let {
-            key.addOnNarrativeExitRequest(it)
-
-        }
-        add(key, content)
-    }
+    operator fun Invoked.invoke(content: ComposableFun) = add(key, content)
 
     fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Invoked, ComposableFun>) -> Boolean) {
         val requestListeners =

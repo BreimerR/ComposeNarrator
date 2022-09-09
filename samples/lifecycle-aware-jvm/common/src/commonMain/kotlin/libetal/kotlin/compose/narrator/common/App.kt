@@ -126,7 +126,7 @@ fun App() =
 
                 }
 
-                AppNarrations.VIDEOS.invoke<AppNarrations, HomeViewModel>({ HomeViewModel() }) {
+                AppNarrations.VIDEOS({ HomeViewModel() }) {
 
                     var allowExit by remember { it.allowExitState }
                     val count by remember { it.countState }
