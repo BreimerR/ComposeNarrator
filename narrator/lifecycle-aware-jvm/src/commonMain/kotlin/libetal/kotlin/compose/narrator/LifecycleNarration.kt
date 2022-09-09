@@ -15,11 +15,14 @@ val <Key : Any> Key.viewModelStoreKey
 @Composable
 @Suppress("UNCHECKED_CAST")
 fun <Key : Any, VM : ViewModel> Key.invoke(
-    vmFactory: () -> ViewModel, content: @Composable NarrativeScope.(VM) -> Unit
+    vmFactory: () -> ViewModel,
+    content: @Composable NarrativeScope.(VM) -> Unit
 ) = with(
     (LocalNarrationScope.current as? NarrationScopeImpl<Key>) ?: throw RuntimeException("Can't be run outside a composable scope")
 ) {
+
     val key = this@invoke.viewModelStoreKey
+
     NarrationViewModelStore[key] = vmFactory
 
     add(this@invoke) {
@@ -41,7 +44,6 @@ fun <Key : Any, VM : ViewModel> Key.invoke(
                         "${viewModel::class}" info "Invalidated the viewModel"
                     }
                 }
-
             }
 
             viewModel.pause()

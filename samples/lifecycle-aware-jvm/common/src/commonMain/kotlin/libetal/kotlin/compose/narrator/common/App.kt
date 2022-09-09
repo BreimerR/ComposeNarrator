@@ -78,6 +78,7 @@ fun App() =
                 }
 
                 AppNarrations.SETTINGS {
+
                     val userState = remember { mutableStateOf<User?>(null) }
 
                     Narration(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
