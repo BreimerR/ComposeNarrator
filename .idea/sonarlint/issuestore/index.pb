@@ -15,8 +15,6 @@ N
 \narrator/core-jvm/src/commonMain/kotlin/libetal/kotlin/compose/narrator/NarrationStateKey.kt,4/1/41907580f9124923ba584a5cc052b1597f2cc1ca
 ê
 `narrator/core/src/commonMain/kotlin/libetal/kotlin/compose/narrator/ProgressiveNarrativeScope.kt,f/3/f3684d94e36f67952fc1053e96fe2be1ec149087
-ã
-[samples/core-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/common/App.kt,4/8/48e207103e383e9f5cccb1b4eccc3bc61832a98f
 ñ
 fnarrator/core/src/commonMain/kotlin/libetal/kotlin/compose/narrator/interfaces/NarrationDestination.kt,d/5/d530f37d06c38c1240000b4bbeba5e743c064bac
 ê
@@ -75,8 +73,6 @@ q
 Asamples/lifecycle-aware-jvm/android/proguard-android-optimize.txt,2/c/2c7a722c3d33f868af9f195d62a1f3bfacd3d089
 Y
 )samples/core-jvm/android/build.gradle.kts,5/1/516c8a4927873803448daa556fd69815af675dcf
-ê
-`narrator/core/src/commonMain/kotlin/libetal/kotlin/compose/narrator/interfaces/NarrationScope.kt,7/c/7cd8502a60bbf3cacff57fe2008a304c600a1d00
 î
 dnarrator/lifecycle/src/commonMain/kotlin/libetal/kotlin/compose/narrator/lifecycle/LifeCycleAware.kt,6/d/6df660d53170f1bdd1f9216655e982d6001b4f47
 ù
