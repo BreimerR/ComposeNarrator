@@ -137,14 +137,10 @@ c
 3samples/lifecycle-aware-jvm/common/build.gradle.kts,6/4/64ad6f4c3e57b00755377e7976da82c622534049
 è
 _narrator/lifecycle/src/commonMain/kotlin/libetal/kotlin/compose/narrator/lifecycle/Closeable.kt,e/b/eb35028885e42b5f10e0433dab33eb20bb197bac
-à
-Xnarrator/core-jvm/src/commonMain/kotlin/libetal/kotlin/compose/narrator/CoreNarration.kt,4/6/46b1c4e19a7b251e4b3cf929c0d9d3ceb87630c8
 ß
 wsamples/lifecycle-aware-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/common/models/HomeViewModel.kt,e/6/e65d2c630d476de985ad82e01ab5df87cd628870
 £
 ssamples/lifecycle-aware-jvm/android/src/main/java/libetal/kotlin/compose/narrator/lifecycle/android/MainActivity.kt,0/0/0055e5431124c9b6c89724e31545199f80792766
-Ä
-Pnarrator/core/src/commonMain/kotlin/libetal/kotlin/compose/narrator/Narration.kt,a/b/abd7778875a344b6288db153cd4d2f9e2b7c81ed
 y
 Inarrator/core/src/commonMain/kotlin/ProgressiveLifeCycleNarrationScope.kt,d/0/d0219d459dc83c38020f3791423bae6bc959bf5f
 C

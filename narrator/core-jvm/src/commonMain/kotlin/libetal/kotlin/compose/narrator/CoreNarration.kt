@@ -5,6 +5,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.*
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
+import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 
