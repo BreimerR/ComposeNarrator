@@ -57,10 +57,6 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
         return backStack.isEmpty
     }
 
-
-    fun NarrativeScope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@ProgressiveNarrationScope, action)
-
-
     companion object {
         const val TAG = "ProgressiveNarrationScope"
     }

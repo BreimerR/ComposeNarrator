@@ -118,6 +118,7 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
         if (action in onNarrationEndListeners) return
         onNarrationEndListeners.add(action)
     }
+    fun Scope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@NarrationScope, action)
 
     companion object {
         const val TAG = "NarrationScope"
