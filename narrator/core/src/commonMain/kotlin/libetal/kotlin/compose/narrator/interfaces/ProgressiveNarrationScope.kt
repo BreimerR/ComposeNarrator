@@ -26,7 +26,7 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Key, C> 
     }
 
     override val newNarrativeScope
-        get() = ProgressiveNarrativeScope(this)
+        get() = ProgressiveNarrativeScope()
 
     fun Key.addToBackstack() {
         if (backStack.isEmpty) backStack.add(this)
@@ -56,6 +56,7 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Key, C> 
         }
         return backStack.isEmpty
     }
+
 
     fun NarrativeScope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@ProgressiveNarrationScope, action)
 
