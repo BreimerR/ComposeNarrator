@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
+import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
 abstract class NarrativeScope {
@@ -9,9 +10,9 @@ abstract class NarrativeScope {
         mutableListOf()
     }
 
-    internal fun <Key : Any,Invoked, ComposableFun> addOnExitRequest(
-        narrationScope: NarrationScope<Key,Invoked, ComposableFun>,
-        action: () -> Boolean
+    internal fun <Key : Any, Invoked, ComposableFun> addOnExitRequest(
+        narrationScope: NarrationScope<Key, Invoked, ComposableFun>,
+        action: ExitRequestListener
     ) {
         narrationScope.onCurrentKeyExitRequestListener {
             hasCliffhangers

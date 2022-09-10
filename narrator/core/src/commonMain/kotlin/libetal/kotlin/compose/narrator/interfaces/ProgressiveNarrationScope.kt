@@ -3,6 +3,7 @@ package libetal.kotlin.compose.narrator.interfaces
 import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
+import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.debug.info
 
 interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Key, C> {
@@ -56,7 +57,7 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Key, C> 
         return backStack.isEmpty
     }
 
-    fun NarrativeScope.addOnExitRequest(action: () -> Boolean) = addOnExitRequest(this@ProgressiveNarrationScope, action)
+    fun NarrativeScope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@ProgressiveNarrationScope, action)
 
 
     companion object {
