@@ -6,7 +6,7 @@ import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.debug.info
 
-interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Key, C> {
+interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, C> {
 
     val backStack: ListBackStack<Key>
 

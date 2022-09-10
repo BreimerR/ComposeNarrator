@@ -7,12 +7,12 @@ import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.laziest
 
-class JvmNarrationScope<Key : Any, Invoked, ComposableFun>(
+class JvmNarrationScope<Key : Any, ComposableFun>(
     private val enterTransition: EnterTransition?,
     private val exitTransition: ExitTransition?,
-    delegate: NarrationScope<Key, Invoked, ComposableFun>,
+    delegate: NarrationScope<Key, ComposableFun>,
     private val composer: @Composable NarrativeScope.(ComposableFun, start: Boolean, end: Boolean) -> Unit
-) : NarrationScope<Key, Invoked, ComposableFun> by delegate {
+) : NarrationScope<Key, ComposableFun> by delegate {
 
     var isAnimating: Boolean = false
 
@@ -24,7 +24,7 @@ class JvmNarrationScope<Key : Any, Invoked, ComposableFun>(
         mutableMapOf()
     }
 
-    override val children: MutableList<NarrationScope<Key, Invoked, ComposableFun>> by laziest {
+    override val children: MutableList<NarrationScope<Key, ComposableFun>> by laziest {
         mutableListOf()
     }
 
@@ -32,7 +32,7 @@ class JvmNarrationScope<Key : Any, Invoked, ComposableFun>(
         mutableListOf()
     }
 
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Invoked, ComposableFun>) -> Boolean>?> by laziest {
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?> by laziest {
         mutableMapOf()
     }
 

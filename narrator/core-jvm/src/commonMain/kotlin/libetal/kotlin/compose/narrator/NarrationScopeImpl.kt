@@ -17,9 +17,6 @@ class NarrationScopeImpl<Key : Any> constructor(
     exitTransition: ExitTransition? = null,
 ) : ProgressiveNarrationScope<Key, ComposableFun> {
 
-    override val Key.key: Key
-        get() = this
-
     private val delegate = JvmNarrationScope(enterTransition, exitTransition, this) { composable, starting, ended ->
         composable()
     }
@@ -36,9 +33,9 @@ class NarrationScopeImpl<Key : Any> constructor(
         get() = delegate.narrativeScopes
     override val onNarrationEndListeners: MutableList<() -> Unit>
         get() = delegate.onNarrationEndListeners
-    override val children: MutableList<NarrationScope<Key, Key, ComposableFun>>
+    override val children: MutableList<NarrationScope<Key, ComposableFun>>
         get() = delegate.children
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Key, ComposableFun>) -> Boolean>?>
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?>
         get() = delegate.onNarrativeExitRequest
 
     @Composable

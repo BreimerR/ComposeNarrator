@@ -7,8 +7,6 @@ esamples/core-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/c
 ^samples/core-jvm/android/src/main/java/libetal/kotlin/compose/narrator/android/MainActivity.kt,8/e/8e976dbe098ee7993def2da87254a4a520cd1625
 N
 narrator/core/build.gradle.kts,d/b/dbde488efed3ca7163f2bd8b1b09ce78ff18f625
-ê
-`narrator/core/src/commonMain/kotlin/libetal/kotlin/compose/narrator/extensions/NarrationScope.kt,7/a/7a5f069f369e9ad02d3a91f8d0eef6f482c72d52
 Ö
 Unarrator/core/src/jsMain/kotlin/libetal/kotlin/compose/narrator/NarrationScopeImpl.kt,3/b/3be76a78a9a9fd01c1ff018a9527524238994344
 †

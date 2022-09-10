@@ -6,7 +6,7 @@ import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.debug.info
 
 
-interface NarrationScope<Key : Any, Invoked, Content> {
+interface NarrationScope<Key : Any, Content> {
 
     val currentKey: Key
 
@@ -20,17 +20,15 @@ interface NarrationScope<Key : Any, Invoked, Content> {
             narrativeScopes[currentKey] = it
         }
 
-    val Invoked.key: Key
-
     val composables: MutableMap<Key, Content>
 
     val narrativeScopes: MutableMap<Key, NarrativeScope>
 
     val onNarrationEndListeners: MutableList<() -> Unit>
 
-    val children: MutableList<NarrationScope<Key, Invoked, Content>>
+    val children: MutableList<NarrationScope<Key, Content>>
 
-    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Invoked, Content>) -> Boolean>?>
+    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Content>) -> Boolean>?>
 
 
     /**
@@ -100,11 +98,11 @@ interface NarrationScope<Key : Any, Invoked, Content> {
     @Composable
     fun Narrate(composable: Content)
 
-    operator fun Invoked.invoke(content: Content) = add(key, content)
+    operator fun Key.invoke(content: Content) = add(this, content)
 
-    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Invoked, Content>) -> Boolean) {
+    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Content>) -> Boolean) {
         val requestListeners =
-            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, Invoked, Content>) -> Boolean>().also {
+            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, Content>) -> Boolean>().also {
                 onNarrativeExitRequest[this] = it
             }
 
@@ -112,7 +110,7 @@ interface NarrationScope<Key : Any, Invoked, Content> {
 
     }
 
-    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, Invoked, Content>) -> Boolean) {
+    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, Content>) -> Boolean) {
         currentKey.addOnNarrativeExitRequest(action)
     }
 

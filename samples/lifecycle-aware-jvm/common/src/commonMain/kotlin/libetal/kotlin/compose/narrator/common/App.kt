@@ -82,8 +82,8 @@ fun App() =
                     val userState = remember { mutableStateOf<User?>(null) }
 
                     Narration(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
-                        val login = { user: User? -> user == null }
-                        val edit = { user: User? -> user != null }
+                        val login = createPremise { user: User? -> user == null }
+                        val edit = createPremise { user: User? -> user != null }
 
                         login {
                             var name by remember { mutableStateOf("") }
