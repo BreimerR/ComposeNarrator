@@ -7,24 +7,24 @@ import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.laziest
 
-class JvmNarrationScope<Key : Any, ComposableFun>(
+class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
     private val enterTransition: EnterTransition?,
     private val exitTransition: ExitTransition?,
-    delegate: NarrationScope<Key, ComposableFun>,
-    private val composer: @Composable NarrativeScope.(ComposableFun, start: Boolean, end: Boolean) -> Unit
-) : NarrationScope<Key, ComposableFun> by delegate {
+    delegate: NarrationScope<Key, Scope, Content>,
+    private val composer: @Composable Scope.(Content, start: Boolean, end: Boolean) -> Unit
+) : NarrationScope<Key, Scope, Content> by delegate {
 
     var isAnimating: Boolean = false
 
     override val narrativeScopes by laziest {
-        mutableMapOf<Key, NarrativeScope>()
+        mutableMapOf<Key, Scope>()
     }
 
-    override val composables: MutableMap<Key, ComposableFun> by laziest {
+    override val composables: MutableMap<Key, Content> by laziest {
         mutableMapOf()
     }
 
-    override val children: MutableList<NarrationScope<Key, ComposableFun>> by laziest {
+    override val children: MutableList<NarrationScope<Key, Scope, Content>> by laziest {
         mutableListOf()
     }
 
@@ -32,13 +32,13 @@ class JvmNarrationScope<Key : Any, ComposableFun>(
         mutableListOf()
     }
 
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?> by laziest {
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?> by laziest {
         mutableMapOf()
     }
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate(composable: ComposableFun) = if (enterTransition != null) {
+    override fun Narrate(composable: Content) = if (enterTransition != null) {
         val exitTransition = exitTransition ?: fadeOut()
         AnimatedContent(
             composable,

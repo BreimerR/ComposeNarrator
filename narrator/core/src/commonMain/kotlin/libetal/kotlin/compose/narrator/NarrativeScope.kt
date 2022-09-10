@@ -10,8 +10,8 @@ abstract class NarrativeScope {
         mutableListOf()
     }
 
-    internal fun <Key : Any , ComposableFun> addOnExitRequest(
-        narrationScope: NarrationScope<Key, ComposableFun>,
+    internal fun <Key : Any ,Scope:NarrativeScope, Content> addOnExitRequest(
+        narrationScope: NarrationScope<Key,Scope, Content>,
         action: ExitRequestListener
     ) {
         narrationScope.onCurrentKeyExitRequestListener {

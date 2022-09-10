@@ -29,13 +29,13 @@ class NarrationScopeImpl<Key : Any> constructor(
 
     override val composables: MutableMap<Key, ComposableFun>
         get() = delegate.composables
-    override val narrativeScopes: MutableMap<Key, NarrativeScope>
+    override val narrativeScopes: MutableMap<Key, ProgressiveNarrativeScope>
         get() = delegate.narrativeScopes
     override val onNarrationEndListeners: MutableList<() -> Unit>
         get() = delegate.onNarrationEndListeners
-    override val children: MutableList<NarrationScope<Key, ComposableFun>>
+    override val children: MutableList<NarrationScope<Key, ProgressiveNarrativeScope, ComposableFun>>
         get() = delegate.children
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ComposableFun>) -> Boolean>?>
+    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ProgressiveNarrativeScope, ComposableFun>) -> Boolean>?>
         get() = delegate.onNarrativeExitRequest
 
     @Composable

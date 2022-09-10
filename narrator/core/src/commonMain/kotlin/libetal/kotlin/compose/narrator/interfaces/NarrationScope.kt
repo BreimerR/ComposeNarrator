@@ -6,7 +6,7 @@ import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.debug.info
 
 
-interface NarrationScope<Key : Any, Content> {
+interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     val currentKey: Key
 
@@ -15,20 +15,22 @@ interface NarrationScope<Key : Any, Content> {
     val currentComponent
         get() = composables[currentKey]
 
-    val currentNarrativeScope: NarrativeScope
+    val newNarrativeScope: Scope
+
+    val composables: MutableMap<Key, Content>
+
+    val narrativeScopes: MutableMap<Key, Scope>
+
+    val currentNarrativeScope: Scope
         get() = narrativeScopes[currentKey] ?: newNarrativeScope.also {
             narrativeScopes[currentKey] = it
         }
 
-    val composables: MutableMap<Key, Content>
-
-    val narrativeScopes: MutableMap<Key, NarrativeScope>
-
     val onNarrationEndListeners: MutableList<() -> Unit>
 
-    val children: MutableList<NarrationScope<Key, Content>>
+    val children: MutableList<NarrationScope<Key, Scope, Content>>
 
-    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Content>) -> Boolean>?>
+    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?>
 
 
     /**
@@ -40,8 +42,6 @@ interface NarrationScope<Key : Any, Content> {
         composables[key] = content
     }
 
-
-    val newNarrativeScope: NarrativeScope
 
     /**
      * backstack
@@ -100,9 +100,9 @@ interface NarrationScope<Key : Any, Content> {
 
     operator fun Key.invoke(content: Content) = add(this, content)
 
-    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Content>) -> Boolean) {
+    fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Scope, Content>) -> Boolean) {
         val requestListeners =
-            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, Content>) -> Boolean>().also {
+            onNarrativeExitRequest[this] ?: mutableListOf<(NarrationScope<Key, Scope, Content>) -> Boolean>().also {
                 onNarrativeExitRequest[this] = it
             }
 
@@ -110,7 +110,7 @@ interface NarrationScope<Key : Any, Content> {
 
     }
 
-    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, Content>) -> Boolean) {
+    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, Scope, Content>) -> Boolean) {
         currentKey.addOnNarrativeExitRequest(action)
     }
 
