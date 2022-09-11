@@ -15,14 +15,17 @@ val <Key : Any> Key.narrative
     )
 
 @Composable
-fun <Key : Any, N : NarrationScope<Key, *, *>> Narration(
-    scope: N,
-    prepareNarratives: @Composable N.() -> Unit
+infix fun <Key : Any, N : NarrationScope<Key, *, *>> N.Narration(
+    prepareNarratives: N.() -> Unit
 ) {
-    CompositionLocalProvider(LocalNarrationScope provides scope) {
-        with(scope) {
-            prepareNarratives()
-            Narrate()
-        }
+    LocalNarrationScope.current?.addChild(this)
+    for (collector in scopeCollectors) {
+        collector collect this
     }
+    scopeCollectors.clear()
+    CompositionLocalProvider(LocalNarrationScope provides this) {
+        prepareNarratives()
+        Narrate()
+    }
+
 }

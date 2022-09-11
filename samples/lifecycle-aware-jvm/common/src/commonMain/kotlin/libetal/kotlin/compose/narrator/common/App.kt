@@ -55,8 +55,6 @@ fun App() =
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-            val userState = mutableStateOf<User?>(null)
-
             Narration<AppNarrations> {
 
                 AppNarrations.HOME {
@@ -77,10 +75,10 @@ fun App() =
                     }
                 }
 
-                AppNarrations.SETTINGS {
-                    "App" info "Recreating SETTINGS"
-                    Narration(userState, fadeIn() + slideInVertically { it }, slideOutVertically { -it }) {
-                        "App" info "Recreating state Narration"
+                AppNarrations.SETTINGS(this, { HomeViewModel() }) {
+                    // NOTICE: Keeping states here isn't advisable as the behaviour isn't as you'd prefer
+                    Narration(it.userState, fadeIn() + slideInVertically { it }, slideOutVertically { -it }) {
+
                         val t = this
 
                         val login = createPremise { it == null }
@@ -101,7 +99,7 @@ fun App() =
                                 }
                             }
 
-                            this@login.addOnExitRequest {
+                            addOnExitRequest {
                                 currentValue != null
                             }
 
@@ -129,7 +127,7 @@ fun App() =
 
                 }
 
-                AppNarrations.VIDEOS({ HomeViewModel() }) {
+                AppNarrations.VIDEOS(this, { HomeViewModel() }) {
 
                     var allowExit by remember { it.allowExitState }
                     val count by remember { it.countState }
@@ -146,20 +144,11 @@ fun App() =
                         }
                     }
 
+                    addOnExitRequest {
+                        allowExit
+                    }
+
                 }
-
-
-                /**
-                 * TODO: Use this way to get narrates to work
-                 * this are like plot twists or sub stories
-                 * AppNarrations.VIDEOS_SUBSECTIONS twists {
-                 *     VideosSubSections()
-                 * }
-                 * // bad word given it's can be used in may apps
-                 * AppNarrations.VIDEOS_SUBSECTIONS setting {
-                 *     VideosSubSections()
-                 * }
-                 **/
 
             }
         }
@@ -167,25 +156,8 @@ fun App() =
 
 
 @Composable
-fun CardedComponent(padding: Dp, composable: @Composable ColumnScope.() -> Unit) {
-    Card {
-        Column(Modifier.padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
-            composable()
-        }
+fun CardedComponent(padding: Dp, composable: @Composable ColumnScope.() -> Unit) = Card {
+    Column(Modifier.padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
+        composable()
     }
 }
-
-@Composable
-fun VideosSubSections() {
-
-    /*AppNarrations.VIDEOS_HOME narrates {
-        Text("Videos Home")
-    }
-
-    AppNarrations.VIDEOS_SETTINGS narrates {
-        Text("Videos Settings")
-    }*/
-
-}
-
-

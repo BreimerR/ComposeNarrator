@@ -44,7 +44,7 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
         composables[key] = content
     }
 
-    fun add(child: NarrationScope<*, *, *>) {
+    fun addChild(child: NarrationScope<*, *, *>) {
         @Suppress("UNCHECKED_CAST")
         (child as NarrationScope<out Any, out NarrativeScope, Content>)
 

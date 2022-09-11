@@ -5,8 +5,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.*
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
-import libetal.kotlin.compose.narrator.interfaces.NarrationScope
-import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 
 /**
@@ -14,51 +12,22 @@ import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
  * If provided handles
  **/
 @Composable
-fun <Key : Any> Narration(prepareComponents: @Composable NarrationScopeImpl<Key>.() -> Unit) {
-    val backStack = NarrationBackStack(
+fun <Key : Any> Narration(prepareComponents: NarrationScopeImpl<Key>.() -> Unit) = NarrationScopeImpl(
+    uuid = "${prepareComponents.hashCode()}",
+    backStack = NarrationBackStack(
         remember { mutableStateListOf<Key>() }
     )
-    val current = LocalNarrationScope.current
-    val scope = NarrationScopeImpl(
-        "${prepareComponents.hashCode()}",
-        backStack
-    )
-    current?.add(scope)
-    for (collector in scopeCollectors) {
-        collector collect scope
-    }
-    scopeCollectors.clear()
-    Narration(scope, prepareComponents)
-}
+) Narration prepareComponents
 
 @Composable
 fun <T> Narration(
     state: MutableState<T>,
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
-    prepareNarrations: @Composable StateNarrationScope<T, ScopedComposable<StateNarrativeScope>>.() -> Unit
-) {
-
-    val current = LocalNarrationScope.current
-
-    val scope = StateNarrationScopeImpl(
-        "${prepareNarrations.hashCode()}",
-        remember { state },
-        enterTransition,
-        exitTransition
-    )
-
-    current?.add(scope)
-
-    for (collector in scopeCollectors) {
-        collector collect scope
-    }
-    scopeCollectors.clear()
-    CompositionLocalProvider(LocalNarrationScope provides scope) {
-        with(scope) {
-            prepareNarrations()
-            Narrate()
-        }
-    }
-}
-
+    prepareNarrations: StateNarrationScope<T, ScopedComposable<StateNarrativeScope>>.() -> Unit
+) = StateNarrationScopeImpl(
+    uuid = "${prepareNarrations.hashCode()}",
+    state = remember { state },
+    enterTransition = enterTransition,
+    exitTransition = exitTransition
+) Narration prepareNarrations

@@ -11,8 +11,9 @@ import libetal.kotlin.debug.info
 
 class HomeViewModel : ViewModel(Long.MAX_VALUE) {
 
-    val allowExitState = mutableStateOf(false)
     val countState = mutableStateOf(0)
+    val userState = mutableStateOf<User?>(null)
+    val allowExitState = mutableStateOf(false)
 
     private var count
         get() = countState.value
