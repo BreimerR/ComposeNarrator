@@ -14,16 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import libetal.kotlin.compose.narrator.ComposableFun
-import libetal.kotlin.compose.narrator.Narration
-import libetal.kotlin.compose.narrator.createScopeCollector
+import libetal.kotlin.compose.narrator.*
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 @Composable
 fun App() =
     Column(Modifier.fillMaxSize()) {
 
-        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ComposableFun>>()
+        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
 
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(MaterialTheme.colors.primary)

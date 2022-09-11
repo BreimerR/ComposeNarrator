@@ -1,6 +1,8 @@
 package libetal.kotlin.compose.narrator.common
 
-import androidx.compose.animation.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,21 +14,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import libetal.kotlin.compose.narrator.ComposableFun
-import libetal.kotlin.compose.narrator.Narration
-import libetal.kotlin.compose.narrator.common.AppNarrations.*
+import libetal.kotlin.compose.narrator.*
+import libetal.kotlin.compose.narrator.common.AppNarrations.SETTINGS
+import libetal.kotlin.compose.narrator.common.AppNarrations.VIDEOS
 import libetal.kotlin.compose.narrator.common.data.User
 import libetal.kotlin.compose.narrator.common.models.HomeViewModel
-import libetal.kotlin.compose.narrator.createScopeCollector
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
-import libetal.kotlin.compose.narrator.invoke
-import libetal.kotlin.debug.info
 
 @Composable
 fun App() =
     Column(Modifier.fillMaxSize()) {
 
-        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ComposableFun>>()
+        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
 
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(MaterialTheme.colors.primary)
