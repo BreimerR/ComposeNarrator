@@ -49,8 +49,6 @@ X
 (.idea/artifacts/common_desktop_1_0_2.xml,8/7/879d70a22f875de30e69294e9ee44bf04b2905d1
 w
 G.idea/sonarlint/issuestore/2/a/2afbb999f001938c88fa43fc2ef52abf0f8213e4,5/1/516e730a14e71f02fa73f3acd6dc7cea9a9fe002
-e
-5.idea/artifacts/lifecycle_aware_jvm_desktop_1_0_2.xml,4/f/4f8fdecdcdbded3731ee05c1531948959bc89343
 [
 +.idea/artifacts/lifecycle_desktop_1_0_2.xml,4/d/4d057d37db9bf254c0652bd36d0918544d1a903e
 V
@@ -101,8 +99,6 @@ c
 wsamples/lifecycle-aware-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/common/models/HomeViewModel.kt,e/6/e65d2c630d476de985ad82e01ab5df87cd628870
 £
 ssamples/lifecycle-aware-jvm/android/src/main/java/libetal/kotlin/compose/narrator/lifecycle/android/MainActivity.kt,0/0/0055e5431124c9b6c89724e31545199f80792766
-C
-settings.gradle.kts,7/4/749edfcc96398253e5b3416184e95c46621da850
 œ
 lsamples/lifecycle-aware-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/common/data/User.kt,d/2/d2363b98586413e32edd1fbb93802f65e6829f02
 —
