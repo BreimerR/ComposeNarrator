@@ -89,8 +89,6 @@ Fsamples/lifecycle-aware-jvm/common/src/androidMain/AndroidManifest.xml,1/d/1de
 psamples/lifecycle-aware-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/common/AppNarrations.kt,d/b/dbff81d60f15ec7920b87db1af0b3d4939e2c834
 S
 #narrator/lifecycle/build.gradle.kts,d/a/dacd287b3e0649c720a028d8bc3287454ab2015d
-]
--narrator/lifecycle-aware-jvm/build.gradle.kts,1/a/1aee75d1df5b57894f982d059ee9865cba8f9005
 d
 4samples/lifecycle-aware-jvm/android/build.gradle.kts,2/9/29f4654aea723acf19317d2d796abbeae1bc5040
 c

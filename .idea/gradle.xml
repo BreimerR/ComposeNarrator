@@ -19,10 +19,10 @@
             <option value="$PROJECT_DIR$/samples/core-jvm/android" />
             <option value="$PROJECT_DIR$/samples/core-jvm/common" />
             <option value="$PROJECT_DIR$/samples/core-jvm/desktop" />
-            <option value="$PROJECT_DIR$/samples/lifecycle-aware-jvm" />
-            <option value="$PROJECT_DIR$/samples/lifecycle-aware-jvm/android" />
-            <option value="$PROJECT_DIR$/samples/lifecycle-aware-jvm/common" />
-            <option value="$PROJECT_DIR$/samples/lifecycle-aware-jvm/desktop" />
+            <option value="$PROJECT_DIR$/samples/lifecycle-aware" />
+            <option value="$PROJECT_DIR$/samples/lifecycle-aware/android" />
+            <option value="$PROJECT_DIR$/samples/lifecycle-aware/common" />
+            <option value="$PROJECT_DIR$/samples/lifecycle-aware/desktop" />
           </set>
         </option>
       </GradleProjectSettings>

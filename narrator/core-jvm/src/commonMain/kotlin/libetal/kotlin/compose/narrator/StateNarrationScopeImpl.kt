@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
-import libetal.kotlin.debug.info
 import libetal.kotlin.laziest
 
 class StateNarrationScopeImpl<T>(
@@ -17,8 +16,6 @@ class StateNarrationScopeImpl<T>(
 
     var isAnimating = false
     var endedAnimation = false
-    val currentSelector
-        get() = stateSelectors[currentKey] ?: throw RuntimeException("Kotlin Error should not be null unless wrongly cleared")
 
     /**
      * Can't save the old value of the state

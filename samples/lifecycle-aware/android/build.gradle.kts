@@ -16,6 +16,11 @@ group = "$projectGroup.narrator.samples.android"
 version = projectVersion
 
 dependencies {
+    implementation(compose.runtime)
+    implementation(compose.material)
+    implementation(compose.animation)
+    implementation(compose.materialIconsExtended)
+    implementation(project(":narrator:core-jvm"))
     implementation(project(":samples:lifecycle-aware:common"))
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("com.google.android.material:material:1.6.1")
@@ -24,7 +29,7 @@ dependencies {
 android {
     compileSdk = androidCompileSdkVersion.toInt()
     defaultConfig {
-        applicationId = "$projectGroup.narrator.lifecycle.aware.android"
+        applicationId = "$projectGroup.narrator.lifecycle.aware.jvm.android"
         minSdk = androidMinSdkVersion.toInt()
         targetSdk = androidTargetSdkVersion.toInt()
         versionCode = 1

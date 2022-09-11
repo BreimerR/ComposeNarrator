@@ -7,7 +7,8 @@ import libetal.kotlin.compose.narrator.lifecycle.ViewModel
 import libetal.kotlin.debug.info
 
 class CounterViewModel : ViewModel(10000) {
-    val jobs = mutableListOf<Job>()
+
+    private val jobs = mutableListOf<Job>()
     val footerLeft = mutableStateListOf<Long>()
     val footerRight = mutableStateListOf<Long>()
     val headerCounters = mutableStateListOf<Long>()
@@ -51,4 +52,5 @@ class CounterViewModel : ViewModel(10000) {
     companion object {
         const val TAG = "CounterViewModel"
     }
+
 }

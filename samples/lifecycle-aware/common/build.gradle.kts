@@ -7,7 +7,7 @@ val androidTargetSdkVersion: String by project
 val androidCompileSdkVersion: String by project
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.compose")
     kotlin("multiplatform")
 }
@@ -19,7 +19,9 @@ version = projectVersion
 kotlin {
 
     android {
-
+        compilations.all {
+            kotlinOptions.jvmTarget = jvmTargetVersion
+        }
     }
 
     jvm("desktop") {
@@ -28,23 +30,14 @@ kotlin {
         }
     }
 
-    js(IR) {
-        browser {
-            testTask {
-                testLogging.showStandardStreams = true
-                useKarma {
-                    useChromeHeadless()
-                    useFirefox()
-                }
-            }
-        }
-        binaries.executable()
-    }
-
-
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(compose.runtime)
+                implementation(compose.material)
+                implementation(compose.animation)
+                implementation(compose.materialIconsExtended)
+                implementation(project(":narrator:core-jvm"))
                 implementation(project(":narrator:lifecycle-aware"))
             }
         }
@@ -53,14 +46,22 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
+        }
     }
 
 }
 
+@Suppress("UnstableApiUsage")
 android {
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
+
         minSdk = androidMinSdkVersion.toInt()
         targetSdk = androidTargetSdkVersion.toInt()
     }

@@ -5,7 +5,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,8 +15,8 @@ import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 
 @Composable
 fun Counter() = Narration(
-    { uuid, stack: SnapshotStateList<CounterNarrations> ->
-        NarrationScopeImpl(
+    { uuid, stack ->
+        NarrationScopeImpl<CounterNarrations>(
             uuid,
             NarrationBackStack(
                 stack
