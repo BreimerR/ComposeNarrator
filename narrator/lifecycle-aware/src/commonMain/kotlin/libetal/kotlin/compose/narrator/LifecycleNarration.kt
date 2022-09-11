@@ -12,7 +12,6 @@ import libetal.kotlin.debug.info
 val <Key : Any> Key.viewModelStoreKey
     get() = toString()
 
-
 @Suppress("UNCHECKED_CAST")
 operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
     scope: NarrationScope<Key, NScope, ScopedComposable<NScope>>,
