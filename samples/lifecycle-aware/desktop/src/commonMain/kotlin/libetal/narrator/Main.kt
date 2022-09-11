@@ -22,7 +22,7 @@ fun main() = application {
         }
 
         MaterialTheme {
-            Counter()
+            App()
         }
 
     }

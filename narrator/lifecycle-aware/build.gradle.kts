@@ -4,6 +4,7 @@ import org.jetbrains.compose.compose
 
 val projectGroup: String by project
 val projectVersion: String by project
+val jvmTargetVersion: String by project
 val androidMinSdkVersion: String by project
 val androidTargetSdkVersion: String by project
 val androidCompileSdkVersion: String by project
@@ -23,13 +24,13 @@ kotlin {
     android {
         publishLibraryVariants("release", "debug")
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = jvmTargetVersion
         }
     }
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget =jvmTargetVersion
         }
     }
 
@@ -95,8 +96,8 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 

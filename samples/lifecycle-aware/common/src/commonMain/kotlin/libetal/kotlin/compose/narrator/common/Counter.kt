@@ -13,8 +13,8 @@ import libetal.kotlin.compose.narrator.NarrationScopeImpl
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 
 
-@Composable
-fun Counter() = Narration(
+/*@Composable
+fun Counter() = Narration<CounterNarrations,CounterViewModel>(
     { uuid, stack ->
         NarrationScopeImpl<CounterNarrations>(
             uuid,
@@ -85,7 +85,7 @@ fun Counter() = Narration(
             }
         }
     }
-}
+}*/
 
 
 enum class CounterNarrations {
