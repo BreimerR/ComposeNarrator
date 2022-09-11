@@ -1,9 +1,10 @@
 package libetal.kotlin.compose.narrator
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
+import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.NarrationViewModelStore
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
@@ -53,4 +54,39 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
 
     }
 
+}
+
+@Composable
+fun <Key : Any, VM : ViewModel> Narration(
+    scopeBuilder: (uuid: String, stack: SnapshotStateList<Key>) -> ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>,
+    vmFactory: () -> VM,
+    prepareNarratives: ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>.(VM) -> Unit
+) {
+    val scope = scopeBuilder(
+        "${prepareNarratives.hashCode()}",
+        remember { mutableStateListOf() }
+    )
+
+    NarrationViewModelStore[scope.uuid] = vmFactory
+
+    scope.addOnNarrationEnd {
+        val vm = NarrationViewModelStore[scope.uuid]
+        vm.pause()
+    }
+
+    CompositionLocalProvider(LocalNarrationScope provides scope) {
+
+        val vm = NarrationViewModelStore[scope.uuid]
+
+        with(scope) {
+            @Suppress("UNCHECKED_CAST")
+            prepareNarratives(vm as VM)
+            Narrate()
+        }
+
+        LaunchedEffect(scope) {
+            vm.resume()
+        }
+
+    }
 }

@@ -1,0 +1,98 @@
+package libetal.kotlin.compose.narrator.common
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import libetal.kotlin.compose.narrator.Narration
+import libetal.kotlin.compose.narrator.NarrationScopeImpl
+import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
+import libetal.kotlin.compose.narrator.lifecycle.ViewModel
+
+
+@Composable
+fun Counter() = Narration(
+    { uuid, stack: SnapshotStateList<CounterNarrations> ->
+        NarrationScopeImpl(
+            uuid,
+            NarrationBackStack(
+                stack
+            )
+        )
+    }, { CounterViewModel() }) { counterViewModel ->
+
+    CounterNarrations.HOME {
+        val header = remember { counterViewModel.headerCounters }
+        val footerLeft = remember { counterViewModel.footerLeft }
+        val footerRight = remember { counterViewModel.footerRight }
+
+        val hI = remember { counterViewModel.hI }
+        val fLi = remember { counterViewModel.fLi }
+        val fRi = remember { counterViewModel.fRi }
+
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            CardedComponent(8.dp) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Button({
+                        counterViewModel.addHeaderCounter()
+                    }) {
+                        Text("Next Child")
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Button({
+
+                    }) {
+                        Text("Prev Child")
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Text("Some Text ${header.getOrNull(hI.value) ?: 0}")
+                }
+
+                Row(horizontalArrangement = Arrangement.SpaceAround) {
+                    Column {
+                        Button({
+
+                        }) {
+                            Text("Next Child")
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Button({
+
+                        }) {
+                            Text("Prev Child")
+                        }
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Column {
+                        Button({
+
+                        }) {
+                            Text("Next Child")
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Button({
+
+                        }) {
+                            Text("Prev Child")
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
+enum class CounterNarrations {
+    HOME,
+    RESET;
+}

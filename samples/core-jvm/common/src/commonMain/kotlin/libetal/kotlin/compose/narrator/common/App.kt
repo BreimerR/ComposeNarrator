@@ -33,11 +33,7 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.back {
-                        for (listener in scope.onNarrationEndListeners) {
-                            listener()
-                        }
-                    }
+                    scope.back()
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }
@@ -78,8 +74,8 @@ fun App() =
                     val userState = remember { mutableStateOf<User?>(null) }
 
                     Narration(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
-                        val login = { user: User? -> user == null }
-                        val edit = { user: User? -> user != null }
+                        val login = createPremise { it == null }
+                        val edit = createPremise { it != null }
 
                         login {
                             var name by remember { mutableStateOf("") }
@@ -97,7 +93,7 @@ fun App() =
                         }
 
                         edit {
-                            val user = it!!
+                            val user = currentValue!!
 
                             CardedComponent(4.dp) {
                                 Row {

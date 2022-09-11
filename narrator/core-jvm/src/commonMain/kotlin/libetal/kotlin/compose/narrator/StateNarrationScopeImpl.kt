@@ -9,7 +9,7 @@ import libetal.kotlin.debug.info
 import libetal.kotlin.laziest
 
 class StateNarrationScopeImpl<T>(
-    override val uuid: String,
+    override var uuid: String,
     override val state: MutableState<T>,
     private val enterTransition: EnterTransition? = null,
     private val exitTransition: ExitTransition? = null
@@ -89,7 +89,7 @@ class StateNarrationScopeImpl<T>(
     }
 
     @Composable
-    @ExperimentalAnimationApi
+    @OptIn(ExperimentalAnimationApi::class)
     override fun Narrate(composable: ScopedComposable<StateNarrativeScope>) = if (enterTransition != null) {
         val exitTransition = exitTransition ?: fadeOut()
         AnimatedContent(
@@ -98,7 +98,7 @@ class StateNarrationScopeImpl<T>(
                 enterTransition with exitTransition
             }
         ) {
-            //TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
+            // TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
             val startingAnimation = !isAnimating
             isAnimating = this.transition.currentState != this.transition.targetState
             endedAnimation = !isAnimating && !startingAnimation

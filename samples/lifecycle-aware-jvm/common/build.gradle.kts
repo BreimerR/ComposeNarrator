@@ -30,7 +30,6 @@ kotlin {
         }
     }
 
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -38,7 +37,8 @@ kotlin {
                 implementation(compose.material)
                 implementation(compose.animation)
                 implementation(compose.materialIconsExtended)
-                implementation(project(":narrator:lifecycle-aware-jvm"))
+                implementation(project(":narrator:core-jvm"))
+                implementation(project(":narrator:lifecycle-aware"))
             }
         }
         val commonTest by getting {
@@ -46,14 +46,22 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
+        }
     }
 
 }
 
+@Suppress("UnstableApiUsage")
 android {
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
+
         minSdk = androidMinSdkVersion.toInt()
         targetSdk = androidTargetSdkVersion.toInt()
     }

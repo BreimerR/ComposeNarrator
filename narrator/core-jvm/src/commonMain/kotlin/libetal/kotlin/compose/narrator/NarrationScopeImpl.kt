@@ -12,7 +12,7 @@ import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 import libetal.kotlin.laziest
 
 class NarrationScopeImpl<Key : Any> constructor(
-    override val uuid: String,
+    override var uuid: String,
     override val backStack: ListBackStack<Key>,
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
