@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -14,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import libetal.kotlin.compose.narrator.Narration
 import libetal.kotlin.compose.narrator.NarrationScopeImpl
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
-import libetal.kotlin.compose.narrator.lifecycle.ViewModel
 
 
 @Composable
@@ -48,7 +45,7 @@ fun Counter() = Narration(
                     }
                     Spacer(Modifier.height(6.dp))
                     Button({
-
+                        counterViewModel.removePrevHeaderCounter()
                     }) {
                         Text("Prev Child")
                     }

@@ -29,3 +29,16 @@ infix fun <Key : Any, N : NarrationScope<Key, *, *>> N.Narration(
     }
 
 }
+
+@Composable
+fun <Key : Any, N : NarrationScope<Key, *, *>> Narration(
+    scopeBuilder: (uuid: String) -> N,
+    prepareNarratives: N.() -> Unit
+) {
+    val scope = scopeBuilder(
+        "${prepareNarratives.hashCode()}"
+    )
+
+    scope Narration prepareNarratives
+
+}

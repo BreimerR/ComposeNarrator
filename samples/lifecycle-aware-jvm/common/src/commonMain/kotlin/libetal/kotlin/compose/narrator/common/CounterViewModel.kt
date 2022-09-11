@@ -32,6 +32,15 @@ class CounterViewModel : ViewModel(10000) {
         }
     }
 
+    fun removePrevHeaderCounter() {
+        val i = hI.value
+        if (i == -1) return
+        hI.value -= 1
+        jobs[i].cancel("Removing the counter for $i")
+        jobs.removeAt(i)
+        headerCounters.removeAt(i)
+    }
+
     private fun incrementIndex(i: Int) = coroutineScope.launch(Dispatchers.Main) {
         val current = headerCounters.getOrNull(i) ?: -1
         if (current == -1L) headerCounters.add(i, -1)
