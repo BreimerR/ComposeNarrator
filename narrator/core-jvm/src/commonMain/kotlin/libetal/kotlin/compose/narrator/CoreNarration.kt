@@ -14,11 +14,16 @@ import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
  * If provided handles
  **/
 @Composable
-fun <Key : Any> Narration(prepareComponents: @Composable ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>.() -> Unit) {
+fun <Key : Any> Narration(prepareComponents: @Composable NarrationScopeImpl<Key>.() -> Unit) {
     val backStack = NarrationBackStack(
         remember { mutableStateListOf<Key>() }
     )
-    val scope = NarrationScopeImpl(backStack)
+    val current = LocalNarrationScope.current
+    val scope = NarrationScopeImpl(
+        "${prepareComponents.hashCode()}",
+        backStack
+    )
+    current?.add(scope)
     for (collector in scopeCollectors) {
         collector collect scope
     }
@@ -31,13 +36,19 @@ fun <T> Narration(
     state: MutableState<T>,
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
-    prepareNarrations: StateNarrationScope<T, StateComposable<T>>.() -> Unit
+    prepareNarrations: @Composable StateNarrationScope<T, ScopedComposable<StateNarrativeScope>>.() -> Unit
 ) {
+
+    val current = LocalNarrationScope.current
+
     val scope = StateNarrationScopeImpl(
-        state,
+        "${prepareNarrations.hashCode()}",
+        remember { state },
         enterTransition,
         exitTransition
     )
+
+    current?.add(scope)
 
     for (collector in scopeCollectors) {
         collector collect scope

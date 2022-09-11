@@ -8,6 +8,12 @@ interface StateNarrationScope<T, C> : NarrationScope<Int, StateNarrativeScope, C
 
     val state: MutableState<T>
 
+    var currentValue
+        get() = state.value
+        set(value) {
+            state.value = value
+        }
+
     override val newNarrativeScope
         get() = StateNarrativeScope()
 

@@ -8,6 +8,8 @@ import libetal.kotlin.debug.info
 
 interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
+    val uuid: String
+
     val currentKey: Key
 
     val shouldExit: Boolean
@@ -28,7 +30,7 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     val onNarrationEndListeners: MutableList<() -> Unit>
 
-    val children: MutableList<NarrationScope<Key, Scope, Content>>
+    val children: MutableMap<String, NarrationScope<out Any, out NarrativeScope, Content>>
 
     val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?>
 
@@ -42,15 +44,23 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
         composables[key] = content
     }
 
+    fun add(child: NarrationScope<*, *, *>) {
+        @Suppress("UNCHECKED_CAST")
+        (child as NarrationScope<out Any, out NarrativeScope, Content>)
+
+        if (child.uuid !in children) children[child.uuid] = child
+    }
+
 
     /**
      * backstack
      **/
-    fun back(onNarrationEnd: (() -> Unit)? = null): Boolean {
+    fun back(): Boolean {
         if (shouldExit) {
-            TAG info "Exiting Popping item"
             cleanUp(currentKey)
-            onNarrationEnd?.invoke()
+            for (listener in onNarrationEndListeners) {
+                listener()
+            }
             return true
         }
 
@@ -58,8 +68,9 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
         if (!shouldExit) return false
 
-        for (child in children) {
+        for ((uuid, child) in children) {
             shouldExit = shouldExit && child.back()
+            TAG info "${child::class} exiting = $shouldExit"
             if (!shouldExit) return false
         }
 
@@ -98,6 +109,9 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
     @Composable
     fun Narrate(composable: Content)
 
+    @Composable
+    fun Compose(composable: Content)
+
     operator fun Key.invoke(content: Content) = add(this, content)
 
     fun Key.addOnNarrativeExitRequest(onExitRequest: (NarrationScope<Key, Scope, Content>) -> Boolean) {
@@ -115,9 +129,10 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
     }
 
     fun addOnNarrationEnd(action: () -> Unit) {
-        if (action in onNarrationEndListeners) return
-        onNarrationEndListeners.add(action)
+        if (action !in onNarrationEndListeners)
+            onNarrationEndListeners.add(action)
     }
+
     fun Scope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@NarrationScope, action)
 
     companion object {

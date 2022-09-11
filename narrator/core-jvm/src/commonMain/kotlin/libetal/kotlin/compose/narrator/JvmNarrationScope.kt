@@ -10,11 +10,12 @@ import libetal.kotlin.laziest
 class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
     private val enterTransition: EnterTransition?,
     private val exitTransition: ExitTransition?,
-    delegate: NarrationScope<Key, Scope, Content>,
-    private val composer: @Composable Scope.(Content, start: Boolean, end: Boolean) -> Unit
+    delegate: NarrationScope<Key, Scope, Content>
 ) : NarrationScope<Key, Scope, Content> by delegate {
 
     var isAnimating: Boolean = false
+
+    var endedAnimation = false
 
     override val narrativeScopes by laziest {
         mutableMapOf<Key, Scope>()
@@ -24,8 +25,9 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
         mutableMapOf()
     }
 
-    override val children: MutableList<NarrationScope<Key, Scope, Content>> by laziest {
-        mutableListOf()
+
+    override val children: MutableMap<String, NarrationScope<out Any, out NarrativeScope, Content>> by laziest {
+        mutableMapOf()
     }
 
     override val onNarrationEndListeners: MutableList<() -> Unit> by laziest {
@@ -44,16 +46,16 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
             composable,
             transitionSpec = {
                 enterTransition with exitTransition
-            },
-            contentAlignment = Alignment.CenterEnd
+            }
         ) {
             //TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
             val startingAnimation = !isAnimating
             isAnimating = this.transition.currentState != this.transition.targetState
-            currentNarrativeScope.composer(it, startingAnimation, !isAnimating && !startingAnimation)
+            endedAnimation = !isAnimating && !startingAnimation
+            Compose(composable)
         }
     } else {
-        currentNarrativeScope.composer(composable, false, true)
+        Compose(composable)
     }
 
 }

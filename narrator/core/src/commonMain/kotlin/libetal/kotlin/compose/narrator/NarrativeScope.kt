@@ -10,16 +10,16 @@ abstract class NarrativeScope {
         mutableListOf()
     }
 
-    internal fun <Key : Any ,Scope:NarrativeScope, Content> addOnExitRequest(
-        narrationScope: NarrationScope<Key,Scope, Content>,
+    internal fun <Key : Any, Scope : NarrativeScope, Content> addOnExitRequest(
+        narrationScope: NarrationScope<Key, Scope, Content>,
         action: ExitRequestListener
     ) {
         narrationScope.onCurrentKeyExitRequestListener {
             hasCliffhangers
         }
 
-        if (action in onExitRequestListeners) return
-        onExitRequestListeners.add(action)
+        if (action !in onExitRequestListeners)
+            onExitRequestListeners.add(action)
     }
 
     val hasCliffhangers

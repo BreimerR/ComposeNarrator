@@ -49,11 +49,9 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
         }
     }
 
-    override fun back(onNarrationEnd: (() -> Unit)?): Boolean {
-        if (super.back(onNarrationEnd)) {
-            TAG info "Progressive exit"
-            backStack.pop()
-        }
+    override fun back(): Boolean {
+        if (super.back()) backStack.pop()
+
         return backStack.isEmpty
     }
 

@@ -3,8 +3,6 @@
 esamples/core-jvm/common/src/commonMain/kotlin/libetal/kotlin/compose/narrator/common/AppNarrations.kt,8/6/86ff18f40aae1ded9b25f0ba42593d7b0be8893d
 @
 build.gradle.kts,d/b/dbcff70658daf80b53ce624f6adcaa529df5ed8d
-Ž
-^samples/core-jvm/android/src/main/java/libetal/kotlin/compose/narrator/android/MainActivity.kt,8/e/8e976dbe098ee7993def2da87254a4a520cd1625
 N
 narrator/core/build.gradle.kts,d/b/dbde488efed3ca7163f2bd8b1b09ce78ff18f625
 …

@@ -1,18 +1,22 @@
 package libetal.kotlin.compose.narrator
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 import libetal.kotlin.debug.info
+import libetal.kotlin.laziest
 
 class StateNarrationScopeImpl<T>(
+    override val uuid: String,
     override val state: MutableState<T>,
-    enterTransition: EnterTransition? = null,
-    exitTransition: ExitTransition? = null
-) : StateNarrationScope<T, StateComposable<T>> {
+    private val enterTransition: EnterTransition? = null,
+    private val exitTransition: ExitTransition? = null
+) : StateNarrationScope<T, ScopedComposable<StateNarrativeScope>> {
 
+    var isAnimating = false
+    var endedAnimation = false
     val currentSelector
         get() = stateSelectors[currentKey] ?: throw RuntimeException("Kotlin Error should not be null unless wrongly cleared")
 
@@ -42,9 +46,7 @@ class StateNarrationScopeImpl<T>(
      * }
      * ```
      **/
-    private val delegate = JvmNarrationScope(null, null, this) { composable, starting, ended ->
-        composable(state.value)
-    }
+    //  private val delegate = JvmNarrationScope(enterTransition, exitTransition, this)
 
     override val stateSelectors: MutableMap<Int, NarrationStateKey<T>> = mutableMapOf()
 
@@ -55,29 +57,56 @@ class StateNarrationScopeImpl<T>(
                 if (test(state.value)) return hashCode
             }
 
-            throw RuntimeException("Failed to get a runner for this state ${state.value}")
+            throw RuntimeException("Missing composables: Probably No premise functions were invoked in StateNarration")
         }
 
     override val shouldExit: Boolean
-        get() = true
+        get() = false
 
-    override val composables: MutableMap<Int, StateComposable<T>>
-        get() = delegate.composables
+    override val composables by laziest {
+        mutableMapOf<Int, ScopedComposable<StateNarrativeScope>>()
+    }
 
-    override val narrativeScopes
-        get() = delegate.narrativeScopes
+    override val narrativeScopes by laziest {
+        mutableMapOf<Int, StateNarrativeScope>()
+    }
 
-    override val onNarrationEndListeners: MutableList<() -> Unit>
-        get() = delegate.onNarrationEndListeners
+    override val onNarrationEndListeners: MutableList<() -> Unit> by laziest {
+        mutableListOf()
+    }
 
-    override val children
-        get() = delegate.children
+    override val children by laziest {
+        mutableMapOf<String, NarrationScope<out Any, out NarrativeScope, ScopedComposable<StateNarrativeScope>>>()
+    }
 
-    override val onNarrativeExitRequest
-        get() = delegate.onNarrativeExitRequest
+    override val onNarrativeExitRequest by laziest {
+        mutableMapOf<Int, MutableList<(NarrationScope<Int, StateNarrativeScope, ScopedComposable<StateNarrativeScope>>) -> Boolean>?>()
+    }
 
     @Composable
-    override fun Narrate(composable: StateComposable<T>) = delegate.Narrate(composable)
+    override fun Compose(composable: ScopedComposable<StateNarrativeScope>) {
+        composable(currentNarrativeScope)
+    }
+
+    @Composable
+    @ExperimentalAnimationApi
+    override fun Narrate(composable: ScopedComposable<StateNarrativeScope>) = if (enterTransition != null) {
+        val exitTransition = exitTransition ?: fadeOut()
+        AnimatedContent(
+            composable,
+            transitionSpec = {
+                enterTransition with exitTransition
+            }
+        ) {
+            //TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
+            val startingAnimation = !isAnimating
+            isAnimating = this.transition.currentState != this.transition.targetState
+            endedAnimation = !isAnimating && !startingAnimation
+            composable(currentNarrativeScope)
+        }
+    } else {
+        composable(currentNarrativeScope)
+    }
 
     companion object {
         const val TAG = "StateNarrationScopeImpl"

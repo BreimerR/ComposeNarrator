@@ -1,7 +1,6 @@
 package libetal.kotlin.compose.narrator.common
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -21,6 +20,7 @@ import libetal.kotlin.compose.narrator.common.models.HomeViewModel
 import libetal.kotlin.compose.narrator.createScopeCollector
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.invoke
+import libetal.kotlin.debug.info
 
 @Composable
 fun App() =
@@ -36,11 +36,7 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.back {
-                        for (listener in scope.onNarrationEndListeners) {
-                            listener()
-                        }
-                    }
+                    scope.back()
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }
@@ -58,7 +54,11 @@ fun App() =
         }
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            val userState = mutableStateOf<User?>(null)
+
             Narration<AppNarrations> {
+
                 AppNarrations.HOME {
 
                     CardedComponent(4.dp) {
@@ -78,30 +78,37 @@ fun App() =
                 }
 
                 AppNarrations.SETTINGS {
+                    "App" info "Recreating SETTINGS"
+                    Narration(userState, fadeIn() + slideInVertically { it }, slideOutVertically { -it }) {
+                        "App" info "Recreating state Narration"
+                        val t = this
 
-                    val userState = remember { mutableStateOf<User?>(null) }
-
-                    Narration(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
-                        val login = createPremise { user: User? -> user == null }
-                        val edit = createPremise { user: User? -> user != null }
+                        val login = createPremise { it == null }
+                        val edit = createPremise { it != null }
 
                         login {
                             var name by remember { mutableStateOf("") }
+
                             CardedComponent(4.dp) {
                                 TextField(name, {
                                     name = it
                                 })
 
                                 Button({
-                                    userState.value = User(name)
+                                    currentValue = User(name)
                                 }) {
                                     Text("Save")
                                 }
                             }
+
+                            this@login.addOnExitRequest {
+                                currentValue != null
+                            }
+
                         }
 
                         edit {
-                            val user = it!!
+                            val user = currentValue!!
 
                             CardedComponent(4.dp) {
                                 Row {
@@ -111,15 +118,11 @@ fun App() =
                                     }
                                 }
                                 Button({
-                                    userState.value = null
+                                    currentValue = null
                                 }) {
                                     Text("Clear")
                                 }
                             }
-                        }
-
-                        addOnExitRequest {
-                            userState.value != null
                         }
 
                     }
