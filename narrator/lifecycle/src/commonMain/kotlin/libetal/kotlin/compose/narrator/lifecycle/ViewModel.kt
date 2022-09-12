@@ -1,6 +1,9 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle.State
+import libetal.kotlin.coroutines.IO
 import libetal.kotlin.debug.info
 import libetal.kotlin.laziest
 
@@ -21,6 +24,14 @@ abstract class ViewModel(killTime: Long = 5000L) : LifeCycleAware<ViewModelLifec
     }
 
     fun addObserver(observer: (State) -> Unit) = lifeCycle.addObserver(observer)
+
+    fun launch(suspendedFun: suspend () -> Unit) = coroutineScope.launch(Dispatchers.Main) {
+        suspendedFun()
+    }
+
+    fun ioLaunch(suspendedFun: suspend () -> Unit) = coroutineScope.launch(Dispatchers.IO) {
+        suspendedFun()
+    }
 
     companion object {
         private const val TAG = "ViewModel"
