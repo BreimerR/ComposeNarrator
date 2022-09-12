@@ -39,7 +39,7 @@ kotlin {
                 implementation(compose.material)
                 implementation(compose.animation)
                 implementation(compose.materialIconsExtended)
-                api(project(":narrator:core-jvm"))
+                implementation(project(":narrator:core-jvm"))
             }
         }
         val commonTest by getting {

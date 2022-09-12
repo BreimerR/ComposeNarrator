@@ -9,7 +9,7 @@ import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 
 
 @Composable
-fun <T> Narration(
+fun <T> NarrationJvm(
     state: MutableState<T>,
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,

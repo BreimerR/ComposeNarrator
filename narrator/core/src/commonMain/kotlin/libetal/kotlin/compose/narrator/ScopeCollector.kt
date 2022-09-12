@@ -19,11 +19,12 @@ fun <T : NarrationScope<out Any, out NarrativeScope, *>> createScopeCollector(on
 class ScopeCollector<Scope : NarrationScope<out Any, out NarrativeScope, *>>(private val onScopeCollected: (Scope.() -> Unit)? = null) {
 
     var scope: Scope? = null
+        get() = field
+            ?: throw RuntimeException("No scope initialized in application. Prepare the collector before the NarrationScope you want to collect.")
         private set
 
     operator fun getValue(receiver: Any?, property: KProperty<*>) =
         scope
-            ?: throw RuntimeException("No scope initialized in application. Prepare the collector before the NarrationScope you want to collect.")
 
     infix fun <NScope : NarrationScope<out Any, out NarrativeScope, *>> collect(collectedScope: NScope) {
         try {

@@ -49,7 +49,7 @@ fun App() =
         }
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Narration<AppNarrations> {
+            NarrationJvm<AppNarrations> {
                 AppNarrations.HOME {
 
                     CardedComponent(4.dp) {
@@ -71,7 +71,7 @@ fun App() =
                 AppNarrations.SETTINGS {
                     val userState = remember { mutableStateOf<User?>(null) }
 
-                    Narration(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
+                    NarrationJvm(userState, fadeIn(), slideOutHorizontally { width -> -width }) {
                         val login = createPremise { it == null }
                         val edit = createPremise { it != null }
 

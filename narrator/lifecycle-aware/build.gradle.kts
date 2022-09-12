@@ -30,7 +30,7 @@ kotlin {
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget =jvmTargetVersion
+            kotlinOptions.jvmTarget = jvmTargetVersion
         }
     }
 
@@ -51,6 +51,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
+                api("libetal.libraries.kotlin:io:1.0.2")
+                api("libetal.libraries.kotlin:log:1.0.2")
+                api("libetal.libraries.kotlin:library:1.0.2")
+                api("libetal.libraries.kotlin:coroutines:1.0.2")
+
                 api(project(":narrator:core"))
                 api(project(":narrator:lifecycle"))
 
@@ -59,21 +64,26 @@ kotlin {
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+
             }
         }
 
         val androidMain by getting {
+            dependencies {
+                api(compose.runtime)
+                api(project(":narrator:core-jvm"))
+            }
         }
 
         val androidTest by getting {
             dependencies {
-                implementation("junit:junit:4.13.2")
+                //  implementation("junit:junit:4.13.2")
             }
         }
 
         val desktopMain by getting {
             dependencies {
+                api(project(":narrator:core-jvm"))
             }
         }
 
@@ -81,8 +91,13 @@ kotlin {
             dependencies {
             }
         }
-    }
 
+        val jsMain by getting {
+            dependencies {
+
+            }
+        }
+    }
 
 
 }
@@ -96,8 +111,8 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

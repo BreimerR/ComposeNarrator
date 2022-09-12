@@ -69,14 +69,12 @@ kotlin {
                 api(compose.preview)
                 api(compose.runtime)
                 api(compose.foundation)
-                api("androidx.core:core-ktx:1.8.0")
-                api("androidx.appcompat:appcompat:1.5.0")
             }
         }
 
         val androidTest by getting {
             dependencies {
-                implementation("junit:junit:4.13.2")
+
             }
 
         }
@@ -113,8 +111,8 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

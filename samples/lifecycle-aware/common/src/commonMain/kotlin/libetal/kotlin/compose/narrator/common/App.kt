@@ -25,7 +25,7 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 fun App() =
     Column(Modifier.fillMaxSize()) {
 
-        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
+        val scope = createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
 
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(MaterialTheme.colors.primary)
@@ -35,7 +35,7 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.back()
+                    scope.scope!!.back()
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }
@@ -43,8 +43,8 @@ fun App() =
             Row {
                 IconButton({
                     // scope.narrate(AppNarrations.SETTINGS)
-                    with(scope) {
-                        SETTINGS.narrate()
+                    with(scope.scope!!) {
+                        AppNarrations.SETTINGS.narrate()
                     }
                 }) {
                     Icon(Icons.Default.Settings, "BackAction", tint = MaterialTheme.colors.onPrimary)
@@ -54,7 +54,7 @@ fun App() =
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-            Narration<AppNarrations> {
+            NarrationJvm<AppNarrations> {
 
                 AppNarrations.HOME {
 
@@ -76,7 +76,7 @@ fun App() =
 
                 AppNarrations.SETTINGS(this, { HomeViewModel() }) {
                     // NOTICE: Keeping states here isn't advisable as the behaviour isn't as you'd prefer
-                    Narration(it.userState, fadeIn() + slideInVertically { it }, slideOutVertically { -it }) {
+                    NarrationJvm(it.userState, fadeIn() + slideInVertically { it }, slideOutVertically { -it }) {
 
                         val t = this
 
@@ -84,15 +84,15 @@ fun App() =
                         val edit = createPremise { it != null }
 
                         login {
-                            var name by remember { mutableStateOf("") }
+                            var nameState = remember { mutableStateOf("") }
 
                             CardedComponent(4.dp) {
-                                TextField(name, {
-                                    name = it
+                                TextField(nameState.value, {
+                                    nameState.value = it
                                 })
 
                                 Button({
-                                    currentValue = User(name)
+                                    currentValue = User(nameState.value)
                                 }) {
                                     Text("Save")
                                 }
@@ -128,12 +128,12 @@ fun App() =
 
                 AppNarrations.VIDEOS(this, { HomeViewModel() }) {
 
-                    var allowExit by remember { it.allowExitState }
-                    val count by remember { it.countState }
+                    var allowExitState = remember { it.allowExitState }
+                    val count  = remember { it.countState }
 
                     CardedComponent(4.dp) {
-                        Switch(allowExit, {
-                            allowExit = it
+                        Switch(allowExitState.value, {
+                            allowExitState.value = it
                         })
                         Text("Count at $count")
                         Button({
@@ -143,8 +143,9 @@ fun App() =
                         }
                     }
 
+
                     addOnExitRequest {
-                        allowExit
+                        allowExitState.value
                     }
 
                 }

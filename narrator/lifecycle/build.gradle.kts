@@ -46,11 +46,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
+
                 api("libetal.libraries.kotlin:io:1.0.2")
-                /**
-                 * Including narrator causes project to fetch
-                 * log which is failing for other projects
-                 **/
                 api("libetal.libraries.kotlin:log:1.0.2")
                 api("libetal.libraries.kotlin:library:1.0.2")
                 api("libetal.libraries.kotlin:coroutines:1.0.2")
@@ -63,7 +60,7 @@ kotlin {
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+
             }
         }
 
@@ -86,7 +83,7 @@ kotlin {
         }
         val desktopTest by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                // api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
             }
         }
     }
@@ -100,8 +97,8 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
