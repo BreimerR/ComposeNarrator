@@ -7,7 +7,6 @@ import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.ScopedComposable
 import libetal.kotlin.compose.narrator.common.App
 import libetal.kotlin.compose.narrator.common.AppNarrations
-import libetal.kotlin.compose.narrator.common.Counter
 import libetal.kotlin.compose.narrator.createScopeCollector
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
