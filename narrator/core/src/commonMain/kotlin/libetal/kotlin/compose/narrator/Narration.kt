@@ -14,6 +14,9 @@ val <Key : Any> Key.narrative
         this
     )
 
+val narrationScope
+    @Composable get() = LocalNarrationScope.current ?: throw RuntimeException("Method should be called inside a Narration. Or a composable nesetd inside a Narration")
+
 @Composable
 infix fun <Key : Any, N : NarrationScope<Key, *, *>> N.Narration(
     prepareNarratives: N.() -> Unit
