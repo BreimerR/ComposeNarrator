@@ -1,6 +1,11 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle.State
 import libetal.kotlin.coroutines.IO
@@ -33,9 +38,36 @@ abstract class ViewModel(killTime: Long = 5000L) : LifeCycleAware<ViewModelLifec
         suspendedFun()
     }
 
+    fun <T> SnapshotStateList<T>.fetch(builder: suspend FlowCollector<T>.() -> Unit): SnapshotStateList<T> = also { state ->
+
+        val flow = flow {
+            ioLaunch {
+                builder()
+            }
+        }
+
+        launch {
+            flow.collectLatest {
+                state.add(it)
+            }
+        }
+
+    }
+
+
+    fun <T> MutableState<T>.fetch(builder: suspend MutableState<T>.() -> T) = also { state ->
+        ioLaunch {
+            val value = builder()
+            launch {
+                state.value = value
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "ViewModel"
     }
+
 
 }
 
