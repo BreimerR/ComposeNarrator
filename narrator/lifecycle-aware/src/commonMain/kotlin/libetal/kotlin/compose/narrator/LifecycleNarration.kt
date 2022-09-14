@@ -76,6 +76,11 @@ fun <Key : Any, VM : ViewModel> Narration(
         vm.pause()
     }
 
+    for (collector in scopeCollectors) {
+        collector collect scope
+    }
+    scopeCollectors.clear()
+
     CompositionLocalProvider(LocalNarrationScope provides scope) {
 
         val vm = NarrationViewModelStore[scope.uuid]
