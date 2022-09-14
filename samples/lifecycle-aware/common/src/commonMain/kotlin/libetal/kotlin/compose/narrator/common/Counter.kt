@@ -8,12 +8,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import libetal.kotlin.compose.narrator.Narration
 import libetal.kotlin.compose.narrator.NarrationJvm
 import libetal.kotlin.compose.narrator.NarrationScopeImpl
 import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 
 
-/*@Composable
+@Composable
 fun Counter() = Narration<CounterNarrations,CounterViewModel>(
     { uuid, stack ->
         NarrationScopeImpl<CounterNarrations>(
@@ -85,7 +86,7 @@ fun Counter() = Narration<CounterNarrations,CounterViewModel>(
             }
         }
     }
-}*/
+}
 
 
 enum class CounterNarrations {

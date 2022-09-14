@@ -60,10 +60,12 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
 fun <Key : Any, VM : ViewModel> Narration(
     scopeBuilder: (uuid: String, stack: SnapshotStateList<Key>) -> ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>,
     vmFactory: () -> VM,
-    prepareNarratives: ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>.(VM) -> Unit
+    prepareNarratives: ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>.(viewModel: VM, uuid: String) -> Unit
 ) {
+
+    val uuid = "${prepareNarratives.hashCode()}"
     val scope = scopeBuilder(
-        "${prepareNarratives.hashCode()}",
+        uuid,
         remember { mutableStateListOf() }
     )
 
@@ -80,7 +82,7 @@ fun <Key : Any, VM : ViewModel> Narration(
 
         with(scope) {
             @Suppress("UNCHECKED_CAST")
-            prepareNarratives(vm as VM)
+            prepareNarratives(vm as VM, uuid)
             Narrate()
         }
 

@@ -14,7 +14,7 @@ fun <T> NarrationJvm(
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
     prepareNarrations: StateNarrationScope<T, ScopedComposable<StateNarrativeScope>>.() -> Unit
-) = remember { state }.let { rememberedState ->
+) = state.let { rememberedState ->
     Narration(
         { uuid ->
             StateNarrationScopeImpl(
