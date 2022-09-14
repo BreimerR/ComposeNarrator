@@ -35,11 +35,11 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
      * the current narrative
      * There is need to clean up a few places
      **/
-    fun Key.narrate() {
+    fun Key.narrate(removeCurrentFromBackStack: Boolean = false) {
         if (currentNarrativeScope.hasCliffhangers) {
             val previous = currentKey
             val existedInStack = backStack.navigateTo(this)
-            if (existedInStack) {
+            if (existedInStack || removeCurrentFromBackStack) {
                 backStack.invalidate(previous)
                 cleanUp(previous)
             }
