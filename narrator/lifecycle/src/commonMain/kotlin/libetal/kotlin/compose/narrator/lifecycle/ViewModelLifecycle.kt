@@ -18,8 +18,6 @@ class ViewModelLifecycle(private val owner: Callbacks, killDuration: Long = 5000
 
             State.CREATED -> owner.onCreate()
 
-            State.STARTED -> owner.onStart()
-
             State.PAUSED -> owner.onPause()
 
             State.RESUMED -> owner.onResume()

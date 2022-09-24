@@ -130,10 +130,6 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
                 TAG debug "Resuming... ${this::class.simpleName}: $state"
             }
 
-            State.STARTED -> {
-                TAG debug "Started... ${this::class.simpleName}"
-            }
-
             State.PAUSED -> {
                 pauseJob = transition(State.DESTROYED, deathDate)
                 TAG debug "Pausing ${this::class.simpleName}..."
@@ -201,7 +197,7 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
          *     <li><b>right before</b> {@link android.app.Activity#onPause() onPause} call.
          * </ul>
          */
-        STARTED,
+        // STARTED,
 
         /**
          * Intermediate state awaiting destruction
@@ -227,8 +223,7 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
         val nextState
             get() = when (this) {
                 CREATED -> RESUMED
-                RESUMED -> STARTED
-                STARTED -> STARTED
+                RESUMED -> PAUSED
                 PAUSED -> DESTROYED
                 DESTROYED -> DESTROYED // TODO move to CREATED not sure of side effects
             }
@@ -239,9 +234,6 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
     interface Callbacks {
         fun onCreate() {
         }
-
-        @Deprecated("Use Doesn't make sense",ReplaceWith("onResume"))
-        fun onStart() {}
 
         fun onResume() {}
 
@@ -261,10 +253,6 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
 
         fun resume() {
             lifeCycle.state = State.RESUMED
-        }
-
-        fun start() {
-            lifeCycle.state = State.STARTED
         }
 
         fun pause(killAfter: Long = lifeCycle.deathDate) {
