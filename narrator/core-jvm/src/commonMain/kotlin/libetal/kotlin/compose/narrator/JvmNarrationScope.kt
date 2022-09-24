@@ -2,8 +2,6 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.laziest
 
@@ -30,8 +28,8 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
         mutableMapOf()
     }
 
-    override val onNarrationEndListeners: MutableList<() -> Unit> by laziest {
-        mutableListOf()
+    override val onNarrationEndListeners by laziest {
+        mutableMapOf<Key, MutableList<() -> Unit>>()
     }
 
     override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?> by laziest {
@@ -40,22 +38,17 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate(composable: Content) = if (enterTransition != null) {
-        val exitTransition = exitTransition ?: fadeOut()
-        AnimatedContent(
-            composable,
-            transitionSpec = {
-                enterTransition with exitTransition
-            }
-        ) {
-            //TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
-            val startingAnimation = !isAnimating
-            isAnimating = this.transition.currentState != this.transition.targetState
-            endedAnimation = !isAnimating && !startingAnimation
-            Compose(composable)
+    override fun Narrate(composable: Content) = if (enterTransition != null) AnimatedContent(
+        composable,
+        transitionSpec = {
+            enterTransition with (exitTransition ?: fadeOut())
         }
-    } else {
-        Compose(composable)
+    ) {
+        val startingAnimation = !isAnimating
+        isAnimating = this.transition.currentState != this.transition.targetState
+        endedAnimation = !isAnimating && !startingAnimation
+        super.Narrate(composable)
     }
+    else super.Narrate(composable)
 
 }

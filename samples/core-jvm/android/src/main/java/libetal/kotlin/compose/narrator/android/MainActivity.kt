@@ -7,7 +7,6 @@ import androidx.compose.material.MaterialTheme
 import libetal.kotlin.compose.narrator.*
 import libetal.kotlin.compose.narrator.common.App
 import libetal.kotlin.compose.narrator.common.AppNarrations
-import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 class MainActivity : AppCompatActivity() {
 

@@ -15,6 +15,7 @@ class StateNarrationScopeImpl<T>(
 ) : StateNarrationScope<T, ScopedComposable<StateNarrativeScope>> {
 
     var isAnimating = false
+
     var endedAnimation = false
 
     /**
@@ -45,13 +46,24 @@ class StateNarrationScopeImpl<T>(
      **/
     //  private val delegate = JvmNarrationScope(enterTransition, exitTransition, this)
 
-    override val stateSelectors: MutableMap<Int, NarrationStateKey<T>> = mutableMapOf()
+    override val stateSelectors: MutableMap<String, NarrationStateKey<T>> = mutableMapOf()
 
-    override val currentKey: Int
+    val backStack = mutableListOf<String>()
+
+    override val prevKey: String?
+        get() = backStack.getOrNull(backStack.size - 2)
+
+    override val currentKey: String
         get() {
 
             for ((hashCode, test) in stateSelectors) {
-                if (test(state.value)) return hashCode
+                if (test(state.value)) {
+                    if (backStack.lastOrNull() != hashCode) {
+                        if (hashCode in backStack) backStack.remove(hashCode)
+                        backStack.add(hashCode)
+                    }
+                    return hashCode
+                }
             }
 
             throw RuntimeException("Missing composables: Probably No premise functions were invoked in StateNarration")
@@ -61,15 +73,15 @@ class StateNarrationScopeImpl<T>(
         get() = false
 
     override val composables by laziest {
-        mutableMapOf<Int, ScopedComposable<StateNarrativeScope>>()
+        mutableMapOf<String, ScopedComposable<StateNarrativeScope>>()
     }
 
     override val narrativeScopes by laziest {
-        mutableMapOf<Int, StateNarrativeScope>()
+        mutableMapOf<String, StateNarrativeScope>()
     }
 
-    override val onNarrationEndListeners: MutableList<() -> Unit> by laziest {
-        mutableListOf()
+    override val onNarrationEndListeners by laziest {
+        mutableMapOf<String, MutableList<() -> Unit>>()
     }
 
     override val children by laziest {
@@ -77,7 +89,7 @@ class StateNarrationScopeImpl<T>(
     }
 
     override val onNarrativeExitRequest by laziest {
-        mutableMapOf<Int, MutableList<(NarrationScope<Int, StateNarrativeScope, ScopedComposable<StateNarrativeScope>>) -> Boolean>?>()
+        mutableMapOf<String, MutableList<(NarrationScope<String, StateNarrativeScope, ScopedComposable<StateNarrativeScope>>) -> Boolean>?>()
     }
 
     @Composable
@@ -85,25 +97,31 @@ class StateNarrationScopeImpl<T>(
         composable(currentNarrativeScope)
     }
 
+    override fun cleanUp(key: String) {
+        super.cleanUp(key)
+        backStack.remove(key)
+    }
+
+    /**TODO
+     * Not sure how to enable
+     * transitions without losing the data that was visible
+     * before a state change.
+     **/
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
     override fun Narrate(composable: ScopedComposable<StateNarrativeScope>) = if (enterTransition != null) {
-        val exitTransition = exitTransition ?: fadeOut()
         AnimatedContent(
             composable,
             transitionSpec = {
-                enterTransition with exitTransition
+                enterTransition with (exitTransition ?: fadeOut())
             }
         ) {
-            // TODO I think the end of this animation is denoted when startAnimating = false && isAnimating = false
             val startingAnimation = !isAnimating
             isAnimating = this.transition.currentState != this.transition.targetState
             endedAnimation = !isAnimating && !startingAnimation
-            composable(currentNarrativeScope)
+            super.Narrate(composable)
         }
-    } else {
-        composable(currentNarrativeScope)
-    }
+    } else super.Narrate(composable)
 
     companion object {
         const val TAG = "StateNarrationScopeImpl"

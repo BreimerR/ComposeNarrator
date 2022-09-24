@@ -18,20 +18,20 @@ fun <T : NarrationScope<out Any, out NarrativeScope, *>> createScopeCollector(on
 
 class ScopeCollector<Scope : NarrationScope<out Any, out NarrativeScope, *>>(private val onScopeCollected: (Scope.() -> Unit)? = null) {
 
-    var scope: Scope? = null
-        get() = field
-            ?: throw RuntimeException("No scope initialized in application. Prepare the collector before the NarrationScope you want to collect.")
-        private set
+    private var _value: Scope? = null
 
-    operator fun getValue(receiver: Any?, property: KProperty<*>) =
-        scope
+    val value: Scope
+        get() = _value
+            ?: throw RuntimeException("No scope initialized in application. Prepare the collector before the NarrationScope you want to collect.")
+
+    operator fun getValue(receiver: Any?, property: KProperty<*>) = value
 
     infix fun <NScope : NarrationScope<out Any, out NarrativeScope, *>> collect(collectedScope: NScope) {
         try {
             @Suppress("UNCHECKED_CAST")
             collectedScope as Scope
 
-            scope = collectedScope
+            _value = collectedScope
             onScopeCollected?.invoke(collectedScope)
 
         } catch (e: ClassCastException) {

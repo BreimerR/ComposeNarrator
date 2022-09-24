@@ -1,7 +1,6 @@
 package libetal.kotlin.compose.narrator.common
 
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,10 +17,12 @@ import libetal.kotlin.compose.narrator.*
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 @Composable
-fun App() =
+fun App() = MaterialTheme {
+
     Column(Modifier.fillMaxSize()) {
 
-        val scope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
+        val scope =
+            createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
 
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(MaterialTheme.colors.primary)
@@ -31,7 +32,7 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.back()
+                    scope.value.back()
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }
@@ -39,7 +40,7 @@ fun App() =
             Row {
                 IconButton({
                     // scope.narrate(AppNarrations.SETTINGS)
-                    with(scope) {
+                    with(scope.value) {
                         AppNarrations.SETTINGS.narrate()
                     }
                 }) {
@@ -76,14 +77,14 @@ fun App() =
                         val edit = createPremise { it != null }
 
                         login {
-                            var name by remember { mutableStateOf("") }
+                            var nameState = remember { mutableStateOf("") }
                             CardedComponent(4.dp) {
-                                TextField(name, {
-                                    name = it
+                                TextField(nameState.value, {
+                                    nameState.value = it
                                 })
 
                                 Button({
-                                    userState.value = User(name)
+                                    userState.value = User(nameState.value)
                                 }) {
                                     Text("Save")
                                 }
@@ -154,7 +155,7 @@ fun App() =
             }
         }
     }
-
+}
 
 @Composable
 fun CardedComponent(padding: Dp, composable: @Composable ColumnScope.() -> Unit) {

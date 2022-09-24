@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="libetal.kotlin.compose.narrator.lifecycle.android">
+          package="libetal.kotlin.compose.narrator.core.lifecycle.aware.android">
 
     <application
-            android:allowBackup="false"
             android:supportsRtl="true"
             android:theme="@style/Theme.ComposeNarrator.Example.NoActionBar">
         <activity
@@ -16,4 +15,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

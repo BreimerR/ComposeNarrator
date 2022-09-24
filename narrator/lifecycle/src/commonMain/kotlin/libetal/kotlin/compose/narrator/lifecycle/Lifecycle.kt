@@ -17,6 +17,7 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
+import libetal.kotlin.debug.debug
 import libetal.kotlin.laziest
 import libetal.kotlin.debug.info
 import kotlin.coroutines.CoroutineContext
@@ -121,33 +122,33 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
         when (state) {
             State.CREATED -> {
                 pauseJob = null
-                TAG info "Creating... ${this::class.simpleName}"
+                TAG debug "Creating... ${this::class.simpleName}"
             }
 
             State.RESUMED -> {
                 pauseJob = null
-                TAG info "Resuming... ${this::class.simpleName}: $state"
+                TAG debug "Resuming... ${this::class.simpleName}: $state"
             }
 
             State.STARTED -> {
-                TAG info "Started... ${this::class.simpleName}"
+                TAG debug "Started... ${this::class.simpleName}"
             }
 
             State.PAUSED -> {
                 pauseJob = transition(State.DESTROYED, deathDate)
-                TAG info "Pausing ${this::class.simpleName}..."
+                TAG debug "Pausing ${this::class.simpleName}..."
             }
 
             State.DESTROYED -> {
                 ioScope.cancel()
                 coroutineScope.cancel()
-                TAG info "Destroyed... ${this::class.simpleName}"
+                TAG debug "Destroyed... ${this::class.simpleName}"
             }
         }
 
         observers.forEach {
             it.onStateChange(state)
-            TAG info "Calling state change for ${this::class.simpleName} $state"
+            TAG debug "Calling state change for ${this::class.simpleName} $state"
         }
 
         lambdaObservers.forEach { (_, func) ->
@@ -236,9 +237,10 @@ abstract class Lifecycle(internal var deathDate: Long = 5000L) {
     }
 
     interface Callbacks {
+        fun onCreate() {
+        }
 
-        fun onCreate() {}
-
+        @Deprecated("Use Doesn't make sense",ReplaceWith("onResume"))
         fun onStart() {}
 
         fun onResume() {}

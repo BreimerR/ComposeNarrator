@@ -20,13 +20,13 @@ dependencies {
     implementation(compose.material)
     implementation(compose.animation)
     implementation(compose.materialIconsExtended)
-    implementation(project(":narrator:core-jvm"))
     implementation(project(":samples:lifecycle-aware:common"))
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("com.google.android.material:material:1.6.1")
 }
 
 android {
+    compileSdkVersion = "android-$androidCompileSdkVersion"
     compileSdk = androidCompileSdkVersion.toInt()
     defaultConfig {
         applicationId = "$projectGroup.narrator.lifecycle.aware.jvm.android"

@@ -4,6 +4,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 
@@ -14,16 +15,14 @@ fun <T> NarrationJvm(
     enterTransition: EnterTransition? = null,
     exitTransition: ExitTransition? = null,
     prepareNarrations: StateNarrationScope<T, ScopedComposable<StateNarrativeScope>>.() -> Unit
-) = state.let { rememberedState ->
-    Narration(
-        { uuid ->
-            StateNarrationScopeImpl(
-                uuid = uuid,
-                state = rememberedState,
-                enterTransition = enterTransition,
-                exitTransition = exitTransition
-            )
-        },
-        prepareNarrations
-    )
-}
+) = Narration(
+    { uuid ->
+        StateNarrationScopeImpl(
+            uuid = uuid,
+            state = state,
+            enterTransition = enterTransition,
+            exitTransition = exitTransition
+        )
+    },
+    prepareNarrations
+)

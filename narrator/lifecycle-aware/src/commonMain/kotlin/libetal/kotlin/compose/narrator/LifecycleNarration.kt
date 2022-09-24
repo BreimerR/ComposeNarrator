@@ -8,6 +8,7 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.NarrationViewModelStore
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
+import libetal.kotlin.debug.debug
 import libetal.kotlin.debug.info
 
 val <Key : Any> Key.viewModelStoreKey
@@ -28,15 +29,11 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
 
         val viewModel = NarrationViewModelStore[key] as VM
 
-        viewModel.create()
-
         content(viewModel)
 
-        LaunchedEffect(viewModel) {
+        LaunchedEffect(true) {
+            viewModel.create()
             viewModel.resume()
-        }
-
-        addOnExitRequest {
 
             viewModel.addObserver {
                 if (it == Lifecycle.State.DESTROYED) {
@@ -45,16 +42,20 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
                     }
                 }
             }
+        }
 
+        addOnNarrationEnd {
             viewModel.pause()
-
-            true
-
         }
 
     }
 
 }
+
+val LocalNarrationKeyId = compositionLocalOf<String?> { null }
+
+val currentScopeUUID
+    @Composable get() = LocalNarrationKeyId.current ?: throw RuntimeException("Only Used in viewModel Narrations")
 
 @Composable
 fun <Key : Any, VM : ViewModel> Narration(
@@ -71,17 +72,16 @@ fun <Key : Any, VM : ViewModel> Narration(
 
     NarrationViewModelStore[scope.uuid] = vmFactory
 
-    scope.addOnNarrationEnd {
-        val vm = NarrationViewModelStore[scope.uuid]
-        vm.pause()
-    }
-
+    LocalNarrationScope.current?.addChild(scope)
     for (collector in scopeCollectors) {
         collector collect scope
     }
     scopeCollectors.clear()
 
-    CompositionLocalProvider(LocalNarrationScope provides scope) {
+    CompositionLocalProvider(
+        LocalNarrationScope provides scope,
+        LocalNarrationKeyId provides uuid
+    ) {
 
         val vm = NarrationViewModelStore[scope.uuid]
 
@@ -91,8 +91,26 @@ fun <Key : Any, VM : ViewModel> Narration(
             Narrate()
         }
 
-        LaunchedEffect(scope) {
+        LaunchedEffect(true) {
+
             vm.resume()
+
+            vm.addObserver {
+                if (it == Lifecycle.State.DESTROYED) {
+                    NarrationViewModelStore.invalidate(scope.uuid) {
+                        "LifecycleNarration" debug "Invalidated ${vm::class}"
+                    }
+                }
+            }
+
+        }
+
+        DisposableEffect(vm) {
+
+            onDispose {
+                vm.pause()
+            }
+
         }
 
     }

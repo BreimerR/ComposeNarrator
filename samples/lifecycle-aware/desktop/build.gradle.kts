@@ -18,7 +18,6 @@ kotlin {
             dependencies {
                 implementation(compose.material)
                 implementation(compose.desktop.currentOs)
-                implementation(project(":narrator:core-jvm"))
                 implementation(project(":samples:lifecycle-aware:common"))
             }
         }

@@ -51,46 +51,44 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
+                api("libetal.libraries.kotlin:io:1.0.2")
                 api("libetal.libraries.kotlin:log:1.0.2")
                 api("libetal.libraries.kotlin:library:1.0.2")
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                api("libetal.libraries.kotlin:coroutines:1.0.2")
+
+                api(project(":narrator:core"))
+                api(project(":narrator:lifecycle"))
+
             }
         }
 
         val commonTest by getting {
             dependencies {
-               // implementation(kotlin("test"))
+
             }
         }
 
         val androidMain by getting {
             dependencies {
-                api(compose.preview)
                 api(compose.runtime)
-                api(compose.foundation)
+                api(project(":narrator:core-jvm"))
             }
         }
 
         val androidTest by getting {
             dependencies {
-
+                //  implementation("junit:junit:4.13.2")
             }
-
         }
 
         val desktopMain by getting {
             dependencies {
-                api(compose.preview)
-                api(compose.runtime)
-                api(compose.foundation)
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                api(project(":narrator:core-jvm"))
             }
         }
 
         val desktopTest by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
             }
         }
 
@@ -99,12 +97,13 @@ kotlin {
 
             }
         }
-
     }
+
+
 }
 
+
 android {
-    compileSdkVersion = "android-$androidCompileSdkVersion"
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {

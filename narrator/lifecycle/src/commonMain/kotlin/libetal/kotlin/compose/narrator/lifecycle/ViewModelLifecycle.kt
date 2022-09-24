@@ -10,33 +10,23 @@ class ViewModelLifecycle(private val owner: Callbacks, killDuration: Long = 5000
 
         TAG info "onStateChangeListener: ${this::class.simpleName} state: $state"
 
+        val className = owner::class.name ?: TAG
+
         when (state) {
 
-            State.DESTROYED -> {
-                owner.onDestroy()
-                TAG debug "Destroyed $state ${this::class.name ?: "AnonymousViewModel"}..."
-            }
+            State.DESTROYED -> owner.onDestroy()
 
-            State.CREATED -> {
-                owner.onCreate()
-                TAG info "Created ${this}..."
-            }
+            State.CREATED -> owner.onCreate()
 
-            State.STARTED -> {
-                owner.onStart()
-                TAG info "Started ${this}..."
-            }
+            State.STARTED -> owner.onStart()
 
-            State.PAUSED -> {
-                owner.onPause()
-                TAG info "Paused ${this}..."
-            }
+            State.PAUSED -> owner.onPause()
 
-            State.RESUMED -> {
-                owner.onResume()
-                TAG info "Resumed ${this}..."
-            }
+            State.RESUMED -> owner.onResume()
+
         }
+
+        className debug state.name
 
         super.onStateChange(state)
 

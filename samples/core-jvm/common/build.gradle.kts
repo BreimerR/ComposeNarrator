@@ -35,11 +35,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.material)
-                implementation(compose.animation)
-                implementation(compose.materialIconsExtended)
-                implementation(project(":narrator:core-jvm"))
+                api(compose.runtime)
+                api(compose.material)
+                api(compose.animation)
+                api(compose.materialIconsExtended)
+                api(project(":narrator:core-jvm"))
             }
         }
         val commonTest by getting {
@@ -53,6 +53,7 @@ kotlin {
 
 @Suppress("UnstableApiUsage")
 android {
+    compileSdkVersion = "android-$androidCompileSdkVersion"
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {

@@ -1,16 +1,20 @@
 package libetal.kotlin.compose.narrator.interfaces
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
+import libetal.kotlin.debug.debug
+import libetal.kotlin.debug.warn
 import libetal.kotlin.debug.info
-
 
 interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     val uuid: String
 
     val currentKey: Key
+
+    val prevKey: Key?
 
     val shouldExit: Boolean
 
@@ -28,19 +32,18 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
             narrativeScopes[currentKey] = it
         }
 
-    val onNarrationEndListeners: MutableList<() -> Unit>
+    val onNarrationEndListeners: MutableMap<Key, MutableList<() -> Unit>>
 
     val children: MutableMap<String, NarrationScope<out Any, out NarrativeScope, Content>>
 
     val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?>
 
-
-    /**
-     * Adds a view to the current
-     * composition backStack
-     **/
     fun add(key: Key, content: Content) {
-        if (key in composables) throw RuntimeException("Can't initialize same key twice")
+        if (key in composables) {
+            TAG warn "Can't initialize same key twice: ${this::class} $key"
+            TAG info "Need Help Resolving for this"
+            return
+        }
         composables[key] = content
     }
 
@@ -56,21 +59,13 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
      * backstack
      **/
     fun back(): Boolean {
-        if (shouldExit) {
-            cleanUp(currentKey)
-            for (listener in onNarrationEndListeners) {
-                listener()
-            }
-            return true
-        }
 
         var shouldExit = runNarrativeExitRequestListeners(true)
 
         if (!shouldExit) return false
 
-        for ((uuid, child) in children) {
+        for ((_, child) in children) {
             shouldExit = shouldExit && child.back()
-            TAG info "${child::class} exiting = $shouldExit"
             if (!shouldExit) return false
         }
 
@@ -107,7 +102,31 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
     }
 
     @Composable
-    fun Narrate(composable: Content)
+    fun Narrate(composable: Content) {
+
+        Compose(composable)
+
+        DisposableEffect(currentKey) {
+
+            onDispose {
+
+                val key = prevKey ?: return@onDispose
+
+                TAG debug "Disposing $key"
+
+                cleanUp(key)
+
+                val listeners = onNarrationEndListeners[key] ?: return@onDispose
+
+                for (listener in listeners) {
+                    listener()
+                }
+
+            }
+
+        }
+
+    }
 
     @Composable
     fun Compose(composable: Content)
@@ -128,9 +147,13 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
         currentKey.addOnNarrativeExitRequest(action)
     }
 
-    fun addOnNarrationEnd(action: () -> Unit) {
-        if (action !in onNarrationEndListeners)
-            onNarrationEndListeners.add(action)
+    fun Key.addOnNarrationEnd(action: () -> Unit) {
+        val listeners = onNarrationEndListeners[this] ?: mutableListOf<() -> Unit>().also {
+            onNarrationEndListeners[this] = it
+        }
+
+        if (action !in listeners)
+            listeners.add(action)
     }
 
     fun Scope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@NarrationScope, action)

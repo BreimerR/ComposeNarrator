@@ -1,4 +1,4 @@
-package libetal.kotlin.compose.narrator.lifecycle.android
+package libetal.kotlin.compose.narrator.core.lifecycle.aware.android
 
 import android.os.Bundle
 import androidx.activity.compose.setContent

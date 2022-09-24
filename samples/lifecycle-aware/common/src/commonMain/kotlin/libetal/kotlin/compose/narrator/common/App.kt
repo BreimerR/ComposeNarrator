@@ -35,7 +35,7 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.scope!!.back()
+                    scope.value!!.back()
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }
@@ -43,7 +43,7 @@ fun App() =
             Row {
                 IconButton({
                     // scope.narrate(AppNarrations.SETTINGS)
-                    with(scope.scope!!) {
+                    with(scope.value!!) {
                         AppNarrations.SETTINGS.narrate()
                     }
                 }) {
