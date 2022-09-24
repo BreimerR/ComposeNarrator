@@ -10,11 +10,7 @@ import libetal.kotlin.compose.narrator.common.AppNarrations
 
 class MainActivity : AppCompatActivity() {
 
-    private val narrationScope by createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>> {
-        addOnNarrationEnd {
-            super.onBackPressed()
-        }
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +24,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
+  /*  override fun onBackPressed() {
         narrationScope.back()
-    }
+    }*/
 
     companion object {
         const val TAG = "MainActivity"

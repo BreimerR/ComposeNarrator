@@ -53,7 +53,7 @@ kotlin {
 
 @Suppress("UnstableApiUsage")
 android {
-    compileSdkVersion = "android-$androidCompileSdkVersion"
+    compileSdkVersion = androidCompileSdkVersion
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {

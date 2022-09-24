@@ -4,10 +4,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 
 
@@ -16,15 +14,31 @@ fun <T> NarrationJvm(
     state: MutableState<T>,
     enterTransition: EnterTransition? = fadeIn(),
     exitTransition: ExitTransition? = fadeOut(),
-    prepareNarrations: StateNarrationScope<T, ScopedComposable<StateNarrativeScope>>.() -> Unit
-) = Narration(
-    { uuid ->
-        StateNarrationScopeImpl(
-            uuid = uuid,
-            state = state,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition
-        )
-    },
-    prepareNarrations
-)
+    prepareNarratives: ListBasedStateNarrationScopeImplJvm<T>.() -> Unit
+) {
+
+    val uuid = prepareNarratives.hashCode()
+
+    val scope = ListBasedStateNarrationScopeImplJvm(
+        uuid = uuid.toString(),
+        state = remember { state },
+        enterTransition = enterTransition,
+        exitTransition = exitTransition,
+        stack = remember { mutableStateListOf() }
+    )
+
+    LocalNarrationScope.current?.addChild(scope)
+
+    for (collector in scopeCollectors) {
+        collector collect scope
+    }
+
+    scopeCollectors.clear()
+
+    prepareNarratives(scope)
+
+    CompositionLocalProvider(LocalNarrationScope provides scope) {
+        scope.Narrate()
+    }
+
+}

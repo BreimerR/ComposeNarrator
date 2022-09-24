@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
+import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.NarrationViewModelStore
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
@@ -38,7 +39,45 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
             viewModel.addObserver {
                 if (it == Lifecycle.State.DESTROYED) {
                     NarrationViewModelStore.invalidate(key) {
-                        "${viewModel::class}" info "Invalidated the viewModel"
+
+                    }
+                }
+            }
+        }
+
+        addOnNarrationEnd {
+            viewModel.pause()
+        }
+
+    }
+
+}
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T, VM : ViewModel> String.invoke(
+    scope: StateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>,
+    vmFactory: () -> VM,
+    content: @Composable StateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.(VM) -> Unit
+) = with(scope) {
+
+    val key = this@invoke.viewModelStoreKey
+
+    NarrationViewModelStore[key] = vmFactory
+
+    add(this@invoke) {
+
+        val viewModel = NarrationViewModelStore[key] as VM
+
+        content(viewModel)
+
+        LaunchedEffect(true) {
+            viewModel.create()
+            viewModel.resume()
+
+            viewModel.addObserver {
+                if (it == Lifecycle.State.DESTROYED) {
+                    NarrationViewModelStore.invalidate(key) {
+
                     }
                 }
             }
