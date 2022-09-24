@@ -5,13 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
+import libetal.kotlin.debug.info
 import libetal.kotlin.laziest
 
 class StateNarrationScopeImpl<T>(
     override var uuid: String,
     override val state: MutableState<T>,
-    private val enterTransition: EnterTransition? = null,
-    private val exitTransition: ExitTransition? = null
+    private val enterTransition: EnterTransition? = fadeIn(),
+    private val exitTransition: ExitTransition? = fadeOut()
 ) : StateNarrationScope<T, ScopedComposable<StateNarrativeScope>> {
 
     var isAnimating = false
@@ -119,6 +120,7 @@ class StateNarrationScopeImpl<T>(
             val startingAnimation = !isAnimating
             isAnimating = this.transition.currentState != this.transition.targetState
             endedAnimation = !isAnimating && !startingAnimation
+            TAG info "Animating State narrations"
             super.Narrate(composable)
         }
     } else super.Narrate(composable)
