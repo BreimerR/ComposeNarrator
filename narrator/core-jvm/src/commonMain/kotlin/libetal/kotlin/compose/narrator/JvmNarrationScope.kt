@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.laziest
@@ -38,17 +39,22 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate(composable: Content) = if (enterTransition != null) AnimatedContent(
-        composable,
-        transitionSpec = {
-            enterTransition with (exitTransition ?: fadeOut())
+    override fun Narrate(composable: Content) {
+        val transition = updateTransition(currentKey)
+
+        transition.AnimatedContent(
+            transitionSpec = {
+                (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
+            }
+        ) {
+
+            val startingAnimation = !isAnimating
+            isAnimating = this.transition.currentState != this.transition.targetState
+            endedAnimation = !isAnimating && !startingAnimation
+
+            composable(currentNarrativeScope)
+
         }
-    ) {
-        val startingAnimation = !isAnimating
-        isAnimating = this.transition.currentState != this.transition.targetState
-        endedAnimation = !isAnimating && !startingAnimation
-        super.Narrate(composable)
     }
-    else super.Narrate(composable)
 
 }
