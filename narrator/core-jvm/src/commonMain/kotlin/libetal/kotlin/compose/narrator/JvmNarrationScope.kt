@@ -37,7 +37,7 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
         mutableMapOf()
     }
 
-    @Composable
+  /*  @Composable
     @OptIn(ExperimentalAnimationApi::class)
     override fun Narrate(composable: Content) = if (enterTransition != null) AnimatedContent(
         composable,
@@ -50,6 +50,6 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
         endedAnimation = !isAnimating && !startingAnimation
         super.Narrate(composable)
     }
-    else super.Narrate(composable)
+    else super.Narrate(composable)*/
 
 }

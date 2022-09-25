@@ -12,6 +12,7 @@ kotlin {
     sourceSets {
         val desktopMain by getting {
             dependencies {
+                implementation(compose.desktop.currentOs)
                 implementation(project(":samples:core-jvm:common"))
             }
         }

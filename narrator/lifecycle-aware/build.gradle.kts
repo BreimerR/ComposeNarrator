@@ -51,6 +51,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
+
                 api("libetal.libraries.kotlin:io:1.0.2")
                 api("libetal.libraries.kotlin:log:1.0.2")
                 api("libetal.libraries.kotlin:library:1.0.2")
@@ -70,7 +71,6 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                api(compose.runtime)
                 api(project(":narrator:core-jvm"))
             }
         }
@@ -83,6 +83,8 @@ kotlin {
 
         val desktopMain by getting {
             dependencies {
+                api(compose.runtime)
+                api(compose.animation)
                 api(project(":narrator:core-jvm"))
             }
         }
@@ -104,7 +106,7 @@ kotlin {
 
 
 android {
-    compileSdkVersion = androidCompileSdkVersion
+
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {

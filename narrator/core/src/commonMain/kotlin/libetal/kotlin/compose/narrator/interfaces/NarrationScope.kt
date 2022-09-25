@@ -12,14 +12,10 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     val uuid: String
 
-    val currentKey: Key
-
     val prevKey: Key?
 
     val shouldExit: Boolean
 
-    val currentComponent
-        get() = composables[currentKey]
 
     val newNarrativeScope: Scope
 
@@ -27,10 +23,6 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     val narrativeScopes: MutableMap<Key, Scope>
 
-    val currentNarrativeScope: Scope
-        get() = narrativeScopes[currentKey] ?: newNarrativeScope.also {
-            narrativeScopes[currentKey] = it
-        }
 
     val onNarrationEndListeners: MutableMap<Key, MutableList<() -> Unit>>
 
@@ -60,35 +52,17 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
      **/
     fun back(): Boolean {
 
-        var shouldExit = runNarrativeExitRequestListeners(true)
-
-        if (!shouldExit) return false
+        var shouldExit = true
 
         for ((_, child) in children) {
             shouldExit = shouldExit && child.back()
             if (!shouldExit) return false
         }
 
-        if (shouldExit) cleanUp(currentKey)
-
         return shouldExit
 
     }
 
-    private fun runNarrativeExitRequestListeners(shouldExit: Boolean): Boolean {
-        var exit = shouldExit
-
-        val listeners = onNarrativeExitRequest[currentKey]
-
-        if (listeners != null) {
-            for (listener in listeners) {
-                exit = exit && listener(this)
-                if (!exit) return false
-            }
-        }
-
-        return exit
-    }
 
     fun cleanUp(key: Key) {
         onNarrativeExitRequest[key]?.clear()
@@ -96,40 +70,13 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
     }
 
     @Composable
-    fun Narrate() = when (val composable: Content? = currentComponent) {
-        null -> throw RuntimeException("Failed to retrieve component")
-        else -> Narrate(composable)
-    }
+    fun Narrate()
+
 
     @Composable
-    fun Narrate(composable: Content) {
-
-        Compose(composable)
-
-        DisposableEffect(currentKey) {
-
-            onDispose {
-
-                val key = prevKey ?: return@onDispose
-
-                TAG debug "Disposing $key"
-
-                cleanUp(key)
-
-                val listeners = onNarrationEndListeners[key] ?: return@onDispose
-
-                for (listener in listeners) {
-                    listener()
-                }
-
-            }
-
-        }
+    fun Compose(composable: Content){
 
     }
-
-    @Composable
-    fun Compose(composable: Content)
 
     operator fun Key.invoke(content: Content) = add(this, content)
 
@@ -143,10 +90,6 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     }
 
-    fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, Scope, Content>) -> Boolean) {
-        currentKey.addOnNarrativeExitRequest(action)
-    }
-
     fun Key.addOnNarrationEnd(action: () -> Unit) {
         val listeners = onNarrationEndListeners[this] ?: mutableListOf<() -> Unit>().also {
             onNarrationEndListeners[this] = it
@@ -156,7 +99,7 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
             listeners.add(action)
     }
 
-    fun Scope.addOnExitRequest(action: ExitRequestListener) = addOnExitRequest(this@NarrationScope, action)
+
 
     companion object {
         const val TAG = "NarrationScope"

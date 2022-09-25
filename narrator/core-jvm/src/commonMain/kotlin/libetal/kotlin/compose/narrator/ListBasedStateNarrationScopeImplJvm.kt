@@ -29,24 +29,17 @@ class ListBasedStateNarrationScopeImplJvm<T>(
         )
     }
 
+    private val String.currentNarrativeScope
+        get() = narrativeScopes[this] ?: newNarrativeScope.also {
+            narrativeScopes[this] = it
+        }
+
     override val stateSelectors by laziest {
         mutableMapOf<String, (T) -> Boolean>()
     }
 
-    override val currentKey: String
-        get() {
 
-            for ((hashCode, selector) in stateSelectors) {
-                if (selector(state.value)) {
-                    return hashCode
-                }
-            }
-
-            throw RuntimeException("Failed")
-
-        }
-
-    val T.key: String
+    private val T.key: String
         get() {
             for ((hashCode, selector) in stateSelectors) {
                 if (selector(this)) return hashCode
@@ -94,45 +87,39 @@ class ListBasedStateNarrationScopeImplJvm<T>(
 
     }
 
-    @Composable
-    override fun Compose(composable: StateNarrationComposable<T>) {
-        composable(currentNarrativeScope, currentValue)
-    }
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate() { // Can't animate when states could be nullable.
+    override fun Narrate() = AnimatedContent(
+        currentValue,
+        transitionSpec = { (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut()) }
+    ) { value ->
 
-        AnimatedContent(currentValue, transitionSpec = {
-            (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
-        }) { value ->
+        val currentKey = value.key
 
-            val currentKey = value.key
+        TAG info "Key Is $currentKey value = $value"
 
-            TAG info "Key Is $currentKey $value"
+        when (val composable = composables[currentKey]) {
+            null -> Unit
+            else -> {
 
-            when (val composable = composables[currentKey]) {
-                null -> Unit
-                else -> {
+                val startingAnimation = !isAnimating
+                isAnimating = this.transition.currentState != this.transition.targetState
+                endedAnimation = !isAnimating && !startingAnimation
 
-                    val startingAnimation = !isAnimating
-                    isAnimating = this.transition.currentState != this.transition.targetState
-                    endedAnimation = !isAnimating && !startingAnimation
-
-                    val currentComposable = when (val key = prevKey) {
+                val currentComposable = when (val key = prevKey) {
+                    null -> composable
+                    else -> when (val prevComposable = composables[key]) {
                         null -> composable
-                        else -> when (val prevComposable = composables[key]) {
-                            null -> composable
-                            else -> prevComposable
-                        }
+                        else -> prevComposable
                     }
-
-                    currentComposable(currentNarrativeScope, value)
-
                 }
-            }
 
+                currentComposable(currentKey.currentNarrativeScope, value)
+
+            }
         }
+
     }
 
     companion object {

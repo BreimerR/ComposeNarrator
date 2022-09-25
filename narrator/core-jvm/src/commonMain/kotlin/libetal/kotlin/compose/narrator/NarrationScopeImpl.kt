@@ -36,8 +36,8 @@ class NarrationScopeImpl<Key : Any> constructor(
     override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ProgressiveNarrativeScope, ScopedComposable<ProgressiveNarrativeScope>>) -> Boolean>?>
         get() = delegate.onNarrativeExitRequest
 
-    @Composable
-    override fun Narrate(composable: ScopedComposable<ProgressiveNarrativeScope>) = delegate.Narrate(composable)
+    //@Composable
+    //override fun Narrate(composable: ScopedComposable<ProgressiveNarrativeScope>) = delegate.Narrate(composable)
 
     @Composable
     override fun Compose(composable: ScopedComposable<ProgressiveNarrativeScope>) {

@@ -25,7 +25,8 @@ import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 fun App() =
     Column(Modifier.fillMaxSize()) {
 
-        val scope = createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
+        val scope =
+            createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>>()
 
         Row(
             Modifier.fillMaxWidth().height(56.dp).background(MaterialTheme.colors.primary)
@@ -44,7 +45,7 @@ fun App() =
                 IconButton({
                     // scope.narrate(AppNarrations.SETTINGS)
                     with(scope.value!!) {
-                        AppNarrations.SETTINGS.narrate()
+                        SETTINGS.narrate()
                     }
                 }) {
                     Icon(Icons.Default.Settings, "BackAction", tint = MaterialTheme.colors.onPrimary)
@@ -54,7 +55,7 @@ fun App() =
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-            NarrationJvm<AppNarrations> {
+            Narration<AppNarrations> {
 
                 AppNarrations.HOME {
 
@@ -74,62 +75,48 @@ fun App() =
                     }
                 }
 
-                AppNarrations.SETTINGS(this, { HomeViewModel() }) {
-                    // NOTICE: Keeping states here isn't advisable as the behaviour isn't as you'd prefer
-                    NarrationJvm(it.userState, fadeIn() + slideInVertically { it }, slideOutVertically { -it }) {
+                SETTINGS(this, { HomeViewModel() }) {
 
-                        val t = this
+                    Narration(remember { mutableStateOf<User?>(null) }) {
+                        val exists = createPremise { it != null }
+                        val missing = createPremise { it == null }
 
-                        val login = createPremise { it == null }
-                        val edit = createPremise { it != null }
-
-                        login {
-                            var nameState = remember { mutableStateOf("") }
-
-                            CardedComponent(4.dp) {
-                                TextField(nameState.value, {
-                                    nameState.value = it
-                                })
-
-                                Button({
-                                    currentValue = User(nameState.value)
-                                }) {
-                                    Text("Save")
-                                }
-                            }
-
-                            addOnExitRequest {
-                                currentValue != null
-                            }
-
-                        }
-
-                        edit {
-                            val user = currentValue!!
-
-                            CardedComponent(4.dp) {
-                                Row {
-                                    Text("Name:")
-                                    CardedComponent(2.dp) {
-                                        Text(user.name)
-                                    }
-                                }
+                        exists { user ->
+                            Column {
+                                Text(user!!.name)
                                 Button({
                                     currentValue = null
                                 }) {
-                                    Text("Clear")
+                                    Text("Delete")
                                 }
                             }
                         }
 
-                    }
+                        missing {
 
+                            Column {
+
+                                val text = remember { mutableStateOf(it?.name ?: "") }
+
+                                TextField(text.value, {
+                                    text.value = it
+                                })
+
+                                Button({
+                                    currentValue = User(text.value)
+                                }) {
+                                    Text("Save")
+
+                                }
+                            }
+                        }
+                    }
                 }
 
-                AppNarrations.VIDEOS(this, { HomeViewModel() }) {
+                VIDEOS(this, { HomeViewModel() }) {
 
-                    var allowExitState = remember { it.allowExitState }
-                    val count  = remember { it.countState }
+                    val allowExitState = remember { it.allowExitState }
+                    val count = remember { it.countState }
 
                     CardedComponent(4.dp) {
                         Switch(allowExitState.value, {

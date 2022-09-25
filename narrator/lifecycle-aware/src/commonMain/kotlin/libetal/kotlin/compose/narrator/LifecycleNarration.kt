@@ -17,7 +17,7 @@ val <Key : Any> Key.viewModelStoreKey
 
 @Suppress("UNCHECKED_CAST")
 operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
-    scope: NarrationScope<Key, NScope, ScopedComposable<NScope>>,
+    scope: ProgressiveNarrationScope<Key, ScopedComposable<NScope>>,
     vmFactory: () -> VM,
     content: @Composable NScope.(VM) -> Unit
 ) = with(scope) {
@@ -84,11 +84,7 @@ operator fun <T, VM : ViewModel> String.invoke(
             }
         }
 
-        DisposableEffect(currentKey) {
-            onDispose {
-                viewModel.pause()
-            }
-        }
+       // TODO addOnNarrationEndRequestHere
 
     }
 
