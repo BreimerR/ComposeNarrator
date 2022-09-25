@@ -84,7 +84,6 @@ operator fun <T, VM : ViewModel> String.invoke(
         }
 
         addOnNarrationEnd {
-            "LifeCycleNarration" info "Pausing ${viewModel::class}"
             viewModel.pause()
         }
 

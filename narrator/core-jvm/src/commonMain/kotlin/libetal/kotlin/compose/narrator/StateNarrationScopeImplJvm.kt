@@ -81,7 +81,20 @@ class StateNarrationScopeImplJvm<T>(
 
         if (backStack.isEmpty && (stateSelectors[key]?.invoke(state.value) == true)) backStack.add(key)
 
-        super.add(key, content)
+        super.add(key) {
+
+            content(it)
+
+            DisposableEffect(key) {
+                onDispose {
+                    val listeners = onNarrationEndListeners[key] ?: return@onDispose
+
+                    for (listener in listeners) {
+                        listener()
+                    }
+                }
+            }
+        }
 
     }
 
