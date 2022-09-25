@@ -7,6 +7,7 @@ import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 import libetal.kotlin.debug.debug
+import libetal.kotlin.debug.info
 import libetal.kotlin.laziest
 
 typealias StateNarrationComposable<T> = @Composable StateNarrativeScope.(T) -> Unit
@@ -39,6 +40,17 @@ class ListBasedStateNarrationScopeImplJvm<T>(
                 if (selector(state.value)) {
                     return hashCode
                 }
+            }
+
+            throw RuntimeException("Failed")
+
+        }
+
+    val T.key: String
+        get() {
+            for ((hashCode, selector) in stateSelectors) {
+                if (selector(this)) return hashCode
+
             }
 
             throw RuntimeException("Failed")
@@ -78,32 +90,28 @@ class ListBasedStateNarrationScopeImplJvm<T>(
 
         if (backStack.isEmpty && (stateSelectors[key]?.invoke(state.value) == true)) backStack.add(key)
 
-        super.add(key) {
-
-            content(it)
-
-
-        }
+        super.add(key, content)
 
     }
 
     @Composable
     override fun Compose(composable: StateNarrationComposable<T>) {
-        composable(currentNarrativeScope, state.value)
+        composable(currentNarrativeScope, currentValue)
     }
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate() {
+    override fun Narrate() { // Can't animate when states could be nullable.
 
-        AnimatedContent(
-            currentKey,
-            transitionSpec = {
-                (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
-            }
-        ) {
+        AnimatedContent(currentValue, transitionSpec = {
+            (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
+        }) { value ->
 
-            when (val composable = composables[it]) {
+            val currentKey = value.key
+
+            TAG info "Key Is $currentKey $value"
+
+            when (val composable = composables[currentKey]) {
                 null -> Unit
                 else -> {
 
@@ -111,54 +119,24 @@ class ListBasedStateNarrationScopeImplJvm<T>(
                     isAnimating = this.transition.currentState != this.transition.targetState
                     endedAnimation = !isAnimating && !startingAnimation
 
-                    val currentComposable =
-                        if (endedAnimation) composable else when (val key = prevKey) {
+                    val currentComposable = when (val key = prevKey) {
+                        null -> composable
+                        else -> when (val prevComposable = composables[key]) {
                             null -> composable
-                            else -> when (val prevComposable = composables[key]) {
-                                null -> composable
-                                else -> prevComposable
-                            }
+                            else -> prevComposable
                         }
+                    }
 
-                    currentComposable(currentNarrativeScope, state.value)
+                    currentComposable(currentNarrativeScope, value)
+
                 }
-            }
-
-        }
-
-        DisposableEffect(currentKey) {
-
-            onDispose {
-
-                val key = prevKey ?: return@onDispose
-
-                NarrationScope.TAG debug "Disposing $key"
-
-                cleanUp(key)
-
-                val listeners = onNarrationEndListeners[key] ?: return@onDispose
-
-                for (listener in listeners) {
-                    listener()
-                }
-
             }
 
         }
     }
 
-    @Composable
-    @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate(composable: StateNarrationComposable<T>) = if (enterTransition != null) AnimatedContent(
-        composable,
-        transitionSpec = {
-            enterTransition with (exitTransition ?: fadeOut())
-        }
-    ) {
-        val startingAnimation = !isAnimating
-        isAnimating = this.transition.currentState != this.transition.targetState
-        endedAnimation = !isAnimating && !startingAnimation
-        super.Narrate(composable)
+    companion object {
+        const val TAG = "ListBasedStateNarrationScopeImplJvm"
     }
-    else super.Narrate(composable)
+
 }

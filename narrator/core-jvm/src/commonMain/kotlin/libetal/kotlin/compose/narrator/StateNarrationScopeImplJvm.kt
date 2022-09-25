@@ -1,3 +1,4 @@
+/*
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
@@ -83,35 +84,17 @@ class StateNarrationScopeImplJvm<T>(
 
     }
 
-    /**TODO
+    */
+/**TODO
      * Not sure how to enable
      * transitions without losing the data that was visible
      * before a state change.
-     **/
-    @Composable
-    @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate() {
+     **//*
 
-        when (val composable = composables[currentKey]) {
-            null -> return
-            else -> if (enterTransition != null) {
-                AnimatedContent(
-                    composable,
-                    transitionSpec = {
-                        enterTransition with (exitTransition ?: fadeOut())
-                    }
-                ) {
-                    val startingAnimation = !isAnimating
-                    isAnimating = this.transition.currentState != this.transition.targetState
-                    endedAnimation = !isAnimating && !startingAnimation
-                    super.Narrate(composable)
-                }
-            } else super.Narrate(composable)
-        }
-    }
+
 
     companion object {
         const val TAG = "StateNarrationScopeImpl"
     }
 
-}
+}*/

@@ -45,10 +45,11 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
             }
         }
 
-        addOnNarrationEnd {
-            viewModel.pause()
+        DisposableEffect(currentKey) {
+            onDispose {
+                viewModel.pause()
+            }
         }
-
     }
 
 }
@@ -83,8 +84,10 @@ operator fun <T, VM : ViewModel> String.invoke(
             }
         }
 
-        addOnNarrationEnd {
-            viewModel.pause()
+        DisposableEffect(currentKey) {
+            onDispose {
+                viewModel.pause()
+            }
         }
 
     }
