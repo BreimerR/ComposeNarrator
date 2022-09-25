@@ -39,17 +39,16 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
             viewModel.addObserver {
                 if (it == Lifecycle.State.DESTROYED) {
                     NarrationViewModelStore.invalidate(key) {
-
+                        "LifeCycleNarration" info "Invalidated $key viewModel"
                     }
                 }
             }
         }
 
-        DisposableEffect(currentKey) {
-            onDispose {
-                viewModel.pause()
-            }
+        addOnNarrationEnd {
+            viewModel.pause()
         }
+
     }
 
 }
@@ -84,7 +83,10 @@ operator fun <T, VM : ViewModel> String.invoke(
             }
         }
 
-       // TODO addOnNarrationEndRequestHere
+        addOnNarrationEnd {
+            "LifeCycleNarration" info "Pausing ${viewModel::class}"
+            viewModel.pause()
+        }
 
     }
 

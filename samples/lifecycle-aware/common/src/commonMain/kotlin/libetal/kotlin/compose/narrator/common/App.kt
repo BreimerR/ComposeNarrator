@@ -19,6 +19,7 @@ import libetal.kotlin.compose.narrator.common.AppNarrations.SETTINGS
 import libetal.kotlin.compose.narrator.common.AppNarrations.VIDEOS
 import libetal.kotlin.compose.narrator.common.data.User
 import libetal.kotlin.compose.narrator.common.models.HomeViewModel
+import libetal.kotlin.compose.narrator.common.models.VideosViewModel
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
 @Composable
@@ -77,7 +78,7 @@ fun App() =
 
                 SETTINGS(this, { HomeViewModel() }) {
 
-                    Narration(remember { mutableStateOf<User?>(null) }) {
+                    Narration(remember { it.userState }) {
                         val exists = createPremise { it != null }
                         val missing = createPremise { it == null }
 
@@ -113,7 +114,7 @@ fun App() =
                     }
                 }
 
-                VIDEOS(this, { HomeViewModel() }) {
+                VIDEOS(this, { VideosViewModel() }) {
 
                     val allowExitState = remember { it.allowExitState }
                     val count = remember { it.countState }
@@ -128,11 +129,6 @@ fun App() =
                         }) {
                             Text("Settings")
                         }
-                    }
-
-
-                    addOnExitRequest {
-                        allowExitState.value
                     }
 
                 }

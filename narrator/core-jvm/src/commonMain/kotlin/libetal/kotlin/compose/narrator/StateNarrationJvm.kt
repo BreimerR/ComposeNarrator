@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.*
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
-import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
 
 
 @Composable
@@ -14,12 +13,12 @@ fun <T> NarrationJvm(
     state: MutableState<T>,
     enterTransition: EnterTransition? = fadeIn(),
     exitTransition: ExitTransition? = fadeOut(),
-    prepareNarratives: ListBasedStateNarrationScopeImplJvm<T>.() -> Unit
+    prepareNarratives: StateNarrationScopeImplJvm<T>.() -> Unit
 ) {
 
     val uuid = prepareNarratives.hashCode()
 
-    val scope = ListBasedStateNarrationScopeImplJvm(
+    val scope = StateNarrationScopeImplJvm(
         uuid = uuid.toString(),
         state = remember { state },
         enterTransition = enterTransition,

@@ -63,10 +63,7 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
     }
 
     @Composable
-    override fun Narrate() = when (val composable: C? = currentComponent) {
-        null -> throw RuntimeException("Failed to retrieve component")
-        else -> Narrate(composable)
-    }
+    override fun Narrate()
 
     private fun runNarrativeExitRequestListeners(shouldExit: Boolean): Boolean {
         var exit = shouldExit
