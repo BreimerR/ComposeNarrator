@@ -37,7 +37,7 @@ fun App() =
         ) {
             Row {
                 IconButton({
-                    scope.value!!.back()
+                    scope.value.back()
                 }) {
                     Icon(Icons.Default.ArrowBack, "BackAction", tint = MaterialTheme.colors.onPrimary)
                 }
@@ -45,7 +45,7 @@ fun App() =
             Row {
                 IconButton({
                     // scope.narrate(AppNarrations.SETTINGS)
-                    with(scope.value!!) {
+                    with(scope.value) {
                         SETTINGS.narrate()
                     }
                 }) {
@@ -74,6 +74,8 @@ fun App() =
                             Text("Videos")
                         }
                     }
+
+
                 }
 
                 SETTINGS(this, { HomeViewModel() }) {
@@ -123,13 +125,18 @@ fun App() =
                         Switch(allowExitState.value, {
                             allowExitState.value = it
                         })
-                        Text("Count at $count")
+                        Text("Count at ${count.value}")
                         Button({
                             SETTINGS.narrate()
                         }) {
                             Text("Settings")
                         }
                     }
+
+                    addOnExitRequest {
+                        allowExitState.value
+                    }
+
 
                 }
 

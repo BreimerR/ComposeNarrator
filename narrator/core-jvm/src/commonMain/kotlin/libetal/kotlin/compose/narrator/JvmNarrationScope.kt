@@ -37,19 +37,4 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
         mutableMapOf()
     }
 
-  /*  @Composable
-    @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate(composable: Content) = if (enterTransition != null) AnimatedContent(
-        composable,
-        transitionSpec = {
-            enterTransition with (exitTransition ?: fadeOut())
-        }
-    ) {
-        val startingAnimation = !isAnimating
-        isAnimating = this.transition.currentState != this.transition.targetState
-        endedAnimation = !isAnimating && !startingAnimation
-        super.Narrate(composable)
-    }
-    else super.Narrate(composable)*/
-
 }

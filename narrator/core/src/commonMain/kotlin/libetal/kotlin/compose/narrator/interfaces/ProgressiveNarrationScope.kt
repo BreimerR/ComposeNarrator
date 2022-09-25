@@ -52,7 +52,7 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
      * There is need to clean up a few places
      **/
     fun Key.narrate(removeCurrentFromBackStack: Boolean = false) {
-        if (currentNarrativeScope.hasCliffhangers) {
+        if (currentKey.currentNarrativeScope.hasCliffhangers) {
             val previous = currentKey
             val existedInStack = backStack.navigateTo(this)
             if (existedInStack || removeCurrentFromBackStack) {
@@ -104,6 +104,11 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
 
     fun ProgressiveNarrativeScope.addOnExitRequest(action: ExitRequestListener) =
         addOnExitRequest(this@ProgressiveNarrationScope, action)
+
+    // Should Run When Backstack is empty
+    fun addOnDisposeEffect(action: () -> Unit) {
+
+    }
 
     companion object {
         const val TAG = "ProgressiveNarrationScope"

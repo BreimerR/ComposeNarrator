@@ -15,9 +15,9 @@ fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Narrator") {
 
         createScopeCollector<ProgressiveNarrationScope<AppNarrations, ScopedComposable<ProgressiveNarrativeScope>>> {
-            /*addOn {
+            addOnDisposeEffect {
                 exitApplication()
-            }*/
+            }
         }
 
         MaterialTheme {

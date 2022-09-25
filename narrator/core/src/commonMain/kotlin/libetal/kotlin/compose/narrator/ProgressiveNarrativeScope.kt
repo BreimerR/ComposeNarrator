@@ -1,7 +1,5 @@
 package libetal.kotlin.compose.narrator
 
-import androidx.compose.runtime.Composable
-import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 
@@ -11,6 +9,7 @@ class ProgressiveNarrativeScope : NarrativeScope() {
         narrationScope: ProgressiveNarrationScope<Key, Content>,
         action: ExitRequestListener
     ) {
+
         narrationScope.onCurrentKeyExitRequestListener {
             hasCliffhangers
         }
