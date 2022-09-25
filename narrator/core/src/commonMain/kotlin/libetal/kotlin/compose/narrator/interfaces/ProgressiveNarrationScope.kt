@@ -24,9 +24,9 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
     val currentComponent
         get() = composables[currentKey]
 
-    val currentNarrativeScope: ProgressiveNarrativeScope
-        get() = narrativeScopes[currentKey] ?: newNarrativeScope.also {
-            narrativeScopes[currentKey] = it
+    val Key.currentNarrativeScope: ProgressiveNarrativeScope
+        get() = narrativeScopes[this] ?: newNarrativeScope.also {
+            narrativeScopes[this] = it
         }
 
     /**
@@ -78,34 +78,6 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
         }
 
         return exit
-    }
-
-
-    @Composable
-    fun Narrate(composable: C) {
-
-        Compose(composable)
-
-        DisposableEffect(currentKey) {
-
-            onDispose {
-
-                val key = prevKey ?: return@onDispose
-
-                NarrationScope.TAG debug "Disposing $key"
-
-                cleanUp(key)
-
-                val listeners = onNarrationEndListeners[key] ?: return@onDispose
-
-                for (listener in listeners) {
-                    listener()
-                }
-
-            }
-
-        }
-
     }
 
     fun onCurrentKeyExitRequestListener(action: (NarrationScope<Key, ProgressiveNarrativeScope, C>) -> Boolean) {

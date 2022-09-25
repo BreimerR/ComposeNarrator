@@ -20,13 +20,12 @@ class NarrationScopeImpl<Key : Any> constructor(
     constructor(uuid: String, backStack: ListBackStack<Key>) : this(uuid, backStack, fadeIn(), fadeOut())
 
     override fun add(key: Key, content: ScopedComposable<ProgressiveNarrativeScope>) = super.add(key) {
+
         content()
 
-        DisposableEffect(currentKey) {
+        DisposableEffect(backStack) {
 
             onDispose {
-
-                val key = prevKey ?: return@onDispose
 
                 NarrationScope.TAG debug "Disposing $key"
 
@@ -77,16 +76,11 @@ class NarrationScopeImpl<Key : Any> constructor(
             val composable = composables[it]
 
             if (composable != null) {
-                composable(currentNarrativeScope)
+                composable(it.currentNarrativeScope)
             }
 
         }
 
-    }
-
-    @Composable
-    override fun Compose(composable: ScopedComposable<ProgressiveNarrativeScope>) {
-        composable(currentNarrativeScope)
     }
 
 }
