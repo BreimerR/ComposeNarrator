@@ -53,17 +53,17 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
      **/
     fun Key.narrate(removeCurrentFromBackStack: Boolean = false) {
         if (currentKey.currentNarrativeScope.hasCliffhangers) {
-            val previous = currentKey
-            val existedInStack = backStack.navigateTo(this)
-            if (existedInStack || removeCurrentFromBackStack) {
-                backStack.invalidate(previous)
-                cleanUp(previous)
-            }
+            backStack.navigateTo(this)
         }
     }
 
     @Composable
     override fun Narrate()
+
+    override fun cleanUp(key: Key) {
+        super.cleanUp(key)
+        backStack.invalidate(key)
+    }
 
     private fun runNarrativeExitRequestListeners(shouldExit: Boolean): Boolean {
         var exit = shouldExit

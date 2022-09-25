@@ -77,7 +77,7 @@ fun App() = MaterialTheme {
                         val edit = createPremise { it != null }
 
                         login {
-                            var nameState = remember { mutableStateOf("") }
+                            val nameState = remember { mutableStateOf("") }
                             CardedComponent(4.dp) {
                                 TextField(nameState.value, {
                                     nameState.value = it
@@ -92,7 +92,7 @@ fun App() = MaterialTheme {
                         }
 
                         edit {
-                            val user = currentValue!!
+                            val user = it!!
 
                             CardedComponent(4.dp) {
                                 Row {

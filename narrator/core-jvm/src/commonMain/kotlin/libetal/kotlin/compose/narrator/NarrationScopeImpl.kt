@@ -27,15 +27,13 @@ class NarrationScopeImpl<Key : Any> constructor(
 
             onDispose {
 
-                NarrationScope.TAG debug "Disposing $key"
-
-                cleanUp(key)
-
                 val listeners = onNarrationEndListeners[key] ?: return@onDispose
 
                 for (listener in listeners) {
                     listener()
                 }
+
+                cleanUp(key)
 
             }
 
