@@ -25,7 +25,6 @@ dependencies {
 }
 
 android {
-    compileSdkVersion = "android-$androidCompileSdkVersion"
     compileSdk = androidCompileSdkVersion.toInt()
     defaultConfig {
         applicationId = "$projectGroup.narrator.core.jvm.android"

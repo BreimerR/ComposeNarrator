@@ -11,11 +11,11 @@ kotlin {
     sourceSets {
         val desktopMain by getting {
             dependencies {
-                implementation(project(":samples:core-jvm:common"))
                 implementation(compose.runtime)
                 implementation(compose.material)
                 implementation(compose.desktop.currentOs)
                 implementation(project(":narrator:core-jvm"))
+                implementation(project(":samples:core-jvm:common"))
             }
         }
     }

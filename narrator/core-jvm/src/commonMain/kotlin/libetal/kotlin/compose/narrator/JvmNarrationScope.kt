@@ -39,7 +39,8 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate(composable: Content) {
+    override fun Narrate() {
+
         val transition = updateTransition(currentKey)
 
         transition.AnimatedContent(
@@ -47,12 +48,16 @@ class JvmNarrationScope<Key : Any, Scope : NarrativeScope, Content>(
                 (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
             }
         ) {
+            when (val ui = composables[it]) {
+                null -> Unit
+                else -> {
+                    val startingAnimation = !isAnimating
+                    isAnimating = this.transition.currentState != this.transition.targetState
+                    endedAnimation = !isAnimating && !startingAnimation
 
-            val startingAnimation = !isAnimating
-            isAnimating = this.transition.currentState != this.transition.targetState
-            endedAnimation = !isAnimating && !startingAnimation
-
-            composable(currentNarrativeScope)
+                    Compose(ui)
+                }
+            }
 
         }
     }
