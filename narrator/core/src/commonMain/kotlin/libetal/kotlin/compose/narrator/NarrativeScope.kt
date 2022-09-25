@@ -6,20 +6,8 @@ import libetal.kotlin.laziest
 
 abstract class NarrativeScope {
 
-    private val onExitRequestListeners: MutableList<() -> Boolean> by laziest {
+    val onExitRequestListeners: MutableList<() -> Boolean> by laziest {
         mutableListOf()
-    }
-
-    internal fun <Key : Any, Scope : NarrativeScope, Content> addOnExitRequest(
-        narrationScope: NarrationScope<Key, Scope, Content>,
-        action: ExitRequestListener
-    ) {
-        narrationScope.onCurrentKeyExitRequestListener {
-            hasCliffhangers
-        }
-
-        if (action !in onExitRequestListeners)
-            onExitRequestListeners.add(action)
     }
 
     val hasCliffhangers

@@ -2,15 +2,17 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
+import libetal.kotlin.debug.debug
 
 class NarrationScopeImpl<Key : Any> constructor(
     override var uuid: String,
     override val backStack: ListBackStack<Key>,
-    enterTransition: EnterTransition? = null,
-    exitTransition: ExitTransition? = null,
+    val enterTransition: EnterTransition? = null,
+    val exitTransition: ExitTransition? = null,
 ) : ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>> {
 
     private val delegate = JvmNarrationScope(enterTransition, exitTransition, this)
@@ -18,7 +20,27 @@ class NarrationScopeImpl<Key : Any> constructor(
     constructor(uuid: String, backStack: ListBackStack<Key>) : this(uuid, backStack, fadeIn(), fadeOut())
 
     override fun add(key: Key, content: ScopedComposable<ProgressiveNarrativeScope>) = super.add(key) {
+
         content()
+
+        DisposableEffect(backStack) {
+
+            onDispose {
+
+                NarrationScope.TAG debug "Disposing $key"
+
+                cleanUp(key)
+
+                val listeners = onNarrationEndListeners[key] ?: return@onDispose
+
+                for (listener in listeners) {
+                    listener()
+                }
+
+            }
+
+        }
+
     }
 
     override val composables: MutableMap<Key, ScopedComposable<ProgressiveNarrativeScope>>
@@ -37,11 +59,28 @@ class NarrationScopeImpl<Key : Any> constructor(
         get() = delegate.onNarrativeExitRequest
 
     @Composable
-    override fun Narrate(composable: ScopedComposable<ProgressiveNarrativeScope>) = delegate.Narrate(composable)
+    @OptIn(ExperimentalAnimationApi::class)
+    override fun Narrate() {
 
-    @Composable
-    override fun Compose(composable: ScopedComposable<ProgressiveNarrativeScope>) {
-        composable(currentNarrativeScope)
+        val exitTransition = exitTransition ?: fadeOut()
+
+        val enterTransition = enterTransition ?: fadeIn()
+
+        AnimatedContent(
+            currentKey,
+            transitionSpec = {
+                enterTransition with exitTransition
+            }
+        ) {
+
+            val composable = composables[it]
+
+            if (composable != null) {
+                composable(it.currentNarrativeScope)
+            }
+
+        }
+
     }
 
 }
