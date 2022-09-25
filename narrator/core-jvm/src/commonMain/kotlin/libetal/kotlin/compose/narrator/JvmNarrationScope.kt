@@ -1,6 +1,7 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.laziest

@@ -94,55 +94,57 @@ class ListBasedStateNarrationScopeImplJvm<T>(
 
     @Composable
     @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate() = when (val composable = composables[currentKey]) {
-        null -> Unit
-        else -> {
+    override fun Narrate() {
 
-            AnimatedContent(
-                state.value,
-                transitionSpec = {
-                    (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
-                }
-            ) {
+        AnimatedContent(
+            currentKey,
+            transitionSpec = {
+                (enterTransition ?: fadeIn()) with (exitTransition ?: fadeOut())
+            }
+        ) {
 
-                val startingAnimation = !isAnimating
-                isAnimating = this.transition.currentState != this.transition.targetState
-                endedAnimation = !isAnimating && !startingAnimation
+            when (val composable = composables[it]) {
+                null -> Unit
+                else -> {
 
-                val currentComposable =
-                    if (endedAnimation) composable else when (val key = prevKey) {
-                        null -> composable
-                        else -> when (val prevComposable = composables[key]) {
+                    val startingAnimation = !isAnimating
+                    isAnimating = this.transition.currentState != this.transition.targetState
+                    endedAnimation = !isAnimating && !startingAnimation
+
+                    val currentComposable =
+                        if (endedAnimation) composable else when (val key = prevKey) {
                             null -> composable
-                            else -> prevComposable
+                            else -> when (val prevComposable = composables[key]) {
+                                null -> composable
+                                else -> prevComposable
+                            }
                         }
-                    }
 
-                currentComposable(currentNarrativeScope, state.value)
-
-            }
-
-            DisposableEffect(state) {
-
-                onDispose {
-
-                    val key = prevKey ?: return@onDispose
-
-                    NarrationScope.TAG debug "Disposing $key"
-
-                    cleanUp(key)
-
-                    val listeners = onNarrationEndListeners[key] ?: return@onDispose
-
-                    for (listener in listeners) {
-                        listener()
-                    }
-
+                    currentComposable(currentNarrativeScope, state.value)
                 }
-
             }
+
         }
 
+        DisposableEffect(currentKey) {
+
+            onDispose {
+
+                val key = prevKey ?: return@onDispose
+
+                NarrationScope.TAG debug "Disposing $key"
+
+                cleanUp(key)
+
+                val listeners = onNarrationEndListeners[key] ?: return@onDispose
+
+                for (listener in listeners) {
+                    listener()
+                }
+
+            }
+
+        }
     }
 
     @Composable
