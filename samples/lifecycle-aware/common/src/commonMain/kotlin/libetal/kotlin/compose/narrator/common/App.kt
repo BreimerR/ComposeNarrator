@@ -1,8 +1,5 @@
 package libetal.kotlin.compose.narrator.common
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -97,20 +94,24 @@ fun App() =
 
                         missing {
 
+                            val textState = remember { mutableStateOf(it?.name ?: "") }
+
                             Column {
 
-                                val text = remember { mutableStateOf(it?.name ?: "") }
-
-                                TextField(text.value, {
-                                    text.value = it
+                                TextField(textState.value, {
+                                    textState.value = it
                                 })
 
                                 Button({
-                                    currentValue = User(text.value)
+                                    currentValue = User(textState.value)
                                 }) {
                                     Text("Save")
 
                                 }
+                            }
+
+                            addOnExitRequest {
+                                true
                             }
                         }
                     }
