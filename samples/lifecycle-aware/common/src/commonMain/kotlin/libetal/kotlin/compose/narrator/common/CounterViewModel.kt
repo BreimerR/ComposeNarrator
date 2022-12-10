@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.*
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
-import libetal.kotlin.debug.info
 
 class CounterViewModel : ViewModel(10000) {
 
