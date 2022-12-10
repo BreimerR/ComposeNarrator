@@ -5,6 +5,7 @@ import libetal.kotlin.compose.narrator.common.data.User
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
 import libetal.kotlin.log.info
 
+
 class HomeViewModel : ViewModel(Long.MAX_VALUE) {
 
 

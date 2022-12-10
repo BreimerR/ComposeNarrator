@@ -10,8 +10,6 @@ import libetal.kotlin.log.info
 class CounterViewModel : ViewModel(10000) {
 
     private val jobs = mutableListOf<Job>()
-    val footerLeft = mutableStateListOf<Long>()
-    val footerRight = mutableStateListOf<Long>()
     val headerCounters = mutableStateListOf<Long>()
 
     val hI = mutableStateOf(-1)
@@ -26,11 +24,9 @@ class CounterViewModel : ViewModel(10000) {
     fun addHeaderCounter() {
         hI.value += 1
         val i = hI.value
-        jobs += coroutineScope.launch(Dispatchers.IO) {
-            while (isActive) {
-                delay(300)
-                incrementIndex(i)
-            }
+        jobs += ioLaunch {
+            delay(300)
+            incrementIndex(i)
         }
     }
 
@@ -43,7 +39,7 @@ class CounterViewModel : ViewModel(10000) {
         headerCounters.removeAt(i)
     }
 
-    private fun incrementIndex(i: Int) = coroutineScope.launch(Dispatchers.Main) {
+    private fun incrementIndex(i: Int) = launch {
         val current = headerCounters.getOrNull(i) ?: -1
         if (current == -1L) headerCounters.add(i, -1)
         headerCounters[i] = current + 1
