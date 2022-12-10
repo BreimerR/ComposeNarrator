@@ -3,14 +3,14 @@ package libetal.kotlin.compose.narrator
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
-import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
-import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
+import libetal.kotlin.compose.narrator.interfaces.MutableStateNarrationScope
+import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle
 import libetal.kotlin.compose.narrator.lifecycle.NarrationViewModelStore
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
-import libetal.kotlin.debug.debug
-import libetal.kotlin.debug.info
+import libetal.kotlin.log.debug
+import libetal.kotlin.log.info
 
 val <Key : Any> Key.viewModelStoreKey
     get() = toString()
@@ -55,9 +55,48 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
 
 @Suppress("UNCHECKED_CAST")
 operator fun <T, VM : ViewModel> String.invoke(
-    scope: StateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>,
+    scope: MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>,
     vmFactory: () -> VM,
-    content: @Composable StateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.(VM) -> Unit
+    content: @Composable MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.(VM) -> Unit
+) = with(scope) {
+
+    val key = this@invoke.viewModelStoreKey
+
+    NarrationViewModelStore[key] = vmFactory
+
+    add(this@invoke) {
+
+        val viewModel = NarrationViewModelStore[key] as VM
+
+        content(viewModel)
+
+        LaunchedEffect(true) {
+            viewModel.create()
+            viewModel.resume()
+
+            viewModel.addObserver {
+                if (it == Lifecycle.State.DESTROYED) {
+                    NarrationViewModelStore.invalidate(key) {
+
+                    }
+                }
+            }
+        }
+
+        addOnNarrationEnd {
+            viewModel.pause()
+        }
+
+    }
+
+}
+
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T, VM : ViewModel> String.invoke(
+    scope: SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>,
+    vmFactory: () -> VM,
+    content: @Composable SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>.(VM) -> Unit
 ) = with(scope) {
 
     val key = this@invoke.viewModelStoreKey

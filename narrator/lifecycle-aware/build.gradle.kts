@@ -50,14 +50,13 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                api(compose.runtime)
+                implementation(compose.runtime)
 
-                api("libetal.libraries.kotlin:io:1.0.2")
-                api("libetal.libraries.kotlin:log:1.0.2")
-                api("libetal.libraries.kotlin:library:1.0.2")
-                api("libetal.libraries.kotlin:coroutines:1.0.2")
+                implementation("libetal.libraries.kotlin:log:1.1.0")
+                implementation("libetal.libraries.kotlin:library:1.0.2")
+                implementation("libetal.libraries.kotlin:coroutines:1.0.2")
 
-                api(project(":narrator:core"))
+                implementation(project(":narrator:core"))
                 api(project(":narrator:lifecycle"))
 
             }
@@ -71,6 +70,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                implementation(compose.runtime)
+                implementation(compose.animation)
                 api(project(":narrator:core-jvm"))
             }
         }
@@ -83,8 +84,8 @@ kotlin {
 
         val desktopMain by getting {
             dependencies {
-                api(compose.runtime)
-                api(compose.animation)
+                implementation(compose.runtime)
+                implementation(compose.animation)
                 api(project(":narrator:core-jvm"))
             }
         }

@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import libetal.kotlin.compose.narrator.lifecycle.Lifecycle.State
 import libetal.kotlin.coroutines.IO
-import libetal.kotlin.debug.info
 import libetal.kotlin.laziest
 
 abstract class ViewModel(killTime: Long = 5000L) : LifeCycleAware<ViewModelLifecycle> {

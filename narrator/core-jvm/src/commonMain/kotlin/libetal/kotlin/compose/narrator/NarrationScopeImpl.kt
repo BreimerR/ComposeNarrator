@@ -6,7 +6,7 @@ import androidx.compose.runtime.DisposableEffect
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
-import libetal.kotlin.debug.debug
+import libetal.kotlin.log.debug
 
 class NarrationScopeImpl<Key : Any> constructor(
     override var uuid: String,

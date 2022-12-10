@@ -1,25 +1,17 @@
 package libetal.kotlin.compose.narrator.interfaces
 
-import androidx.compose.runtime.MutableState
-import libetal.kotlin.compose.narrator.StateNarrationKey
 import libetal.kotlin.compose.narrator.StateNarrativeScope
 
-interface StateNarrationScope<T, C> : NarrationScope<String, StateNarrativeScope, C> {
+interface StateNarrationScope<T, C, S, Premise> : NarrationScope<String, StateNarrativeScope, C> {
 
-    val state: MutableState<T>
-
-    var currentValue
-        get() = state.value
-        set(value) {
-            state.value = value
-        }
+    val state: S
 
     override val newNarrativeScope
         get() = StateNarrativeScope()
 
-    val stateSelectors: MutableMap<String, StateNarrationKey<T>>
+    val stateSelectors: MutableMap<String, Premise>
 
-    fun createPremise(premise: (T) -> Boolean) = premise.hashCode().toString().also {
+    fun createPremise(premise: Premise) = premise.hashCode().toString().also {
         stateSelectors[it] = premise
     }
 

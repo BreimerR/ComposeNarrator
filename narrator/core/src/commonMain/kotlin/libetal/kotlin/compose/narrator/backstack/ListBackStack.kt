@@ -2,7 +2,7 @@ package libetal.kotlin.compose.narrator.backstack
 
 import androidx.compose.runtime.mutableStateListOf
 import libetal.kotlin.compose.narrator.backstack.exceptions.EmptyBackStackException
-import libetal.kotlin.debug.info
+import libetal.kotlin.log.info
 
 /**@Description
  * This BackStack just adds and removes items from the

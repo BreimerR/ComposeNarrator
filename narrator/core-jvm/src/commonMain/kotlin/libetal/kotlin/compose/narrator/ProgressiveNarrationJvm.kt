@@ -10,6 +10,7 @@ import libetal.kotlin.compose.narrator.backstack.NarrationBackStack
 @Composable
 fun <Key : Any> NarrationJvm(prepareComponents: NarrationScopeImpl<Key>.() -> Unit) =
     remember { mutableStateListOf<Key>() }.let { stack ->
+
         Narration(
             { uuid ->
                 NarrationScopeImpl(

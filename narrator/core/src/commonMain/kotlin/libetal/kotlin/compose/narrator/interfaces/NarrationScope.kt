@@ -4,18 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import libetal.kotlin.compose.narrator.NarrativeScope
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
-import libetal.kotlin.debug.debug
-import libetal.kotlin.debug.warn
-import libetal.kotlin.debug.info
+import libetal.kotlin.log.debug
+import libetal.kotlin.log.warn
+import libetal.kotlin.log.info
 
 interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
 
     val uuid: String
-
-    val prevKey: Key?
-
-    val shouldExit: Boolean
-
 
     val newNarrativeScope: Scope
 

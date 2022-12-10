@@ -17,9 +17,8 @@
 package libetal.kotlin.compose.narrator.lifecycle
 
 import kotlinx.coroutines.*
-import libetal.kotlin.debug.debug
+import libetal.kotlin.log.debug
 import libetal.kotlin.laziest
-import libetal.kotlin.debug.info
 import kotlin.coroutines.CoroutineContext
 import libetal.kotlin.coroutines.IO as CompatIO
 

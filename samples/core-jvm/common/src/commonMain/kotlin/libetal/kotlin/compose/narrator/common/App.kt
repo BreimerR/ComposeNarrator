@@ -169,13 +169,6 @@ fun CardedComponent(padding: Dp, composable: @Composable ColumnScope.() -> Unit)
 @Composable
 fun VideosSubSections() {
 
-    /*AppNarrations.VIDEOS_HOME narrates {
-        Text("Videos Home")
-    }
-
-    AppNarrations.VIDEOS_SETTINGS narrates {
-        Text("Videos Settings")
-    }*/
 
 }
 

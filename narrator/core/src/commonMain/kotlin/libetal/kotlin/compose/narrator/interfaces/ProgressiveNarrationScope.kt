@@ -1,9 +1,6 @@
 package libetal.kotlin.compose.narrator.interfaces
 
-import libetal.kotlin.debug.debug
-import libetal.kotlin.debug.info
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
@@ -12,11 +9,8 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
 
     val backStack: ListBackStack<Key>
 
-    override val prevKey: Key?
+    val prevKey: Key?
         get() = backStack.previous
-
-    override val shouldExit: Boolean
-        get() = backStack.isAlmostEmpty
 
     val currentKey: Key
         get() = backStack.current

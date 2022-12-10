@@ -38,14 +38,14 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                api(compose.runtime)
-                api(compose.runtime)
-                api(compose.foundation)
+                implementation(compose.runtime)
+                implementation(compose.runtime)
+                implementation(compose.foundation)
                 api(project(":narrator:core"))
-                api("libetal.libraries.kotlin:log:1.0.2")
-                api("libetal.libraries.kotlin:library:1.0.2")
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("libetal.libraries.kotlin:log:1.1.0")
+                implementation("libetal.libraries.kotlin:library:1.0.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }
         }
 
@@ -57,8 +57,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                api("androidx.core:core-ktx:1.8.0")
-                api("androidx.appcompat:appcompat:1.5.0")
+                implementation("androidx.core:core-ktx:1.8.0")
+                implementation("androidx.appcompat:appcompat:1.5.0")
             }
         }
 
@@ -71,13 +71,13 @@ kotlin {
 
         val desktopMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
             }
         }
 
         val desktopTest by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
             }
         }
     }

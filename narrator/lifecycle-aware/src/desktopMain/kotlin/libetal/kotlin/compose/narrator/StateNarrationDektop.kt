@@ -2,12 +2,26 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import libetal.kotlin.compose.narrator.interfaces.StateNarrationScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import libetal.kotlin.compose.narrator.interfaces.MutableStateNarrationScope
+import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
 
 @Composable
 actual fun <T> Narration(
     state: MutableState<T>,
-    prepareNarrations: StateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.() -> Unit
+    prepareNarrations: MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.() -> Unit
+): Unit = NarrationJvm(
+    state,
+    defaultEntryAnimation,
+    defaultExitAnimation,
+    prepareNarrations
+)
+
+
+@Composable
+actual fun <T> Narration(
+    state: SnapshotStateList<T>,
+    prepareNarrations: SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>.() -> Unit
 ): Unit = NarrationJvm(
     state,
     defaultEntryAnimation,
