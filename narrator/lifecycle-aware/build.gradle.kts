@@ -56,7 +56,7 @@ kotlin {
                 implementation("libetal.libraries.kotlin:library:1.0.2")
                 implementation("libetal.libraries.kotlin:coroutines:1.0.2")
 
-                implementation(project(":narrator:core"))
+                api(project(":narrator:core"))
                 api(project(":narrator:lifecycle"))
 
             }
