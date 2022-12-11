@@ -75,11 +75,12 @@ fun App() =
 
                 }
 
-                SETTINGS(this, { HomeViewModel() }) {
+                SETTINGS(this, { HomeViewModel() }) { homeViewModel ->
 
-                    Narration(remember { it.userState }) {
+                    Narration(remember { homeViewModel.userState }) {
                         val exists = createPremise { it != null }
                         val missing = createPremise { it == null }
+
 
                         exists { user ->
                             Column {
@@ -94,7 +95,7 @@ fun App() =
 
                         missing {
 
-                            val textState = remember { mutableStateOf(it?.name ?: "") }
+                            val textState = remember { mutableStateOf(homeViewModel.userState.value?.name ?: "") }
 
                             Column {
 
@@ -108,12 +109,16 @@ fun App() =
                                     Text("Save")
 
                                 }
+
                             }
 
                             addOnExitRequest {
-                                true
+                                textState.value.isNotEmpty()
                             }
+
                         }
+
+
                     }
                 }
 
