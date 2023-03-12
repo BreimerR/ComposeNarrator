@@ -53,8 +53,8 @@ kotlin {
                 implementation(compose.runtime)
 
                 implementation("libetal.libraries.kotlin:log:1.1.0")
-                implementation("libetal.libraries.kotlin:library:1.0.2")
-                implementation("libetal.libraries.kotlin:coroutines:1.0.2")
+                implementation("libetal.libraries.kotlin:library:1.0.3")
+                implementation("libetal.libraries.kotlin:coroutines:1.0.3")
 
                 api(project(":narrator:core"))
                 api(project(":narrator:lifecycle"))

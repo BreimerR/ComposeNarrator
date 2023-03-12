@@ -47,10 +47,10 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
 
-                api("libetal.libraries.kotlin:io:1.0.2")
+                api("libetal.libraries.kotlin:io:1.0.3")
                 implementation("libetal.libraries.kotlin:log:1.1.0")
-                api("libetal.libraries.kotlin:library:1.0.2")
-                api("libetal.libraries.kotlin:coroutines:1.0.2")
+                api("libetal.libraries.kotlin:library:1.0.3")
+                api("libetal.libraries.kotlin:coroutines:1.0.3")
 
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
