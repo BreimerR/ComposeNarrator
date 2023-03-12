@@ -15,6 +15,10 @@ val <Key : Any> Key.narrative
         this
     )
 
+
+val <Key : Any> Key.isInProgress
+    @Composable get() : Boolean = TODO("Checks if the current narration key is the active one or not. For state narrations we check if a certain state is active.")
+
 val narrationScope
     @Composable get() = LocalNarrationScope.current
         ?: throw RuntimeException("Method should be called inside a Narration. Or a composable nesetd inside a Narration")
