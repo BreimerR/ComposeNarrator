@@ -8,36 +8,16 @@ import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
 import libetal.kotlin.laziest
 
+
 class SnapshotStateNarrationScopeImplJvm<T>(
-    override val uuid: String,
-    override val state: SnapshotStateList<T>,
+    uuid: String,
+    state: SnapshotStateList<T>,
     val enterTransition: EnterTransition? = fadeIn(),
     val exitTransition: ExitTransition? = fadeOut()
-) : SnapShotStateNarrationScope<T, StateNarrationComposable<SnapshotStateList<T>>> {
-
-    override val stateSelectors by laziest {
-        mutableMapOf<String, (SnapshotStateList<T>) -> Boolean>()
-    }
-
-    override val composables by laziest {
-        mutableMapOf<String, StateNarrationComposable<SnapshotStateList<T>>>()
-    }
-
-    override val narrativeScopes by laziest {
-        mutableMapOf<String, StateNarrativeScope>()
-    }
-
-    override val onNarrationEndListeners by laziest {
-        mutableMapOf<String, MutableList<() -> Unit>>()
-    }
-
-    override val children by laziest {
-        mutableMapOf<String, NarrationScope<out Any, out NarrativeScope, StateNarrationComposable<SnapshotStateList<T>>>>()
-    }
-
-    override val onNarrativeExitRequest by laziest {
-        mutableMapOf<String, MutableList<(NarrationScope<String, StateNarrativeScope, StateNarrationComposable<SnapshotStateList<T>>>) -> Boolean>?>()
-    }
+) : SnapShotStateNarrationScope<T, StateNarrationComposable<SnapshotStateList<T>>>(
+    uuid,
+    state
+) {
 
     private val String.currentNarrativeScope
         get() = narrativeScopes[this] ?: newNarrativeScope.also {
@@ -57,15 +37,14 @@ class SnapshotStateNarrationScopeImplJvm<T>(
         }
 
     @Composable
-    @OptIn(ExperimentalAnimationApi::class)
-    override fun Narrate() {
+    override fun Narrate()  {
         if (enterTransition == null) {
             val currentKey = state.key
             composables[currentKey]?.Narrate(currentKey, state)
         } else AnimatedContent(
             state,
             transitionSpec = {
-                enterTransition with (exitTransition ?: fadeOut())
+                enterTransition togetherWith (exitTransition ?: fadeOut())
             }
         ) { snapshot ->
             val currentKey = snapshot.key

@@ -5,20 +5,24 @@ import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 
-interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, ProgressiveNarrativeScope, C> {
-
-    val backStack: ListBackStack<Key>
+abstract class ProgressiveNarrationScope<Key : Any, C>(
+    uuid: String,
+    open val backStack: ListBackStack<Key>,
+) : NarrationScope<Key, ProgressiveNarrativeScope, C>(
+    uuid,
+    ProgressiveNarrativeScope()
+) {
 
     val prevKey: Key?
         get() = backStack.previous
 
-    val currentKey: Key
+    open val currentKey: Key
         get() = backStack.current
 
     val currentComponent
         get() = composables[currentKey]
 
-    val Key.currentNarrativeScope: ProgressiveNarrativeScope
+    open val Key.currentNarrativeScope: ProgressiveNarrativeScope
         get() = narrativeScopes[this] ?: newNarrativeScope.also {
             narrativeScopes[this] = it
         }
@@ -31,9 +35,6 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
         key.addToBackstack()
         composables[key] = content
     }
-
-    override val newNarrativeScope
-        get() = ProgressiveNarrativeScope()
 
     fun Key.addToBackstack() {
         if (backStack.isEmpty) backStack.add(this)
@@ -50,9 +51,6 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
             backStack.navigateTo(this)
         }
     }
-
-    @Composable
-    override fun Narrate()
 
     override fun cleanUp(key: Key) {
         super.cleanUp(key)
@@ -109,6 +107,3 @@ interface ProgressiveNarrationScope<Key : Any, C> : NarrationScope<Key, Progress
     }
 
 }
-
-
-

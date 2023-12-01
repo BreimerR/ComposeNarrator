@@ -1,31 +1,40 @@
 package libetal.kotlin.compose.narrator.interfaces
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import libetal.kotlin.compose.narrator.NarrativeScope
-import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
-import libetal.kotlin.log.debug
+import libetal.kotlin.laziest
 import libetal.kotlin.log.warn
 import libetal.kotlin.log.info
 
-interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
-
-    val uuid: String
-
+abstract class NarrationScope<Key : Any, Scope : NarrativeScope, Content>(
+    val uuid: String,
     val newNarrativeScope: Scope
+) {
 
-    val composables: MutableMap<Key, Content>
+    val narrativeScopes by laziest {
+        mutableMapOf<Key, Scope>()
+    }
 
-    val narrativeScopes: MutableMap<Key, Scope>
+    val composables: MutableMap<Key, Content> by laziest {
+        mutableMapOf()
+    }
 
+    val children: MutableMap<String, NarrationScope<out Any, out NarrativeScope, Content>> by laziest {
+        mutableMapOf()
+    }
 
-    val onNarrationEndListeners: MutableMap<Key, MutableList<() -> Unit>>
+    val onNarrationEndListeners by laziest {
+        mutableMapOf<Key, MutableList<() -> Unit>>()
+    }
 
-    val children: MutableMap<String, NarrationScope<out Any, out NarrativeScope, Content>>
+    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?> by laziest {
+        mutableMapOf()
+    }
 
-    val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, Scope, Content>) -> Boolean>?>
+    @Composable
+    abstract fun Narrate()
 
-    fun add(key: Key, content: Content) {
+    open fun add(key: Key, content: Content) {
         if (key in composables) {
             TAG warn "Can't initialize same key twice: ${this::class} $key"
             TAG info "Need Help Resolving for this"
@@ -45,7 +54,7 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
     /**
      * backstack
      **/
-    fun back(): Boolean {
+    open fun back(): Boolean {
 
         var shouldExit = true
 
@@ -59,18 +68,9 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
     }
 
 
-    fun cleanUp(key: Key) {
+    open fun cleanUp(key: Key) {
         onNarrativeExitRequest[key]?.clear()
         onNarrativeExitRequest[key] = null
-    }
-
-    @Composable
-    fun Narrate()
-
-
-    @Composable
-    fun Compose(composable: Content){
-
     }
 
     operator fun Key.invoke(content: Content) = add(this, content)
@@ -93,7 +93,6 @@ interface NarrationScope<Key : Any, Scope : NarrativeScope, Content> {
         if (action !in listeners)
             listeners.add(action)
     }
-
 
 
     companion object {

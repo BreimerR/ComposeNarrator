@@ -84,7 +84,7 @@ fun App() =
 
                         exists { user ->
                             Column {
-                                Text(user!!.name)
+                                Text(user?.name.orEmpty())
                                 Button({
                                     currentValue = null
                                 }) {

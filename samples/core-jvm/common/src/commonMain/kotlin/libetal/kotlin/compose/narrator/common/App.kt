@@ -50,7 +50,7 @@ fun App() = MaterialTheme {
         }
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            NarrationJvm<AppNarrations> {
+            NarrationJvm {
                 AppNarrations.HOME {
 
                     CardedComponent(4.dp) {

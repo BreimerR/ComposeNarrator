@@ -2,7 +2,6 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import libetal.kotlin.compose.narrator.extensions.LocalNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
@@ -23,8 +22,10 @@ val narrationScope
     @Composable get() = LocalNarrationScope.current
         ?: throw RuntimeException("Method should be called inside a Narration. Or a composable nesetd inside a Narration")
 
+
+// Key : Any, Scope : NarrativeScope, Content
 @Composable
-infix fun <Key : Any, N : NarrationScope<Key, *, *>> N.Narration(
+infix fun <Key : Any, Scope : NarrativeScope, Content, N : NarrationScope<Key, Scope, Content>> N.Narration(
     prepareNarratives: N.() -> Unit
 ) {
     LocalNarrationScope.current?.addChild(this)
@@ -42,7 +43,7 @@ infix fun <Key : Any, N : NarrationScope<Key, *, *>> N.Narration(
 }
 
 @Composable
-fun <Key : Any, N : NarrationScope<Key, *, *>> Narration(
+fun <Key : Any, Scope : NarrativeScope, Content, N : NarrationScope<Key, Scope, Content>> Narration(
     scopeBuilder: (uuid: String) -> N,
     prepareNarratives: N.() -> Unit
 ) {

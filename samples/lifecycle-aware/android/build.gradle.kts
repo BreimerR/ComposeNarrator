@@ -21,7 +21,7 @@ dependencies {
     implementation(compose.animation)
     implementation(compose.materialIconsExtended)
     implementation(project(":samples:lifecycle-aware:common"))
-    implementation("androidx.activity:activity-compose:1.5.1")
+    implementation("androidx.activity:activity-compose:1.8.1")
     implementation("com.google.android.material:material:1.6.1")
 }
 

@@ -1,21 +1,23 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.animation.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.*
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.interfaces.NarrationScope
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
-import libetal.kotlin.log.debug
 
-class NarrationScopeImpl<Key : Any> constructor(
-    override var uuid: String,
-    override val backStack: ListBackStack<Key>,
+class NarrationScopeImpl<Key : Any>(
+    uuid: String,
+    backStack: ListBackStack<Key>,
     val enterTransition: EnterTransition? = null,
     val exitTransition: ExitTransition? = null,
-) : ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>> {
+) : ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>(
+    uuid,
+    backStack
+) {
 
-    private val delegate = JvmNarrationScope(enterTransition, exitTransition, this)
+    override val backStack
+        get() = super.backStack
 
     constructor(uuid: String, backStack: ListBackStack<Key>) : this(uuid, backStack, fadeIn(), fadeOut())
 
@@ -41,33 +43,26 @@ class NarrationScopeImpl<Key : Any> constructor(
 
     }
 
-    override val composables: MutableMap<Key, ScopedComposable<ProgressiveNarrativeScope>>
-        get() = delegate.composables
+    override val currentKey
+        get() = super.currentKey
 
-    override val narrativeScopes: MutableMap<Key, ProgressiveNarrativeScope>
-        get() = delegate.narrativeScopes
+    override val Key.currentNarrativeScope: ProgressiveNarrativeScope
+        get() = narrativeScopes[this] ?: newNarrativeScope.also {
+            narrativeScopes[this] = it
+        }
 
-    override val onNarrationEndListeners
-        get() = delegate.onNarrationEndListeners
-
-    override val children
-        get() = delegate.children
-
-    override val onNarrativeExitRequest: MutableMap<Key, MutableList<(NarrationScope<Key, ProgressiveNarrativeScope, ScopedComposable<ProgressiveNarrativeScope>>) -> Boolean>?>
-        get() = delegate.onNarrativeExitRequest
 
     @Composable
-    @OptIn(ExperimentalAnimationApi::class)
     override fun Narrate() {
 
-        val exitTransition = exitTransition ?: fadeOut()
+        val lambdaExitTransition = exitTransition ?: fadeOut()
 
-        val enterTransition = enterTransition ?: fadeIn()
+        val lambdaEnterTransition = enterTransition ?: fadeIn()
 
         AnimatedContent(
             currentKey,
             transitionSpec = {
-                enterTransition with exitTransition
+                lambdaEnterTransition togetherWith lambdaExitTransition
             }
         ) {
 
@@ -82,4 +77,3 @@ class NarrationScopeImpl<Key : Any> constructor(
     }
 
 }
-

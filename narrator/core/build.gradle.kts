@@ -4,10 +4,18 @@ import org.jetbrains.compose.compose
 
 val projectGroup: String by project
 val projectVersion: String by project
+val kotlinDateTime: String by project
+val androidCoreKtx: String by project
+val androidAppCompat: String by project
 val jvmTargetVersion: String by project
+val kotlinCoroutines: String by project
 val androidMinSdkVersion: String by project
+val libetalKotlinVersion: String by project
+val kotlinSwingCoroutines: String by project
+val libetalKotlinLogVersion: String by project
 val androidTargetSdkVersion: String by project
 val androidCompileSdkVersion: String by project
+
 
 plugins {
     kotlin("multiplatform")
@@ -50,11 +58,11 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation("libetal.libraries.kotlin:log:1.1.0")
-                implementation("libetal.libraries.kotlin:library:1.0.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                api(compose.runtime)
+                api("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTime")
+                api("libetal.libraries.kotlin:library:$libetalKotlinVersion")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
             }
         }
 
@@ -72,25 +80,19 @@ kotlin {
             }
         }
 
-        val androidTest by getting {
-            dependencies {
-
-            }
-
-        }
 
         val desktopMain by getting {
             dependencies {
                 implementation(compose.preview)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinSwingCoroutines")
             }
         }
 
         val desktopTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinSwingCoroutines")
             }
         }
 

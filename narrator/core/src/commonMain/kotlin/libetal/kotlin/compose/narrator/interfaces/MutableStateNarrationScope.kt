@@ -1,16 +1,22 @@
 package libetal.kotlin.compose.narrator.interfaces
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import libetal.kotlin.compose.narrator.PremiseKey
+import libetal.kotlin.compose.narrator.StateNarrativeScope
 
-interface MutableStateNarrationScope<T, C> : StateNarrationScope<T, C, MutableState<T>, PremiseKey<T>> {
+abstract class MutableStateNarrationScope<T, C>(
+    uuid: String,
+    state: MutableState<T>
+) : StateNarrationScope<T, C, MutableState<T>, PremiseKey<T>>(
+    uuid,
+    state
+) {
 
-    var currentValue
+    open var currentValue
         get() = state.value
         set(value) {
             state.value = value
         }
 
 }
-
-
