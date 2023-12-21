@@ -19,6 +19,7 @@ kotlin {
                 implementation(compose.material)
                 implementation(compose.desktop.currentOs)
                 implementation(project(":samples:lifecycle-aware:common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
             }
         }
     }

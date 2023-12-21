@@ -45,27 +45,27 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(project(":narrator:core"))
-                implementation("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTime")
-                implementation("libetal.libraries.kotlin:library:$libetalKotlinVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
+                api(compose.runtime)
+                api(compose.runtime)
+                api(compose.foundation)
+                api(project(":narrator:core"))
+                api("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTime")
+                api("libetal.libraries.kotlin:library:$libetalKotlinVersion")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
             }
         }
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                api(kotlin("test"))
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.core:core-ktx:$androidCoreKtx")
-                implementation("androidx.appcompat:appcompat:$androidAppCompat")
+                api("androidx.core:core-ktx:$androidCoreKtx")
+                api("androidx.appcompat:appcompat:$androidAppCompat")
             }
         }
 

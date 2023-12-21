@@ -53,12 +53,12 @@ kotlin {
                 implementation(compose.runtime)
 
                 api("libetal.libraries.kotlin:io:$libetalKotlinVersion")
+                api("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
                 api("libetal.libraries.kotlin:library:$libetalKotlinVersion")
                 api("libetal.libraries.kotlin:coroutines:$libetalKotlinVersion")
-                implementation("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
 
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTime")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTime")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
 
             }
         }

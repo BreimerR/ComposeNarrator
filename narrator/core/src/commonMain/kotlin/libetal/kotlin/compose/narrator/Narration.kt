@@ -25,7 +25,7 @@ val narrationScope
 
 // Key : Any, Scope : NarrativeScope, Content
 @Composable
-infix fun <Key : Any, Scope : NarrativeScope, Content, N : NarrationScope<Key, Scope, Content>> N.Narration(
+infix fun <Key : Any, N : NarrationScope<Key, *, *>> N.Narration(
     prepareNarratives: N.() -> Unit
 ) {
     LocalNarrationScope.current?.addChild(this)
@@ -43,7 +43,7 @@ infix fun <Key : Any, Scope : NarrativeScope, Content, N : NarrationScope<Key, S
 }
 
 @Composable
-fun <Key : Any, Scope : NarrativeScope, Content, N : NarrationScope<Key, Scope, Content>> Narration(
+fun <Key : Any, N : NarrationScope<Key, *, *>> Narration(
     scopeBuilder: (uuid: String) -> N,
     prepareNarratives: N.() -> Unit
 ) {

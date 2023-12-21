@@ -52,7 +52,7 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
+                api(compose.runtime)
 
                 implementation("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
                 implementation("libetal.libraries.kotlin:library:$libetalKotlinVersion")
@@ -72,8 +72,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.animation)
+                api(compose.runtime)
+                api(compose.animation)
                 api(project(":narrator:core-jvm"))
             }
         }
@@ -86,8 +86,8 @@ kotlin {
 */
         val desktopMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.animation)
+                api(compose.runtime)
+                api(compose.animation)
                 api(project(":narrator:core-jvm"))
             }
         }

@@ -37,7 +37,7 @@ kotlin {
                 api(compose.material)
                 api(compose.animation)
                 api(compose.materialIconsExtended)
-                api("libetal.libraries.kotlin:log:1.1.0")
+                implementation("libetal.libraries.kotlin:log:1.1.0")
                 api(project(":narrator:lifecycle-aware"))
             }
         }

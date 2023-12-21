@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "DEPRECATION")
 
 import org.jetbrains.compose.compose
 
