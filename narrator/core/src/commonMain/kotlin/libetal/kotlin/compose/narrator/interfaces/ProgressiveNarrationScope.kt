@@ -1,6 +1,5 @@
 package libetal.kotlin.compose.narrator.interfaces
 
-import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.ProgressiveNarrativeScope
 import libetal.kotlin.compose.narrator.backstack.ListBackStack
 import libetal.kotlin.compose.narrator.listeners.ExitRequestListener

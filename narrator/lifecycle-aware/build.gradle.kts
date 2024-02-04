@@ -36,7 +36,7 @@ kotlin {
         }
     }
 
-    js(IR) {
+   /* js(IR) {
         browser {
             testTask {
                 testLogging.showStandardStreams = true
@@ -46,7 +46,7 @@ kotlin {
                 }
             }
         }
-    }
+    }*/
 
     sourceSets {
 
@@ -97,11 +97,11 @@ kotlin {
             }
         }
 
-        val jsMain by getting {
+        /* Error occurs when we compile with js val jsMain by getting {
             dependencies {
 
             }
-        }
+        }*/
     }
 
 
