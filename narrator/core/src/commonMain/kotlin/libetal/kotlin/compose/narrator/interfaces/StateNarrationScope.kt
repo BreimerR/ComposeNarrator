@@ -1,6 +1,5 @@
 package libetal.kotlin.compose.narrator.interfaces
 
-import androidx.compose.runtime.Composable
 import libetal.kotlin.compose.narrator.StateNarrativeScope
 
 abstract class StateNarrationScope<T, C, S, Premise>(

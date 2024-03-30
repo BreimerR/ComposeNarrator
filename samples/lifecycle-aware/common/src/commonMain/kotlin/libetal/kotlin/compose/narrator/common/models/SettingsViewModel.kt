@@ -1,16 +1,16 @@
 package libetal.kotlin.compose.narrator.common.models
 
-import androidx.compose.runtime.mutableStateOf
-import libetal.kotlin.compose.narrator.common.data.User
+import libetal.kotlin.compose.narrator.common.data.UserState
 import libetal.kotlin.compose.narrator.lifecycle.ViewModel
 import libetal.kotlin.log.info
 
 
-class HomeViewModel : ViewModel(Long.MAX_VALUE) {
+class SettingsViewModel : ViewModel(Long.MAX_VALUE) {
 
 
-    val userState = mutableStateOf<User?>(null)
+    val userState = UserState()
 
+    val user by userState
 
     override fun onResume() {
         TAG info "Home view model resuming"

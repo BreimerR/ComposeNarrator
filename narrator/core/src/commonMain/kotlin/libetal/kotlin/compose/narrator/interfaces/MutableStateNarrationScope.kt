@@ -1,9 +1,7 @@
 package libetal.kotlin.compose.narrator.interfaces
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import libetal.kotlin.compose.narrator.PremiseKey
-import libetal.kotlin.compose.narrator.StateNarrativeScope
 
 abstract class MutableStateNarrationScope<T, C>(
     uuid: String,

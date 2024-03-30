@@ -15,7 +15,7 @@ import libetal.kotlin.compose.narrator.*
 import libetal.kotlin.compose.narrator.common.AppNarrations.SETTINGS
 import libetal.kotlin.compose.narrator.common.AppNarrations.VIDEOS
 import libetal.kotlin.compose.narrator.common.data.User
-import libetal.kotlin.compose.narrator.common.models.HomeViewModel
+import libetal.kotlin.compose.narrator.common.models.SettingsViewModel
 import libetal.kotlin.compose.narrator.common.models.VideosViewModel
 import libetal.kotlin.compose.narrator.interfaces.ProgressiveNarrationScope
 
@@ -53,7 +53,7 @@ fun App() =
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-            Narration<AppNarrations> {
+            Narration {
 
                 AppNarrations.HOME {
 
@@ -75,36 +75,35 @@ fun App() =
 
                 }
 
-                SETTINGS(this, { HomeViewModel() }) { homeViewModel ->
+                SETTINGS(this, { SettingsViewModel() }) { settingsViewModel ->
+                    val nameState = remember { mutableStateOf<String?>(null) }
+                    val userState = remember{ mutableStateOf(settingsViewModel.userState) }
 
-                    Narration(remember { homeViewModel.userState }) {
-                        val exists = createPremise { it != null }
-                        val missing = createPremise { it == null }
-
+                    Narration(userState) {
+                        val exists = createPremise { it.isSet }
+                        val missing = createPremise { !it.isSet }
 
                         exists { user ->
                             Column {
-                                Text(user?.name.orEmpty())
+                                Text(user.name.orEmpty())
                                 Button({
-                                    currentValue = null
+                                    userState.value.name = null
                                 }) {
                                     Text("Delete")
                                 }
                             }
                         }
 
-                        missing {
-
-                            val textState = remember { mutableStateOf(homeViewModel.userState.value?.name ?: "") }
+                        missing { user ->
 
                             Column {
 
-                                TextField(textState.value, {
-                                    textState.value = it
+                                TextField(nameState.value.orEmpty(), {
+                                    nameState.value = it
                                 })
 
                                 Button({
-                                    currentValue = User(textState.value)
+                                    settingsViewModel.userState.name = nameState.value
                                 }) {
                                     Text("Save")
 
@@ -113,7 +112,7 @@ fun App() =
                             }
 
                             addOnExitRequest {
-                                textState.value.isNotEmpty()
+                                userState.value.name?.isNotEmpty() ?: false
                             }
 
                         }

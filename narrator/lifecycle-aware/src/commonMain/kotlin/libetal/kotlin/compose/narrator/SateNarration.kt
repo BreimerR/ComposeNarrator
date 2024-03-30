@@ -1,10 +1,12 @@
 package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
+
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import libetal.kotlin.compose.narrator.interfaces.MutableStateNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
+import libetal.kotlin.compose.narrator.interfaces.ValueStateNarrationScope
 
 
 @Composable
