@@ -136,6 +136,7 @@ val currentScopeUUID
     @Composable get() = LocalNarrationKeyId.current ?: throw RuntimeException("Only Used in viewModel Narrations")
 
 @Composable
+@Deprecated("Use wasn't validated")
 fun <Key : Any, VM : ViewModel> Narration(
     scopeBuilder: (uuid: String, stack: SnapshotStateList<Key>) -> ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>,
     vmFactory: () -> VM,

@@ -16,9 +16,6 @@ class NarrationScopeImpl<Key : Any>(
     backStack
 ) {
 
-    override val backStack
-        get() = super.backStack
-
     constructor(uuid: String, backStack: ListBackStack<Key>) : this(uuid, backStack, fadeIn(), fadeOut())
 
     override fun add(key: Key, content: ScopedComposable<ProgressiveNarrativeScope>) = super.add(key) {

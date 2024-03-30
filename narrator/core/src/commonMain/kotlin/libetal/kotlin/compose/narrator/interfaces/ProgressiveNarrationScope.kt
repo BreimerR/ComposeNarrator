@@ -6,7 +6,7 @@ import libetal.kotlin.compose.narrator.listeners.ExitRequestListener
 
 abstract class ProgressiveNarrationScope<Key : Any, C>(
     uuid: String,
-    open val backStack: ListBackStack<Key>,
+    val backStack: ListBackStack<Key>,
 ) : NarrationScope<Key, ProgressiveNarrativeScope, C>(
     uuid,
     ProgressiveNarrativeScope()
