@@ -8,15 +8,15 @@ import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
 
 
 @Composable
-actual fun <T> Narration(
+fun <T> Narration(
     state: MutableState<T>,
     prepareNarrations: MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.() -> Unit
-): Unit = TODO("Implementation Pending")
+): Unit {}
 
 @Composable
-actual fun <T> Narration(
+fun <T> Narration(
     state: SnapshotStateList<T>,
     prepareNarrations: SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>.() -> Unit
 ) {
-    TODO("Implementation Pending")
+
 }

@@ -1,0 +1,33 @@
+[versions]
+kotlin = "1.9.21"
+composeVersion = "1.5.11"
+agp = "8.2.0"
+libetalKotlinLogVersion = "1.1.0"
+libetalKotlinVersion = "1.0.3"
+kotlinCoroutines = "1.6.4"
+androidCoreKtx="1.12.0"
+androidAppCompat="1.6.1"
+kotlinDateTime = "0.3.2"
+#agp = "8.4.0-beta02"
+jvmTargetVersion = "11"
+
+[libraries]
+libetal-io = { group = "libetal.libraries.kotlin", name = "io", version.ref = "libetalKotlinVersion" }
+libetal-logs = { group = "libetal.libraries.kotlin", name = "log", version.ref = "libetalKotlinLogVersion" }
+libetal-kotlin = { group = "libetal.libraries.kotlin", name = "library", version.ref = "libetalKotlinVersion" }
+libetal-coroutines = { group = "libetal.libraries.kotlin", name = "coroutines", version.ref = "libetalKotlinVersion" }
+
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+
+jetbrains-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinDateTime" }
+jetbrains-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
+jetbrains-kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinCoroutines" }
+
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidCoreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidAppCompat" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "composeVersion" }

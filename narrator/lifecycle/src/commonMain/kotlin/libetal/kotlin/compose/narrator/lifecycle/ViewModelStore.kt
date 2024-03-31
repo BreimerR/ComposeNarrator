@@ -7,7 +7,7 @@ open class ViewModelStore<Key> {
     /**
      * TODO: This model won't work on NATIVE platforms best use ThreadLocal
      **/
-    internal val store by laziest {
+    val store by laziest {
         mutableMapOf<Key, ViewModel>()
     }
 
@@ -15,13 +15,24 @@ open class ViewModelStore<Key> {
         mutableMapOf<Key, () -> ViewModel>()
     }
 
-    operator fun get(key: Key) = store[key] ?: key.createViewModel() ?: throw RuntimeException(
-        """| Make sure to use 
-           | fun Key.invoke(viewModelFactory:()->ViewModel, ...)
-        """.trimMargin()
-    )
+    inline operator fun <reified R : ViewModel> get(key: Key?): R = when (key) {
+        null -> when(val viewModel = store.values.filterIsInstance<R>().firstOrNull()){
+            null -> throw RuntimeException(
+                """| Make sure to use and the type initialized matches the type requested in viewModelProvider<T>()
+                   | fun Key.invoke(viewModelFactory:()->ViewModel, ...)
+                """.trimMargin()
+            )
+            else -> viewModel
+        }
 
-    private fun Key.createViewModel() = initializers[this]?.invoke()?.also { viewModel ->
+        else -> (store[key] ?: key.createViewModel() ?: throw RuntimeException(
+            """| Make sure to use 
+               | fun Key.invoke(viewModelFactory:()->ViewModel, ...)
+            """.trimMargin()
+        )) as R
+    }
+
+    fun Key.createViewModel() = initializers[this]?.invoke()?.also { viewModel ->
         store[this] = viewModel
     }
 

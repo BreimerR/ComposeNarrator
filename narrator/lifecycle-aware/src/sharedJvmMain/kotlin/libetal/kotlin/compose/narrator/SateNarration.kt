@@ -6,11 +6,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import libetal.kotlin.compose.narrator.interfaces.MutableStateNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
-import libetal.kotlin.compose.narrator.interfaces.ValueStateNarrationScope
 
 
 @Composable
-expect fun <T> Narration(
+expect  fun <T> Narration(
     state: MutableState<T>,
     prepareNarrations: MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.() -> Unit
 )

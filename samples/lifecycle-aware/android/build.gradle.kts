@@ -26,6 +26,7 @@ dependencies {
 }
 
 android {
+    namespace = "libetal.kotlin.compose.narrator.core.lifecycle.aware.android"
     compileSdk = androidCompileSdkVersion.toInt()
     defaultConfig {
         applicationId = "$projectGroup.narrator.lifecycle.aware.jvm.android"

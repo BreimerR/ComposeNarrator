@@ -4,6 +4,7 @@ import org.jetbrains.compose.compose
 
 val projectGroup: String by project
 val projectVersion: String by project
+val composeVersion: String by project
 val jvmTargetVersion: String by project
 val androidMinSdkVersion: String by project
 val libetalKotlinVersion: String by project
@@ -13,55 +14,63 @@ val androidCompileSdkVersion: String by project
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose")
-    id("com.android.library")
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.android.library)
     `maven-publish`
 }
+
+val javaVersion: JavaVersion by extra
+val javaTargetVersion: String by extra
+
 
 group = "$projectGroup.narrator"
 version = projectVersion
 
 kotlin {
 
-    android {
-        publishLibraryVariants("release", "debug")
-        compilations.all {
-            kotlinOptions.jvmTarget = jvmTargetVersion
-        }
-    }
+    androidTarget()
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = jvmTargetVersion
+            kotlinOptions.jvmTarget = javaTargetVersion
         }
     }
 
-   /* js(IR) {
+    js(IR) {
         browser {
             testTask {
                 testLogging.showStandardStreams = true
-                useKarma {
+                /*useKarma {
                     useChromeHeadless()
                     useFirefox()
-                }
+                }*/
             }
         }
-    }*/
+    }
+
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
+
 
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
 
-                implementation("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
-                implementation("libetal.libraries.kotlin:library:$libetalKotlinVersion")
-                implementation("libetal.libraries.kotlin:coroutines:$libetalKotlinVersion")
+                api(libs.libetal.logs)
+                api(libs.libetal.kotlin)
+                api(libs.libetal.coroutines)
+                api(libs.jetbrains.datetime)
+                api(libs.jetbrains.kotlinx.coroutines.core)
 
                 api(project(":narrator:core"))
                 api(project(":narrator:lifecycle"))
 
             }
+        }
+
+        val sharedJvmMain by creating {
+            dependsOn(commonMain)
         }
 
         val commonTest by getting {
@@ -70,11 +79,16 @@ kotlin {
             }
         }
 
+
+
         val androidMain by getting {
+            dependsOn(sharedJvmMain)
             dependencies {
                 api(compose.runtime)
                 api(compose.animation)
                 api(project(":narrator:core-jvm"))
+                api(libs.androidx.core)
+                api(libs.androidx.appcompat)
             }
         }
 
@@ -85,6 +99,7 @@ kotlin {
         }
 */
         val desktopMain by getting {
+            dependsOn(sharedJvmMain)
             dependencies {
                 api(compose.runtime)
                 api(compose.animation)
@@ -110,6 +125,7 @@ kotlin {
 
 android {
 
+    namespace = "libetal.kotlin.compose.navigation.core.lifecycle.aware"
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
@@ -117,9 +133,18 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeVersion.get()
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
 }
 
 publishing {

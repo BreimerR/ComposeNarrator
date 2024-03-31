@@ -15,6 +15,8 @@ plugins {
 group = "$projectGroup.narrator.samples.common"
 version = projectVersion
 
+val javaVersion: JavaVersion by extra
+val javaTargetVersion: String by extra
 
 kotlin {
 
@@ -53,6 +55,7 @@ kotlin {
 
 @Suppress("UnstableApiUsage")
 android {
+    namespace = "libetal.kotlin.compose.narrator.samples.core.jvm.android"
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
@@ -61,7 +64,7 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
 }

@@ -6,11 +6,15 @@ val androidMinSdkVersion: String by project
 val androidTargetSdkVersion: String by project
 val androidCompileSdkVersion: String by project
 
+
 plugins {
     id("org.jetbrains.compose")
     id("com.android.application")
     kotlin("android")
 }
+
+val javaVersion: JavaVersion by extra
+val javaTargetVersion: String by extra
 
 group = "$projectGroup.narrator.samples.android"
 version = projectVersion
@@ -25,21 +29,30 @@ dependencies {
 }
 
 android {
+    namespace = "libetal.kotlin.compose.narrator.android"
     compileSdk = androidCompileSdkVersion.toInt()
     defaultConfig {
-        applicationId = "$projectGroup.narrator.core.jvm.android"
+        //applicationId = "$projectGroup.narrator.core.jvm.android"
         minSdk = androidMinSdkVersion.toInt()
         targetSdk = androidTargetSdkVersion.toInt()
-        versionCode = 1
-        versionName = "1.0"
+        //versionCode = 1
+        //versionName = "1.0"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
 
     packagingOptions {
         excludes += "META-INF/log.kotlin_module"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeVersion.get()
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     buildTypes {

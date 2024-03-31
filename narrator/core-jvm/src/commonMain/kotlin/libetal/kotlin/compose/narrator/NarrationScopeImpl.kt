@@ -11,14 +11,14 @@ class NarrationScopeImpl<Key : Any>(
     backStack: ListBackStack<Key>,
     val enterTransition: EnterTransition? = null,
     val exitTransition: ExitTransition? = null,
-) : ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>(
+) : ProgressiveNarrationScope<Key, @Composable ProgressiveNarrativeScope.() -> Unit>(
     uuid,
     backStack
 ) {
 
     constructor(uuid: String, backStack: ListBackStack<Key>) : this(uuid, backStack, fadeIn(), fadeOut())
 
-    override fun add(key: Key, content: ScopedComposable<ProgressiveNarrativeScope>) = super.add(key) {
+    override fun add(key: Key, content: @Composable ProgressiveNarrativeScope.() -> Unit) = super.add(key) {
 
         content()
 

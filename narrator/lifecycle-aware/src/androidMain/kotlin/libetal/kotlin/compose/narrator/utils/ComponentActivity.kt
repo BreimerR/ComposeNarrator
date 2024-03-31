@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
 
 
-internal val LocalActivity: ComponentActivity?
+val LocalActivity: ComponentActivity?
     @Composable get() = when (val res = LocalContext.current) {
         is ComponentActivity -> res
         else -> null

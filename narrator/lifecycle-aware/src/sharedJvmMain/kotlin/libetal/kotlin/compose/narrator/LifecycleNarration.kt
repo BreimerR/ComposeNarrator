@@ -16,10 +16,10 @@ val <Key : Any> Key.viewModelStoreKey
     get() = toString()
 
 @Suppress("UNCHECKED_CAST")
-operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
-    scope: ProgressiveNarrationScope<Key, ScopedComposable<NScope>>,
-    vmFactory: () -> VM,
-    content: @Composable NScope.(VM) -> Unit
+inline operator fun <Key : Any, reified VM : ViewModel, NScope : NarrativeScope> Key.invoke(
+    scope: ProgressiveNarrationScope<Key, @Composable NScope.() -> Unit>,
+    noinline vmFactory: () -> VM,
+    noinline content: @Composable NScope.(VM) -> Unit
 ) = with(scope) {
 
     val key = this@invoke.viewModelStoreKey
@@ -28,7 +28,7 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
 
     add(this@invoke) {
 
-        val viewModel = NarrationViewModelStore[key] as VM
+        val viewModel: VM = NarrationViewModelStore[key]
 
         content(viewModel)
 
@@ -54,10 +54,10 @@ operator fun <Key : Any, VM : ViewModel, NScope : NarrativeScope> Key.invoke(
 }
 
 @Suppress("UNCHECKED_CAST")
-operator fun <T, VM : ViewModel> String.invoke(
+inline operator fun <T, reified VM : ViewModel> String.invoke(
     scope: MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>,
-    vmFactory: () -> VM,
-    content: @Composable MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.(VM) -> Unit
+    noinline vmFactory: () -> VM,
+    noinline content: @Composable MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.(VM) -> Unit
 ) = with(scope) {
 
     val key = this@invoke.viewModelStoreKey
@@ -66,7 +66,7 @@ operator fun <T, VM : ViewModel> String.invoke(
 
     add(this@invoke) {
 
-        val viewModel = NarrationViewModelStore[key] as VM
+        val viewModel: VM = NarrationViewModelStore[key]
 
         content(viewModel)
 
@@ -93,10 +93,10 @@ operator fun <T, VM : ViewModel> String.invoke(
 
 
 @Suppress("UNCHECKED_CAST")
-operator fun <T, VM : ViewModel> String.invoke(
+inline operator fun <T, reified VM : ViewModel> String.invoke(
     scope: SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>,
-    vmFactory: () -> VM,
-    content: @Composable SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>.(VM) -> Unit
+    noinline vmFactory: () -> VM,
+    noinline content: @Composable SnapShotStateNarrationScope<T, @Composable StateNarrativeScope.(SnapshotStateList<T>) -> Unit>.(VM) -> Unit
 ) = with(scope) {
 
     val key = this@invoke.viewModelStoreKey
@@ -105,7 +105,7 @@ operator fun <T, VM : ViewModel> String.invoke(
 
     add(this@invoke) {
 
-        val viewModel = NarrationViewModelStore[key] as VM
+        val viewModel: VM = NarrationViewModelStore[key]
 
         content(viewModel)
 
@@ -137,10 +137,10 @@ val currentScopeUUID
 
 @Composable
 @Deprecated("Use wasn't validated")
-fun <Key : Any, VM : ViewModel> Narration(
-    scopeBuilder: (uuid: String, stack: SnapshotStateList<Key>) -> ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>,
-    vmFactory: () -> VM,
-    prepareNarratives: ProgressiveNarrationScope<Key, ScopedComposable<ProgressiveNarrativeScope>>.(viewModel: VM, uuid: String) -> Unit
+inline fun <Key : Any, reified VM : ViewModel> Narration(
+    scopeBuilder: (uuid: String, stack: SnapshotStateList<Key>) -> ProgressiveNarrationScope<Key, @Composable ProgressiveNarrativeScope.() -> Unit>,
+    noinline vmFactory: () -> VM,
+    noinline prepareNarratives: ProgressiveNarrationScope<Key, @Composable ProgressiveNarrativeScope.() -> Unit>.(viewModel: VM, uuid: String) -> Unit
 ) {
 
     val uuid = "${prepareNarratives.hashCode()}"
@@ -162,11 +162,11 @@ fun <Key : Any, VM : ViewModel> Narration(
         LocalNarrationKeyId provides uuid
     ) {
 
-        val vm = NarrationViewModelStore[scope.uuid]
+        val vm:VM = NarrationViewModelStore[scope.uuid]
 
         with(scope) {
             @Suppress("UNCHECKED_CAST")
-            prepareNarratives(vm as VM, uuid)
+            prepareNarratives(vm, uuid)
             Narrate()
         }
 

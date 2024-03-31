@@ -10,7 +10,10 @@ import kotlinx.coroutines.Dispatchers
  **/
 @Suppress("UNCHECKED_CAST")
 @Composable
-fun <VM : ViewModel> viewModelProvider() = LocalViewModelProvider.current as? VM
+inline fun <reified VM : ViewModel> viewModelProvider(): VM = when (val viewModel = LocalViewModelProvider.current) {
+    is VM -> viewModel
+    else -> NarrationViewModelStore[null]
+}
 
 fun <T : Any> ViewModel.retrievedState(loader: suspend (callback: (T) -> Unit) -> Unit) =
     mutableStateOf<T?>(null).also {
@@ -21,7 +24,7 @@ fun <T : Any> ViewModel.retrievedState(loader: suspend (callback: (T) -> Unit) -
         }
     }
 
-val <Key> Key.lifeCycleViewModel
+val <Key> Key.lifeCycleViewModel: ViewModel
     get() = NarrationViewModelStore[storeKey]
 
 /**

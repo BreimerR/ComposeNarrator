@@ -4,6 +4,7 @@ import org.jetbrains.compose.compose
 
 val projectGroup: String by project
 val projectVersion: String by project
+val composeVersion: String by project
 val kotlinDateTime: String by project
 val androidCoreKtx: String by project
 val androidAppCompat: String by project
@@ -18,26 +19,23 @@ val androidCompileSdkVersion: String by project
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose")
-    id("com.android.library")
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.android.library)
     `maven-publish`
 }
+
+val javaVersion: JavaVersion by extra
+val javaTargetVersion: String by extra
 
 group = "$projectGroup.narrator"
 version = projectVersion
 
 kotlin {
-
-    android {
-        publishLibraryVariants("release", "debug")
-        compilations.all {
-            kotlinOptions.jvmTarget = jvmTargetVersion
-        }
-    }
+    androidTarget()
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = jvmTargetVersion
+            kotlinOptions.jvmTarget = javaTargetVersion
         }
     }
 
@@ -49,10 +47,10 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(project(":narrator:core"))
-                api("libetal.libraries.kotlin:log:$libetalKotlinLogVersion")
-                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTime")
-                api("libetal.libraries.kotlin:library:$libetalKotlinVersion")
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
+                api(libs.libetal.logs)
+                api(libs.libetal.kotlin)
+                api(libs.jetbrains.datetime)
+                api(libs.jetbrains.kotlinx.coroutines.core)
             }
         }
 
@@ -64,8 +62,7 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                api("androidx.core:core-ktx:$androidCoreKtx")
-                api("androidx.appcompat:appcompat:$androidAppCompat")
+
             }
         }
 
@@ -78,20 +75,20 @@ kotlin {
 
         val desktopMain by getting {
             dependencies {
-                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinSwingCoroutines")
+                api(libs.jetbrains.kotlinx.coroutines.swing)
             }
         }
 
         val desktopTest by getting {
             dependencies {
-                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinSwingCoroutines")
+                api(libs.jetbrains.kotlinx.coroutines.swing)
             }
         }
     }
 }
 
 android {
-
+    namespace = "libetal.kotlin.compose.narrator.jvm"
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
@@ -99,9 +96,17 @@ android {
         targetSdk = androidTargetSdkVersion.toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
+    composeOptions{
+        kotlinCompilerExtensionVersion = libs.versions.composeVersion.get()
+    }
+
+    buildFeatures{
+        compose = true
+    }
+
 }
 
 publishing {

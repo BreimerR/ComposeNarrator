@@ -2,9 +2,7 @@ package libetal.kotlin.compose.narrator
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import libetal.kotlin.compose.narrator.interfaces.ValueStateNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.MutableStateNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
 

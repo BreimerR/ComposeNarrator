@@ -37,7 +37,8 @@ kotlin {
                 api(compose.material)
                 api(compose.animation)
                 api(compose.materialIconsExtended)
-                implementation("libetal.libraries.kotlin:log:1.1.0")
+
+                api(libs.libetal.logs)
                 api(project(":narrator:lifecycle-aware"))
             }
         }
@@ -58,6 +59,7 @@ kotlin {
 
 @Suppress("UnstableApiUsage")
 android {
+    namespace = "libetal.kotlin.compose.narrator.core.lifecycle.aware.common"
     compileSdk = androidCompileSdkVersion.toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
