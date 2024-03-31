@@ -1,8 +1,3 @@
 package com.libetal.dependencies
 
-// KotlinTargetContainerWithPresetFunctions
-/*
-fun .jvm(){
-
-}
-*/
+/*Need for centralized dependencies and plugin setup required here*/
