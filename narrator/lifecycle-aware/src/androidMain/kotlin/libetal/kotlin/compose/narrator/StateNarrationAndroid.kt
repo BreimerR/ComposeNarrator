@@ -7,11 +7,11 @@ import libetal.kotlin.compose.narrator.interfaces.MutableStateNarrationScope
 import libetal.kotlin.compose.narrator.interfaces.SnapShotStateNarrationScope
 
 @Composable
-actual inline fun <T> Narration(
-    vmFactory: MutableState<T>,
+actual fun <T> Narration(
+    state: MutableState<T>,
     prepareNarrations: MutableStateNarrationScope<T, @Composable StateNarrativeScope.(T) -> Unit>.() -> Unit
 ): Unit = NarrationJvm(
-    vmFactory,
+    state,
     defaultEntryAnimation,
     defaultExitAnimation,
     prepareNarrations
